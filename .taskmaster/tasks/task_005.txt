@@ -1,0 +1,255 @@
+# Task ID: 5
+# Title: Home Dashboard Implementation
+# Status: done
+# Dependencies: 2, 3, 4
+# Priority: high
+# Description: Create the main dashboard screen showing learning progress, daily question sets, and quick access to key features.
+# Details:
+1. Create the following components for the home dashboard:
+
+   a. TopBar.tsx
+   ```typescript
+   // Profile icon, streak counter with flame icon, notification bell
+   ```
+
+   b. DailyQuestionCard.tsx
+   ```typescript
+   // Hero card showing daily question options
+   // PRD 4.2: Offer 3 options - Daily 1문제, Daily 3문제, Daily 5문제
+   // Display estimated completion time for selected option
+   // Start learning button
+   ```
+
+   c. WeaknessAnalysis.tsx
+   ```typescript
+   // Progress bar showing improvement in weak areas
+   // Dynamic text based on progress percentage
+   ```
+
+   d. QuickActionMenu.tsx
+   ```typescript
+   // Buttons for review wrong answers and camera search
+   ```
+
+2. Implement bottom tab navigation (GNB):
+   ```typescript
+   // Home, Learning, Camera, Wrong Answers, My Page tabs
+   // Use react-router for navigation
+   ```
+
+3. Create API functions to:
+   - Fetch daily question set
+   - Get user streak information
+   - Retrieve weakness analysis data
+
+4. Implement animations for card transitions and progress bars using Framer Motion
+
+5. Create loading states and skeleton screens for data fetching
+
+6. Implement pull-to-refresh functionality for updating dashboard data
+
+# Test Strategy:
+1. Verify all dashboard components render correctly with sample data
+2. Test API integration for fetching real data
+3. Verify streak counter displays correct value
+4. Test navigation between tabs
+5. Verify progress bars update correctly based on user data
+6. Test responsive design on different screen sizes
+7. Verify loading states and skeleton screens
+8. Test pull-to-refresh functionality
+
+# Subtasks:
+## 1. Implement TopBar Component with User Info and Streak Counter [done]
+### Dependencies: None
+### Description: Create the TopBar.tsx component that displays user profile icon, streak counter with flame icon, and notification bell.
+### Details:
+Create a responsive TopBar component that includes: 1) Profile icon that links to user profile page, 2) Streak counter with animated flame icon showing current streak days, 3) Notification bell with badge for unread notifications. Implement API integration to fetch user streak data from the database. Use Framer Motion for subtle animations when the component mounts.
+<info added on 2025-11-26T13:53:44.151Z>
+Subtask 5.1 has been completed with all requirements fulfilled. The implementation includes:
+
+1. TopBar component creation in src/components/dashboard/TopBar.tsx with:
+   - Profile icon linking to profile page
+   - Streak counter with flame icon and day count
+   - Notification bell icon for future expansion
+   - Fully responsive design
+
+2. Framer Motion animations:
+   - Fade and slide animations on component mount
+   - Pulsing animation for the flame icon when user has an active streak
+
+3. API integration through src/lib/api/dashboard.ts:
+   - getUserStreak function implementation
+   - Supabase integration for retrieving user streak data
+   - Error handling and default values
+
+4. Dashboard integration:
+   - TopBar added to Dashboard layout
+   - Sticky positioning for consistent navigation
+
+5. UX improvements:
+   - Skeleton UI for loading states
+   - Fallback for profile images
+   - Accessibility enhancements with aria-labels
+
+6. Build and lint verification:
+   - All lint checks passed
+   - Successful build completion
+</info added on 2025-11-26T13:53:44.151Z>
+
+## 2. Develop Daily Question Card Component with Progress Tracking [done]
+### Dependencies: 5.1
+### Description: Implement the DailyQuestionCard.tsx component that displays the daily set of 5 questions with estimated completion time and start button.
+### Details:
+Create a prominent card component that shows: 1) Today's 5-question set with a visually appealing layout, 2) Estimated completion time based on question complexity, 3) 'Start Learning' button with hover/press effects, 4) Progress indicator if user has partially completed today's questions. Implement API integration to fetch the daily question set data. Add skeleton loading state while data is being fetched.
+<info added on 2025-11-26T13:59:26.860Z>
+Completed tasks for Subtask 5.2:
+
+1. DailyQuestionCard component implementation:
+   - Created visual layout for daily 5-question set
+   - Added estimated completion time calculation (2 minutes per question)
+   - Implemented "Start Learning" button with appropriate states
+   - Added "Continue Learning" option for partially completed sets
+   - Included completion status indicator with button disabling when complete
+
+2. Progress tracking functionality:
+   - Implemented progress bar (0-100%)
+   - Added logic to calculate completed questions based on study_records
+   - Dynamic button text based on completion status
+
+3. API integration in dashboard.ts:
+   - Implemented getTodayDailySet function
+   - Created createDailySet function
+   - Added progress calculation logic
+
+4. Question API integration in questions.ts:
+   - Implemented getDailyQuestionSet function
+   - Added fallback logic for database function failures
+   - Added certification-specific question selection
+
+5. Automatic set generation:
+   - Added logic to create new daily set when none exists
+   - Implemented user certification-based question selection
+   - Added error handling and loading state management
+
+6. UI enhancements:
+   - Added Framer Motion animations for component mounting (fade + slide)
+   - Implemented progress bar animations
+   - Created skeleton loading UI for data fetching states
+
+7. Dashboard integration:
+   - Successfully integrated DailyQuestionCard into Dashboard page
+   - Adjusted layout for proper positioning
+   - Passed all lint and build tests
+</info added on 2025-11-26T13:59:26.860Z>
+
+## 3. Create Weakness Analysis Component with Dynamic Content [done]
+### Dependencies: 5.1
+### Description: Develop the WeaknessAnalysis.tsx component showing progress bars for improvement in weak areas with dynamic text based on progress percentage.
+### Details:
+Implement a component that visualizes user's progress in weak subject areas: 1) Create animated progress bars using Framer Motion, 2) Generate dynamic motivational text based on progress percentage (e.g., 'Almost there!' at 80%+, 'Keep going!' at 40-79%), 3) Show most improved and least improved categories, 4) Add small graph visualization of weekly improvement. Integrate with API to fetch weakness analysis data from the database.
+<info added on 2025-11-26T14:03:12.448Z>
+Subtask 5.3 has been completed with the following implementations:
+
+1. WeaknessAnalysis component (src/components/dashboard/WeaknessAnalysis.tsx):
+   - Visualization of weak subject areas
+   - Progress bars for each category
+   - Dynamic motivational text based on scores
+   - Display of most improved areas
+   - Identification of areas needing focused study
+
+2. Framer Motion animations for progress bars:
+   - Sequential animations with delays
+   - Fade and slide animations for categories
+   - Width animations (0.8s duration)
+
+3. Dynamic text implementation with score-based messaging:
+   - 80+ points: "Excellent!"
+   - 60-79 points: "Almost there!"
+   - 40-59 points: "Keep going!"
+   - Below 40 points: "Needs more focus"
+
+4. Trend indicators:
+   - Icons for improvement/decline/stability
+   - Score improvement display (+/-)
+   - Color-coded trend visualization
+
+5. Color-coded progress bars:
+   - Green for 80+ points
+   - Primary color for 60-79 points
+   - Yellow for 40-59 points
+   - Red for below 40 points
+
+6. API integration (src/lib/api/dashboard.ts):
+   - getWeaknessAnalysis function
+   - Comparison of two most recent diagnostic results
+   - Calculation of improvement by category
+   - Trend analysis (improving/declining/stable)
+
+7. Data analysis features:
+   - Top 3 most improved areas
+   - 3 areas needing focused study (lowest scores)
+   - Sorting by improvement rate
+
+8. Skeleton loading states:
+   - UI placeholders during data loading
+   - Guidance messages for empty data states
+
+9. Dashboard integration:
+   - WeaknessAnalysis component added to Dashboard page
+
+10. Build and lint verification:
+    - Passed lint checks
+    - Successful build
+</info added on 2025-11-26T14:03:12.448Z>
+
+## 4. Implement Bottom Tab Navigation (GNB) with React Router [done]
+### Dependencies: 5.1, 5.2, 5.3
+### Description: Create the Global Navigation Bar (GNB) with tabs for Home, Learning, Camera, Wrong Answers, and My Page using react-router for navigation.
+### Details:
+Develop a persistent bottom navigation bar with: 1) Five tabs with icons and labels (Home, Learning, Camera, Wrong Answers, My Page), 2) Visual indicator for active tab, 3) Smooth transitions between tabs using react-router, 4) Optional floating action button for camera functionality. Ensure navigation state is preserved when switching between tabs. Implement accessibility features for tab navigation.
+<info added on 2025-11-26T14:05:32.131Z>
+Subtask 5.4 has been completed with the following implementations:
+
+1. BottomTabNavigation component (src/components/navigation/BottomTabNavigation.tsx):
+   - Fixed bottom navigation bar with 5 tabs: Home, Learning, Camera, Wrong Answers, My Page
+   - Each tab includes appropriate icons and labels
+
+2. React Router integration:
+   - Current path detection using useLocation
+   - Navigation handling with useNavigate
+   - Automatic active tab detection and highlighting
+
+3. Active tab visualization:
+   - Animated active indicator using Framer Motion's layoutId
+   - Color change for active tab (primary color)
+   - Scale effect for active tab icon
+   - Active indicator bar displayed at the top of the tab
+
+4. Framer Motion animations:
+   - Slide up animation on component mount
+   - Smooth transitions for active tab indicator using spring animation
+
+5. Accessibility features:
+   - aria-label descriptions for each tab
+   - aria-current attribute for active tab indication
+   - Keyboard accessibility support
+
+6. New page components:
+   - Learning.tsx
+   - Camera.tsx
+   - WrongAnswers.tsx
+
+7. App.tsx integration:
+   - Bottom tab navigation shown only to logged-in users
+   - All tab routes added
+   - Protected routes implemented
+
+8. Layout adjustments:
+   - Added pb-24 padding for bottom tab spacing
+   - Applied bottom margin to Dashboard, Profile and other pages
+
+9. Build and lint verification:
+   - Passed npm run lint
+   - Successful npm run build
+</info added on 2025-11-26T14:05:32.131Z>
+

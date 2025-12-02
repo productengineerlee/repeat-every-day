@@ -1,0 +1,245 @@
+# Task ID: 10
+# Title: Personalized Learning Algorithm
+# Status: done
+# Dependencies: 3, 6, 8
+# Priority: high
+# Description: Implement the algorithm for recommending personalized daily question sets based on user performance and weak areas.
+# Details:
+1. Design and implement the recommendation algorithm:
+   ```typescript
+   // src/utils/recommendationEngine.ts
+   // Consider factors:
+   // - User's weak areas from diagnostic test
+   // - Recent performance on questions
+   // - Time since last exposure to a topic
+   // - Question difficulty progression
+   // - Spaced repetition principles
+   ```
+
+2. Create Supabase database function for generating daily sets:
+   ```sql
+   -- Generate 5 questions daily based on user data
+   -- Balance between weak areas and comprehensive coverage
+   -- Avoid recently answered questions
+   ```
+
+3. Implement scheduled job for daily question set generation:
+   ```typescript
+   // Use Supabase scheduled functions
+   // Generate sets at midnight local time
+   // Handle time zone differences
+   ```
+
+4. Create API functions to:
+   - Fetch personalized daily question set
+   - Update user performance metrics
+   - Recalculate weak areas based on ongoing performance
+
+5. Implement caching strategy for quick access to daily sets
+
+6. Add manual refresh option for users who want new questions
+
+7. Create analytics tracking for algorithm effectiveness
+
+# Test Strategy:
+1. Test recommendation algorithm with various user profiles
+2. Verify daily set generation with different performance patterns
+3. Test scheduled job reliability
+4. Verify weak area recalculation accuracy
+5. Test caching strategy and performance
+6. Verify manual refresh functionality
+7. Test analytics data collection
+8. Verify algorithm adapts to improving performance
+
+# Subtasks:
+## 1. Design Core Recommendation Engine Architecture [done]
+### Dependencies: None
+### Description: Create the foundational architecture for the recommendation engine that will power personalized learning.
+### Details:
+Implement the base recommendation engine in src/utils/recommendationEngine.ts with core interfaces and types. Define the algorithm's main components and data flow. Create utility functions for calculating recommendation scores based on multiple factors. Include documentation for each component and how they interact.
+<info added on 2025-11-26T14:44:18.752Z>
+Subtask 10.1 has been completed with the following implementation:
+
+1. Base recommendation engine architecture implemented in src/lib/utils/recommendationEngine.ts with:
+   - Core type definitions and interfaces:
+     * UserPerformanceData: Structure for user performance data
+     * QuestionMetadata: Structure for question metadata
+     * RecommendationScore: Structure for recommendation score calculation results
+     * RecommendationConfig: Configuration options for the recommendation engine
+
+   - Key algorithm functions implemented:
+     * calculateWeakAreaBoost: Calculates bonus scores for weak areas
+     * calculateRecencyPenalty: Applies penalties for recently solved questions
+     * calculateDifficultyMatch: Determines appropriateness of question difficulty
+     * calculateCategoryBalance: Ensures balanced category distribution
+     * calculateSpacedRepetitionScore: Implements spaced repetition principles
+     * calculateRecommendationScore: Computes overall recommendation score per question
+     * selectRecommendedQuestions: Selects optimal questions from the available pool
+
+   - Default configuration (DEFAULT_CONFIG) defined with:
+     * Target question count: 5
+     * Weighting parameters for all scoring factors
+     * Filtering settings for recent questions and difficulty range
+     * Spaced repetition interval settings
+
+   - Greedy algorithm implementation for question selection that:
+     * Selects highest-scoring questions at each step
+     * Dynamically recalculates scores based on previous selections
+     * Ensures category diversity in recommendations
+
+2. All code successfully passes linting and builds without errors.
+</info added on 2025-11-26T14:44:18.752Z>
+
+## 2. Implement Weak Area Analysis and Weighting System [done]
+### Dependencies: 10.1
+### Description: Develop the component that analyzes user performance data to identify and prioritize weak knowledge areas.
+### Details:
+Create functions to analyze diagnostic test results and ongoing question performance. Implement a weighted scoring system that prioritizes topics where users struggle most. Design an algorithm to detect patterns in incorrect answers. Build a mechanism to adjust weights dynamically as user performance changes over time.
+<info added on 2025-11-26T14:48:47.997Z>
+Implementation of Weak Area Analysis and Weighting System has been completed with the following components:
+
+1. Weakness analysis and weighting system (src/lib/utils/weaknessAnalysis.ts):
+   - CategoryPerformance interface and calculation functions that track category-specific statistics including accuracy rates, average time spent, and incorrect answer counts by joining study_records with questions
+   - WrongAnswerPattern interface and detection functions that classify patterns as repeated, concentrated, or sporadic with severity ratings
+   - WeightedScore interface and calculation functions that compute scores based on multiple factors including diagnostic test results, ongoing performance, error frequency, time since last study, and performance trends
+   - Performance trend analysis functions that compare recent vs. previous periods to determine if performance is improving, declining, or stable
+   - Weak area identification functions that automatically identify weakness areas based on weighted scores
+   - Dynamic weight adjustment functions that automatically modify weights as user performance changes
+
+2. Recommendation engine integration (src/lib/utils/recommendationEngine.ts):
+   - Successfully imported and utilized the weakness analysis system functions
+   - Enhanced calculateWeakAreaBoost function to leverage weighted scores
+   - Modified selectRecommendedQuestions function to be asynchronous and incorporate weighted scores
+   - Implemented automatic updates for weak areas
+
+3. All code successfully passed linting and build tests.
+</info added on 2025-11-26T14:48:47.997Z>
+
+## 3. Integrate Spaced Repetition Principles [done]
+### Dependencies: 10.1
+### Description: Implement spaced repetition logic to optimize long-term knowledge retention in the recommendation algorithm.
+### Details:
+Research and implement optimal spaced repetition intervals based on learning science. Create functions to track time since last exposure to topics and calculate ideal re-exposure timing. Develop logic to balance new content introduction with review of previously learned material. Implement difficulty progression that adapts to user performance.
+<info added on 2025-11-26T14:54:20.535Z>
+Completed tasks for Subtask 10.3 (Integrate Spaced Repetition Principles):
+
+1. Implemented spaced repetition utilities (src/lib/utils/spacedRepetition.ts):
+   - SM-2 algorithm-based interval calculations:
+     * calculateNextInterval function for determining review timing
+     * Dynamic interval adjustment using easeFactor
+     * Interval progression based on consecutive correct answers
+   
+   - Performance-based interval adjustments:
+     * adjustIntervalByPerformance function for dynamic timing based on recent performance
+     * Increased intervals for good performance, decreased for poor performance
+   
+   - Category-specific learning tracking:
+     * getLastExposureByCategory function to retrieve last study time by category
+     * getCategoryReviewStats function for review count and recent accuracy rates
+   
+   - Ideal review timing calculations:
+     * calculateIdealReviewTiming function based on last study time and performance
+     * Urgency assessment (high/medium/low)
+   
+   - New content and review balancing:
+     * calculateReviewNewBalance function to determine daily set ratios
+     * Dynamic ratio adjustment based on review frequency and performance
+   
+   - Difficulty progression implementation:
+     * calculateDifficultyProgression function for user performance-based difficulty adjustment
+     * Progressive difficulty increases for good performance, decreases for poor performance
+   
+   - Comprehensive scoring system:
+     * calculateSpacedRepetitionScore function for combined factor assessment
+     * Urgency and performance-based score adjustments
+
+2. Recommendation engine integration (src/lib/utils/recommendationEngine.ts):
+   - Imported and utilized spaced repetition utility functions
+   - Enhanced calculateSpacedRepetitionScore function with:
+     * Automatic category review statistics retrieval
+     * Ideal review timing integration
+     * Performance-based scoring
+   - Automatic updates for category last study timestamps
+
+3. Successfully passed build and lint tests:
+   - npm run lint completed without errors
+   - npm run build completed successfully
+</info added on 2025-11-26T14:54:20.535Z>
+
+## 4. Create Daily Set Generation Database Function [done]
+### Dependencies: 10.1, 10.2, 10.3
+### Description: Develop the Supabase database function that will generate personalized daily question sets based on the recommendation algorithm.
+### Details:
+Write SQL function in Supabase to generate daily sets of 5 questions. Implement logic to query user performance data and apply recommendation algorithm. Ensure balance between weak areas and comprehensive topic coverage. Add constraints to avoid recently answered questions. Optimize query performance for scale.
+<info added on 2025-11-26T14:58:10.498Z>
+Implemented personalized daily set generation database function in Supabase:
+
+- Created `generate_personalized_daily_set` function with:
+  - Weak area identification (categories below 60% accuracy)
+  - Exclusion of questions answered within last day
+  - User accuracy calculation (30-day window)
+  - Dynamic difficulty targeting based on user performance
+  - Category weighting system (3.0 for weak areas, 1.0 for others)
+  - Last study time consideration
+
+- Implemented greedy algorithm for question selection:
+  - Prioritizes weak areas (40% of questions)
+  - Ensures category diversity
+  - Filters by appropriate difficulty (target ±1)
+  - Includes randomization element
+
+- Optimized performance with:
+  - Strategic indexing (certification_type, category, difficulty)
+  - Array operation optimization
+  - Early termination logic
+
+- Updated API in questions.ts to use new function with fallback options
+- Verified with successful lint and build tests
+</info added on 2025-11-26T14:58:10.498Z>
+
+## 5. Implement Scheduled Job for Automatic Set Generation [done]
+### Dependencies: 10.4
+### Description: Create the scheduled job system that automatically generates new daily question sets for all users.
+### Details:
+Configure Supabase scheduled functions to run daily set generation at appropriate times. Implement time zone handling to ensure sets are generated at midnight in user's local time. Create fallback mechanisms for job failures. Add logging for monitoring job execution and performance. Implement throttling to handle large user bases.
+<info added on 2025-11-26T15:01:40.394Z>
+Completed tasks:
+
+1. Database migration (create_scheduled_daily_set_generation):
+   - Created daily_set_generation_logs table:
+     * Tracks job status (pending, processing, completed, failed)
+     * Records error messages and processing time
+     * Implemented RLS policies (users can only view their own logs)
+   
+   - Implemented generate_daily_sets_batch function:
+     * Processes users in batches (default 50 users)
+     * Enforces maximum processing time (default 5 minutes)
+     * Excludes users with already generated sets for today
+     * Prevents duplicate processing jobs
+     * Handles errors with logging
+     * Supports throttling
+   
+   - Implemented retry_failed_daily_set_generations function:
+     * Retries failed jobs from the last 24 hours
+     * Limits maximum retry attempts (default 3)
+     * Processes in batches (default 20 users)
+
+2. Configured pg_cron scheduled jobs:
+   - Main job: Runs daily at UTC 00:00 (KST 09:00)
+     * Calls generate_daily_sets_batch(50, 300000)
+   
+   - Retry job: Runs every 2 hours
+     * Calls retry_failed_daily_set_generations(3, 20)
+
+3. Implemented API functions (src/lib/api/scheduledJobs.ts):
+   - runDailySetGenerationBatch: Manual batch execution
+   - retryFailedGenerations: Manual retry execution
+   - getUserGenerationLogs: Query logs by user
+   - getGenerationStats: Query overall statistics
+   - getRecentFailures: Query recent failed jobs
+
+4. Passed build and lint tests:
+   - npm run lint passed
+   - npm run build successful
+</info added on 2025-11-26T15:01:40.394Z>
+

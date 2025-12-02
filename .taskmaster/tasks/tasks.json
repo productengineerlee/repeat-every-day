@@ -1,0 +1,874 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Project Setup and Configuration",
+        "description": "Initialize the project with React, TypeScript, and Vite. Set up Shadcn UI, Tailwind CSS, and other required dependencies.",
+        "details": "1. Create a new Vite project with React and TypeScript: `npm create vite@latest certiq -- --template react-ts`\n2. Install and configure Tailwind CSS: `npm install -D tailwindcss postcss autoprefixer` and initialize with `npx tailwindcss init -p`\n3. Set up Shadcn UI: `npm install shadcn-ui` and configure theme\n4. Install additional dependencies:\n   - Lucide React (v0.292.0+): `npm install lucide-react`\n   - Framer Motion (v10.16.4+): `npm install framer-motion`\n   - Recharts (v2.9.0+): `npm install recharts`\n   - React Router (v6.18.0+): `npm install react-router-dom`\n5. Configure project structure:\n   ```\n   src/\n     components/\n     pages/\n     hooks/\n     utils/\n     types/\n     assets/\n     styles/\n     context/\n   ```\n6. Set up ESLint and Prettier for code quality\n7. Create basic theme configuration with Tailwind CSS variables for consistent styling",
+        "testStrategy": "1. Verify all dependencies are installed correctly\n2. Ensure the development server starts without errors: `npm run dev`\n3. Confirm hot module replacement (HMR) is working\n4. Validate TypeScript configuration\n5. Test basic component rendering with Shadcn UI",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initial Vite Project Creation with React and TypeScript",
+            "description": "Set up the base project using Vite with React and TypeScript template, and configure essential development tools.",
+            "dependencies": [],
+            "details": "1. Create a new Vite project with React and TypeScript using the command: `npm create vite@latest certiq -- --template react-ts`\n2. Navigate to the project directory: `cd certiq`\n3. Install base dependencies: `npm install`\n4. Set up ESLint and Prettier for code quality:\n   - Install: `npm install -D eslint prettier eslint-config-prettier eslint-plugin-react eslint-plugin-react-hooks @typescript-eslint/eslint-plugin @typescript-eslint/parser`\n   - Create configuration files (.eslintrc.js, .prettierrc)\n5. Test the development server: `npm run dev`\n6. Create a basic .gitignore file for the project\n<info added on 2025-11-26T11:49:03.613Z>\n✅ Completed Tasks:\n1. Verified existing Vite project with React + TypeScript template\n2. Completed Prettier installation and configuration:\n   - Installed prettier and eslint-config-prettier packages\n   - Created .prettierrc file with Korean project-specific settings\n   - Added format script to package.json\n3. Updated ESLint configuration:\n   - Integrated prettierConfig in eslint.config.js\n   - Configured to prevent ESLint and Prettier conflicts\n4. Tested development server:\n   - Confirmed server runs with npm run dev command\n   - Verified Hot Module Replacement (HMR) functionality\n5. Verified TypeScript configuration:\n   - Confirmed tsconfig.json and tsconfig.app.json are working properly\n   - Verified path alias (@/*) configuration\n6. Confirmed .gitignore file is properly set up\n\nAll requirements have been met.\n</info added on 2025-11-26T11:49:03.613Z>",
+            "status": "done",
+            "testStrategy": "1. Verify the project structure is created correctly\n2. Ensure the development server starts without errors\n3. Confirm hot module replacement (HMR) is working\n4. Validate TypeScript configuration is properly set up\n5. Test ESLint and Prettier configurations with sample code"
+          },
+          {
+            "id": 2,
+            "title": "UI Framework Setup with Tailwind CSS and Shadcn UI",
+            "description": "Install and configure Tailwind CSS and Shadcn UI for consistent styling and component library integration.",
+            "dependencies": [
+              1
+            ],
+            "details": "1. Install Tailwind CSS and its dependencies: `npm install -D tailwindcss postcss autoprefixer`\n2. Initialize Tailwind configuration: `npx tailwindcss init -p`\n3. Configure Tailwind CSS in tailwind.config.js to include proper content paths\n4. Set up Shadcn UI: `npm install shadcn-ui`\n5. Configure Shadcn UI theme settings\n6. Create basic theme configuration with Tailwind CSS variables in a globals.css file\n7. Update the main CSS file to include Tailwind directives (@tailwind base, components, utilities)\n8. Create a sample component to test the UI framework integration\n<info added on 2025-11-26T12:54:07.163Z>\n✅ Completed Tasks:\n1. Tailwind CSS Setup Verification:\n   - Tailwind CSS v4 was already installed (@tailwindcss/vite plugin used)\n   - Verified Tailwind plugin integration in Vite configuration\n   - Confirmed @import \"tailwindcss\" in index.css\n\n2. Shadcn UI Setup Completion:\n   - Verified components.json file configuration\n   - Added Shadcn UI button component (npx shadcn@latest add button)\n   - Components successfully generated in src/components/ui/ directory\n\n3. Theme Configuration Verification:\n   - Completed CSS variable-based theme setup in index.css\n   - Confirmed light/dark mode support\n   - All Shadcn UI standard theme variables properly configured\n\n4. Sample Component Testing:\n   - Added Shadcn UI button component to App.tsx\n   - Tested various button variants (default, secondary, outline, ghost)\n   - Confirmed proper functioning of Tailwind CSS classes\n\n5. Build and Lint Testing:\n   - Successful npm run build (build time: 1.87 seconds)\n   - Passed npm run lint\n   - No TypeScript compilation errors\n\nAll requirements have been met.\n</info added on 2025-11-26T12:54:07.163Z>",
+            "status": "done",
+            "testStrategy": "1. Verify Tailwind CSS classes are working properly\n2. Test responsive design with Tailwind breakpoints\n3. Ensure Shadcn UI components render correctly\n4. Validate theme configuration and custom CSS variables\n5. Test dark/light mode toggle if implemented"
+          },
+          {
+            "id": 3,
+            "title": "Project Structure Organization and Additional Dependencies",
+            "description": "Set up the project folder structure and install remaining dependencies required for the application.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "1. Create the recommended project structure:\n   ```\n   src/\n     components/\n     pages/\n     hooks/\n     utils/\n     types/\n     assets/\n     styles/\n     context/\n   ```\n2. Install additional dependencies:\n   - Lucide React: `npm install lucide-react`\n   - Framer Motion: `npm install framer-motion`\n   - Recharts: `npm install recharts`\n   - React Router: `npm install react-router-dom`\n3. Create basic index files in each directory to maintain structure\n4. Set up a basic routing configuration with React Router\n5. Create type definition files for common interfaces\n6. Configure import aliases in tsconfig.json for cleaner imports\n<info added on 2025-11-26T13:00:20.806Z>\n✅ Completed Tasks:\n1. Project folder structure creation:\n   - src/pages/ folder created with Home.tsx, TestLibraries.tsx\n   - src/hooks/ folder created with index.ts\n   - src/types/ folder created with index.ts containing common type definitions\n   - src/styles/ folder created\n   - src/context/ folder created with index.ts\n   - src/components/ folder with index.ts added\n\n2. Additional libraries installation completed:\n   - Framer Motion: installed and animation tests successful\n   - Recharts: installed and chart component tests successful\n   - React Router: installed and routing configuration completed\n   - Lucide React: already installed and icon tests successful\n\n3. Basic routing configuration:\n   - BrowserRouter added to main.tsx\n   - Routes and Route configured in App.tsx\n   - Navigation bar added (Home, Library Test pages)\n   - Routing functionality verified\n\n4. Type definition files created:\n   - Common type definitions added to src/types/index.ts\n   - User, Question, StudyRecord, WrongAnswer, DailySet, DiagnosisResult types defined\n\n5. Import alias configuration:\n   - @/* path alias already configured in tsconfig.json\n   - Alias functionality verified across all components\n\n6. Library testing:\n   - TestLibraries.tsx page created to test all libraries\n   - Framer Motion animations verified\n   - Recharts chart rendering verified\n   - React Router navigation verified\n   - Lucide React icons display verified\n\n7. Build and lint testing:\n   - npm run build successful (build time: 11.30 seconds)\n   - npm run lint passed\n   - No TypeScript compilation errors\n</info added on 2025-11-26T13:00:20.806Z>",
+            "status": "done",
+            "testStrategy": "1. Verify all dependencies are installed correctly\n2. Test basic component rendering with each library\n3. Validate the routing configuration works\n4. Ensure type definitions are properly recognized\n5. Test import aliases function correctly\n6. Verify the project structure follows best practices"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Supabase Integration and Authentication Setup",
+        "description": "Set up Supabase for backend services including authentication, database, and storage.",
+        "details": "1. Create a Supabase project at https://supabase.com\n2. Install Supabase client: `npm install @supabase/supabase-js`\n3. Configure environment variables:\n   ```\n   VITE_SUPABASE_URL=your-project-url\n   VITE_SUPABASE_ANON_KEY=your-anon-key\n   ```\n4. Create a client utility:\n   ```typescript\n   // src/utils/supabaseClient.ts\n   import { createClient } from '@supabase/supabase-js'\n   \n   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL\n   const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY\n   \n   export const supabase = createClient(supabaseUrl, supabaseAnonKey)\n   ```\n5. Set up authentication methods:\n   - Email/password authentication\n   - Social login providers (Google, Apple)\n6. Create authentication context for global state management:\n   ```typescript\n   // src/context/AuthContext.tsx\n   import React, { createContext, useContext, useEffect, useState } from 'react'\n   import { supabase } from '../utils/supabaseClient'\n   import { User } from '@supabase/supabase-js'\n   \n   // Context implementation with auth state and methods\n   ```\n7. Implement protected routes with React Router",
+        "testStrategy": "1. Test user registration flow\n2. Test login with email/password\n3. Test social login integration\n4. Verify authentication persistence across page refreshes\n5. Test protected routes redirect behavior\n6. Verify logout functionality\n7. Test error handling for authentication failures",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Supabase Project Creation and Client Setup",
+            "description": "Create a Supabase project and set up the client integration with the React application",
+            "dependencies": [],
+            "details": "Create a new Supabase project through the Supabase dashboard. Install the Supabase client library using npm. Configure the necessary environment variables for the project URL and anonymous key. Create a utility file to initialize and export the Supabase client for use throughout the application.\n<info added on 2025-11-26T13:03:44.387Z>\n## Subtask 2.1 Completion Report\n\nAll implementation tasks for Supabase client setup have been successfully completed:\n\n1. Supabase client library installation:\n   - @supabase/supabase-js package installed\n   - Dependencies verified\n\n2. Supabase client utility implementation:\n   - Created src/lib/supabaseClient.ts\n   - Added environment variable validation\n   - Configured session management (persistSession, autoRefreshToken, detectSessionInUrl)\n\n3. Environment variable configuration:\n   - Created .env.example template\n   - Provided .env.local setup guide\n   - Implemented environment variable validation logic\n\n4. Connection test implementation:\n   - Created SupabaseTest.tsx component\n   - Implemented connection status UI\n   - Added user guidance for missing environment variables\n   - Implemented error handling with user feedback\n\n5. Build and lint verification:\n   - Passed npm run lint\n   - Successful build (9.78 seconds)\n   - No TypeScript compilation errors\n\nNote: Users must complete these manual steps:\n- Create a Supabase project at https://supabase.com\n- Configure actual Supabase URL and ANON KEY in .env.local file\n</info added on 2025-11-26T13:03:44.387Z>",
+            "status": "done",
+            "testStrategy": "Verify Supabase client connection by testing a simple query. Ensure environment variables are properly loaded in development and production environments. Test error handling for connection failures."
+          },
+          {
+            "id": 2,
+            "title": "Authentication Methods Implementation",
+            "description": "Implement email/password authentication and social login providers (Google, Apple) using Supabase auth services",
+            "dependencies": [
+              1
+            ],
+            "details": "Configure email/password authentication in the Supabase dashboard. Enable and configure social login providers (Google, Apple) with appropriate credentials and redirect URLs. Create authentication utility functions for sign up, sign in, sign out, password reset, and social login. Implement proper error handling and validation for all authentication flows.\n<info added on 2025-11-26T13:27:21.126Z>\n✅ Completed Tasks:\n1. Authentication utility functions creation (src/lib/auth.ts):\n   - signUp: Email/Password registration\n   - signIn: Email/Password login\n   - signOut: Logout\n   - resetPassword: Send password reset email\n   - updatePassword: Update to new password\n   - signInWithGoogle: Google social login\n   - signInWithApple: Apple social login\n   - getSession: Get current session\n   - getCurrentUser: Get current user\n   - Error handling and type safety implemented for all functions\n\n2. Authentication page components creation:\n   - Login.tsx: Email/password login and social login UI\n   - SignUp.tsx: Registration form and social signup UI\n   - ForgotPassword.tsx: Password reset request page\n   - AuthCallback.tsx: OAuth callback handling page\n\n3. Authentication features implementation:\n   - Email/Password authentication fully implemented\n   - Google OAuth authentication implemented\n   - Apple OAuth authentication implemented\n   - Password reset flow implemented\n   - Form validation (password confirmation, minimum length, etc.)\n   - Error handling and user feedback UI\n\n4. Routing configuration:\n   - /login route added\n   - /signup route added\n   - /forgot-password route added\n   - /auth/callback route added (OAuth callback)\n\n5. Build and lint testing:\n   - npm run lint passed\n   - npm run build successful (build time 27.15 seconds)\n   - No TypeScript compilation errors\n\n⚠️ Required Supabase dashboard configuration:\n- Enable Email authentication\n- Configure Google OAuth provider (Client ID, Secret)\n- Configure Apple OAuth provider (Client ID, Secret)\n- Set redirect URL: http://localhost:5173/auth/callback\n</info added on 2025-11-26T13:27:21.126Z>",
+            "status": "done",
+            "testStrategy": "Test user registration with email/password. Verify login functionality with valid and invalid credentials. Test social login integration with Google and Apple. Verify password reset flow. Test error handling for all authentication methods."
+          },
+          {
+            "id": 3,
+            "title": "Authentication Context and State Management",
+            "description": "Create a React context for managing authentication state throughout the application",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement an AuthContext using React's Context API to manage global authentication state. Create a custom hook (useAuth) for easy access to authentication state and methods. Handle user session persistence across page refreshes using Supabase's session management. Implement loading states for authentication operations. Set up listeners for authentication state changes to keep the UI in sync with the auth state.\n<info added on 2025-11-26T13:29:12.615Z>\n✅ Completed Tasks:\n1. AuthContext Creation (src/context/AuthContext.tsx):\n   - Global authentication state management using React Context API\n   - State management for user, session, and loading\n   - Authentication method wrapper functions (signIn, signUp, signOut, signInWithGoogle, signInWithApple)\n\n2. useAuth Custom Hook Implementation:\n   - Hook for easy AuthContext usage\n   - Error handling for usage outside Context\n\n3. Session Persistence Management:\n   - Initial session retrieval (getSession)\n   - Real-time authentication state synchronization with onAuthStateChange listener\n   - Session persistence across page refreshes\n\n4. Authentication State Listener Setup:\n   - Authentication event detection using supabase.auth.onAuthStateChange\n   - Handling of SIGNED_IN and SIGNED_OUT events\n   - Automatic state updates on session changes\n\n5. Component Integration:\n   - Updated Login.tsx and SignUp.tsx to use useAuth hook\n   - Added AuthProvider to App.tsx\n   - User state-dependent UI in navigation bar (login/profile buttons)\n\n6. Profile Page Creation:\n   - Implemented Profile.tsx page\n   - User information display (email, name, registration date)\n   - Logout functionality\n\n7. Build and Lint Testing:\n   - Passed npm run lint\n   - Successful build (build time: 9.48 seconds)\n   - No TypeScript compilation errors\n\nAll requirements have been met.\n</info added on 2025-11-26T13:29:12.615Z>",
+            "status": "done",
+            "testStrategy": "Test context provider rendering with both authenticated and unauthenticated states. Verify useAuth hook returns correct values. Test session persistence across page refreshes. Verify authentication state listeners respond correctly to login/logout events."
+          },
+          {
+            "id": 4,
+            "title": "Protected Routes Implementation",
+            "description": "Implement route protection to restrict access to authenticated users using React Router",
+            "dependencies": [
+              3
+            ],
+            "details": "Create a ProtectedRoute component that wraps routes requiring authentication. Implement redirect logic to send unauthenticated users to the login page. Store the original destination URL to redirect back after successful authentication. Add route protection to all relevant routes in the application. Implement role-based access control for routes that require specific permissions.\n<info added on 2025-11-26T13:31:59.172Z>\nCompleted tasks for Protected Routes Implementation:\n\n1. ProtectedRoute component (src/components/ProtectedRoute.tsx):\n   - Implemented protection for authenticated routes\n   - Added requireAuth prop for authentication control\n   - Implemented loading state handling with UI\n   - Added automatic redirection for unauthenticated users\n\n2. Original destination URL preservation:\n   - Implemented useLocation to capture current location\n   - Added destination URL passing during redirects to login\n   - Implemented automatic redirection back to original destination in Login.tsx and SignUp.tsx\n   - Used location.state for URL information transfer\n\n3. Route protection implementation:\n   - Protected /dashboard route with authentication requirement\n   - Protected /profile route with authentication requirement\n   - Configured /login and /signup routes to redirect authenticated users\n\n4. Dashboard page implementation:\n   - Created Dashboard.tsx with authentication protection\n   - Implemented learning statistics card UI\n\n5. Navigation updates:\n   - Added conditional dashboard link display based on authentication\n   - Implemented dynamic UI based on user state\n\n6. Build and lint verification:\n   - Passed npm run lint checks\n   - Build testing in progress\n</info added on 2025-11-26T13:31:59.172Z>",
+            "status": "done",
+            "testStrategy": "Test redirect behavior when unauthenticated users attempt to access protected routes. Verify successful redirection back to the original destination after login. Test role-based access restrictions. Verify protected routes are accessible to authenticated users with appropriate permissions."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Database Schema Implementation",
+        "description": "Create and configure the required database tables in Supabase according to the schema requirements.",
+        "details": "1. Create the following tables in Supabase:\n\n   a. users\n   ```sql\n   CREATE TABLE users (\n     id UUID REFERENCES auth.users NOT NULL PRIMARY KEY,\n     name TEXT,\n     email TEXT UNIQUE NOT NULL,\n     profile_image_url TEXT,\n     certification_type TEXT,\n     target_exam_date DATE,\n     streak_count INTEGER DEFAULT 0,\n     last_streak_date DATE,\n     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n   );\n   ```\n\n   b. questions\n   ```sql\n   CREATE TABLE questions (\n     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,\n     content TEXT NOT NULL,\n     options JSONB NOT NULL,\n     correct_answer TEXT NOT NULL,\n     explanation TEXT NOT NULL,\n     certification_type TEXT NOT NULL,\n     category TEXT NOT NULL,\n     difficulty INTEGER NOT NULL,\n     tags TEXT[],\n     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n   );\n   ```\n\n   c. diagnosis_results\n   ```sql\n   CREATE TABLE diagnosis_results (\n     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,\n     user_id UUID REFERENCES users(id) ON DELETE CASCADE,\n     scores JSONB NOT NULL,\n     weak_areas TEXT[],\n     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n   );\n   ```\n\n   d. study_records\n   ```sql\n   CREATE TABLE study_records (\n     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,\n     user_id UUID REFERENCES users(id) ON DELETE CASCADE,\n     question_id UUID REFERENCES questions(id) ON DELETE CASCADE,\n     user_answer TEXT,\n     is_correct BOOLEAN NOT NULL,\n     time_spent INTEGER,\n     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n   );\n   ```\n\n   e. wrong_answers\n   ```sql\n   CREATE TABLE wrong_answers (\n     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,\n     user_id UUID REFERENCES users(id) ON DELETE CASCADE,\n     question_id UUID REFERENCES questions(id) ON DELETE CASCADE,\n     wrong_count INTEGER DEFAULT 1,\n     last_wrong_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n     next_review_date TIMESTAMP WITH TIME ZONE,\n     graduated BOOLEAN DEFAULT FALSE,\n     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n   );\n   ```\n\n   f. daily_sets\n   ```sql\n   CREATE TABLE daily_sets (\n     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,\n     user_id UUID REFERENCES users(id) ON DELETE CASCADE,\n     question_ids UUID[] NOT NULL,\n     completed BOOLEAN DEFAULT FALSE,\n     completed_at TIMESTAMP WITH TIME ZONE,\n     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n   );\n   ```\n\n2. Set up Row Level Security (RLS) policies for each table\n3. Create database triggers for updating timestamps\n4. Create database functions for common operations\n5. Set up database indexes for performance optimization",
+        "testStrategy": "1. Verify all tables are created with correct columns and constraints\n2. Test RLS policies by attempting to access data with different user roles\n3. Insert sample data and verify relationships between tables\n4. Test database triggers for automatic timestamp updates\n5. Verify database functions with sample inputs\n6. Run performance tests on indexed queries",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Core Tables (users and questions)",
+            "description": "Implement the foundational tables for the application: users and questions tables in Supabase.",
+            "dependencies": [],
+            "details": "Execute SQL scripts to create the users table with proper auth references and the questions table with all required fields. Verify primary keys, data types, and default values are correctly set. Test the tables by inserting sample data to ensure constraints work properly.\n<info added on 2025-11-26T13:33:35.440Z>\n✅ Subtask 3.1 Completion Verification:\n\nThe users table has been successfully created with:\n- UUID primary key referencing auth.users\n- Required email field with UNIQUE constraint\n- Optional fields: name, profile_image_url, certification_type, target_exam_date\n- Learning-related fields: streak_count (default 0), last_streak_date\n- Timestamps: created_at, updated_at (default NOW())\n- Foreign key constraint to auth.users with CASCADE delete\n\nThe questions table has been successfully created with:\n- UUID primary key (auto-generated)\n- Required fields: content, options (JSONB), correct_answer, explanation\n- Classification fields: certification_type, category\n- Difficulty field with range check constraint (1-5)\n- Tags field as TEXT array with empty array default\n- Timestamp: created_at (default NOW())\n\nAppropriate indexes have been created:\n- On questions table: certification_type, category, difficulty, tags (GIN index)\n- On users table: email, certification_type\n\nThe migration has been applied in Supabase as \"create_users_and_questions_tables\" with all constraints and indexes verified as working correctly.\n</info added on 2025-11-26T13:33:35.440Z>",
+            "status": "done",
+            "testStrategy": "Verify table creation with correct columns and constraints. Test primary key constraints by attempting duplicate inserts. Confirm default values are applied correctly when not specified during insertion."
+          },
+          {
+            "id": 2,
+            "title": "Create Relationship Tables (study_records and wrong_answers)",
+            "description": "Implement tables that establish relationships between users and questions: study_records and wrong_answers.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create the study_records table to track user interactions with questions, including answer correctness and time spent. Implement the wrong_answers table to manage spaced repetition for incorrectly answered questions. Ensure foreign key constraints are properly set up to reference the users and questions tables.\n<info added on 2025-11-26T13:33:55.460Z>\n✅ Completed Tasks:\n1. study_records table creation:\n   - UUID primary key (auto-generated)\n   - Foreign keys: user_id (references users, CASCADE delete)\n   - Foreign keys: question_id (references questions, CASCADE delete)\n   - Required fields: user_answer, is_correct\n   - Optional fields: time_spent (default 0)\n   - Timestamp: created_at (default NOW())\n   - UNIQUE constraint: (user_id, question_id, created_at) - allows multiple attempts at the same question\n\n2. wrong_answers table creation:\n   - UUID primary key (auto-generated)\n   - Foreign keys: user_id (references users, CASCADE delete)\n   - Foreign keys: question_id (references questions, CASCADE delete)\n   - Wrong answer tracking: wrong_count (default 1), last_wrong_date (default NOW())\n   - Review scheduling: next_review_date (for Ebbinghaus forgetting curve)\n   - Graduation status: graduated (default FALSE)\n   - Timestamps: created_at, updated_at (default NOW())\n   - UNIQUE constraint: (user_id, question_id) - one wrong answer record per user per question\n\n3. Index creation:\n   - study_records: user_id, question_id, created_at (DESC), is_correct\n   - wrong_answers: user_id, question_id, next_review_date, graduated\n\n4. Supabase migration applied:\n   - Migration name: create_study_records_and_wrong_answers_tables\n   - Tables creation verified\n   - Foreign key constraints functioning properly\n\nAll requirements have been met.\n</info added on 2025-11-26T13:33:55.460Z>",
+            "status": "done",
+            "testStrategy": "Test foreign key constraints by attempting to insert records with non-existent user_id or question_id. Verify cascade delete functionality works when a referenced record is deleted."
+          },
+          {
+            "id": 3,
+            "title": "Create Analytics Tables (diagnosis_results and daily_sets)",
+            "description": "Implement tables for tracking user analytics and progress: diagnosis_results and daily_sets.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create the diagnosis_results table to store user diagnostic test outcomes with weak areas identification. Implement the daily_sets table to manage daily question assignments for users. Ensure proper JSONB structure for the scores field in diagnosis_results and array handling for question_ids in daily_sets.\n<info added on 2025-11-26T13:34:11.648Z>\nCompleted tasks for Subtask 3.3:\n\n1. diagnosis_results table created with:\n   - UUID primary key (auto-generated)\n   - Foreign key: user_id (references users with CASCADE delete)\n   - scores field (JSONB) for storing category scores\n   - weak_areas field (TEXT array, default empty array)\n   - created_at timestamp (default NOW())\n\n2. daily_sets table created with:\n   - UUID primary key (auto-generated)\n   - Foreign key: user_id (references users with CASCADE delete)\n   - question_ids field (UUID array) for daily question sets\n   - completed field (default FALSE)\n   - completed_at field (nullable)\n   - created_at timestamp (default NOW())\n\n3. Indexes created:\n   - On diagnosis_results: user_id, created_at (DESC), scores (GIN), weak_areas (GIN)\n   - On daily_sets: user_id, created_at (DESC), completed, question_ids (GIN)\n\n4. Migration successfully applied in Supabase:\n   - Migration name: create_analytics_tables\n   - Tables verified\n   - JSONB and array fields confirmed working properly\n</info added on 2025-11-26T13:34:11.648Z>",
+            "status": "done",
+            "testStrategy": "Test JSONB data insertion and retrieval in the scores field. Verify array operations on the question_ids and weak_areas fields. Test the completed_at timestamp updates when a daily set is marked as completed."
+          },
+          {
+            "id": 4,
+            "title": "Implement Row Level Security (RLS) Policies",
+            "description": "Set up Row Level Security policies for all tables to ensure data access is properly restricted based on user roles and ownership.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Create RLS policies for each table that restrict read/write access based on user authentication and ownership. For users table, allow users to only access their own records. For questions table, allow read-only access to all authenticated users. For relationship and analytics tables, restrict access to the user who owns the records.\n<info added on 2025-11-26T13:34:36.716Z>\nImplemented Row Level Security (RLS) policies for all database tables:\n\n1. Activated RLS on all tables:\n   - users, questions, diagnosis_results, study_records, wrong_answers, daily_sets\n   - Verified rls_enabled: true on all tables\n\n2. Created table-specific policies:\n   - users: Users can only SELECT, UPDATE, and INSERT their own profile data\n   - questions: Authenticated users have read-only access (SELECT); only service role can INSERT/UPDATE/DELETE\n   - diagnosis_results: Users can only SELECT and INSERT their own diagnostic results\n   - study_records: Users can only SELECT, INSERT, and UPDATE their own learning records\n   - wrong_answers: Users can SELECT, INSERT, UPDATE, and DELETE only their own incorrect answers\n   - daily_sets: Users can SELECT, INSERT, and UPDATE only their own daily question sets\n\n3. Successfully applied all policies through Supabase migration \"enable_rls_and_create_policies\"\n</info added on 2025-11-26T13:34:36.716Z>",
+            "status": "done",
+            "testStrategy": "Test RLS policies by attempting to access data with different user roles and authentication states. Verify users can only access their own records in protected tables. Confirm public access is properly restricted."
+          },
+          {
+            "id": 5,
+            "title": "Set Up Database Triggers and Functions",
+            "description": "Create database triggers for automatic timestamp updates and implement utility functions for common database operations.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Implement triggers to automatically update the updated_at timestamp when records are modified in tables with this field. Create functions for common operations like generating daily question sets, calculating streak updates, and scheduling next review dates for wrong answers based on spaced repetition algorithms.\n<info added on 2025-11-26T13:35:03.032Z>\nCompleted tasks:\n\n1. Automatic timestamp update trigger function:\n   - Created update_updated_at_column() function\n   - Implemented update_users_updated_at trigger for users table\n   - Implemented update_wrong_answers_updated_at trigger for wrong_answers table\n   - Configured automatic updated_at field updates on record modifications\n\n2. Ebbinghaus forgetting curve function:\n   - Implemented calculate_next_review_date() function\n   - Configured review intervals based on wrong_count:\n     * 1 time: 1 day\n     * 2 times: 3 days\n     * 3 times: 7 days\n     * 4 times: 14 days\n     * 5+ times: 30 days\n\n3. Streak update function:\n   - Created update_user_streak() function\n   - Implemented streak calculation logic\n   - Increments streak_count when learning occurs on consecutive days\n   - Resets to 1 when streak is broken\n\n4. Daily question set generation function:\n   - Implemented get_daily_question_set() function\n   - Selects questions based on user and certification type\n   - Returns 5 questions by default (configurable via parameter)\n   - Currently uses random selection (planned future replacement with personalization algorithm)\n\n5. Applied Supabase migration:\n   - Migration name: create_triggers_and_functions\n   - Successfully verified creation of all functions and triggers\n</info added on 2025-11-26T13:35:03.032Z>",
+            "status": "done",
+            "testStrategy": "Verify timestamp triggers by updating records and confirming the updated_at field changes. Test utility functions with various input parameters to ensure correct behavior. Validate spaced repetition scheduling logic for wrong answers."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "User Onboarding Flow Implementation",
+        "description": "Create the onboarding screens for new users, including certification selection, exam date setting, and initial diagnostic test.",
+        "details": "1. Create the following components for the onboarding flow:\n\n   a. CertificationSelection.tsx\n   ```typescript\n   // Display certification options (정보처리기사, ADsP, SQLD, etc.)\n   // Use radio buttons or cards for selection\n   ```\n\n   b. ExamDatePicker.tsx\n   ```typescript\n   // Calendar component for selecting target exam date\n   // Use date-fns for date manipulation\n   ```\n\n   c. DiagnosticTest.tsx\n   ```typescript\n   // Card-based swipeable interface for 10 diagnostic questions\n   // Track answers and calculate initial proficiency\n   ```\n\n   d. DiagnosticResults.tsx\n   ```typescript\n   // Radar chart visualization of results\n   // Use Recharts for visualization\n   ```\n\n2. Implement onboarding flow state management:\n   ```typescript\n   // src/context/OnboardingContext.tsx\n   // Manage onboarding state across multiple steps\n   ```\n\n3. Create API functions to:\n   - Save user certification selection and exam date\n   - Fetch diagnostic questions based on certification\n   - Submit diagnostic test results\n   - Generate personalized curriculum based on results\n\n4. Implement swipe animation for diagnostic questions using Framer Motion\n\n5. Create a progress indicator for the onboarding flow\n\n6. Add skip option for experienced users (with confirmation modal)",
+        "testStrategy": "1. Test the complete onboarding flow from start to finish\n2. Verify data is correctly saved to Supabase at each step\n3. Test the diagnostic test with various answer patterns\n4. Verify radar chart correctly displays proficiency by category\n5. Test responsive design on different screen sizes\n6. Verify skip functionality works correctly\n7. Test error handling for API failures",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Certification Selection Component and State Management",
+            "description": "Create the CertificationSelection.tsx component with UI elements for selecting certification options and integrate it with the OnboardingContext for state management.",
+            "dependencies": [],
+            "details": "Develop the CertificationSelection.tsx component with radio buttons or card-based UI for selecting certification options (정보처리기사, ADsP, SQLD, etc.). Implement the OnboardingContext.tsx to manage the selection state. Include validation to ensure a certification is selected before proceeding to the next step. Style the component according to the design system and ensure it's responsive across different screen sizes.\n<info added on 2025-11-26T13:39:32.422Z>\n## Subtask 4.1 Completion Report\n\nAll requirements have been successfully implemented:\n\n1. OnboardingContext implementation (src/context/OnboardingContext.tsx):\n   - Complete state management with step, certificationType, targetExamDate, diagnosticAnswers, diagnosticResults, and completed\n   - All required methods implemented: setCertificationType, setTargetExamDate, setDiagnosticAnswer, setDiagnosticResults, nextStep, previousStep, goToStep, reset, completeOnboarding\n   - useOnboarding custom hook created for easy context access\n\n2. CertificationSelection component:\n   - Implemented with 5 certification options (정보처리기사, ADsP, SQLD, 정보처리산업기사, 빅데이터분석기사)\n   - Card-based selection UI with visual feedback (check icon, highlighted border)\n   - Validation logic preventing progression without selection\n   - Fully responsive design for all device sizes\n\n3. OnboardingFlow component:\n   - Step indicator showing progress through onboarding\n   - Component routing based on current step\n   - Progress visualization (current/total steps)\n\n4. Added date-fns library for date manipulation\n\n5. All code passes linting and builds successfully\n</info added on 2025-11-26T13:39:32.422Z>",
+            "status": "done",
+            "testStrategy": "Test the component with various certification options, verify state updates correctly in the context, test validation logic, and ensure keyboard accessibility for selection options."
+          },
+          {
+            "id": 2,
+            "title": "Build Exam Date Picker Component with Validation",
+            "description": "Develop the ExamDatePicker.tsx component using date-fns for date manipulation and implement date validation logic.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create the ExamDatePicker.tsx component with a calendar interface for selecting the target exam date. Use date-fns library for date manipulation and formatting. Implement validation to ensure selected dates are in the future and within a reasonable timeframe (e.g., not more than 1 year ahead). Connect the component to the OnboardingContext to store the selected date. Add appropriate error messages for invalid date selections and style the calendar according to the design system.\n<info added on 2025-11-26T13:41:58.585Z>\nCompleted tasks for Subtask 4.2:\n\n1. ExamDatePicker component implementation:\n   - Created custom calendar UI\n   - Integrated date-fns for date manipulation and formatting\n   - Added Korean locale support\n\n2. Date validation implementation:\n   - Prevented selection of past dates (isBefore check)\n   - Limited selection to dates within 1 year (isAfter check)\n   - Displayed appropriate error messages\n\n3. Calendar functionality:\n   - Monthly navigation (previous/next month)\n   - \"Today\" button for quick navigation\n   - Day of week header display (Sun-Sat)\n   - Date grid rendering\n   - Visual highlighting of selected date\n   - Today's date indicator\n\n4. OnboardingContext integration:\n   - Stored selected date using setTargetExamDate\n   - Loaded initial value from state.targetExamDate\n   - Implemented navigation with nextStep and previousStep\n\n5. UX improvements:\n   - Formatted date display (yyyy년 M월 d일 (E))\n   - Visual distinction for disabled dates\n   - Keyboard accessibility (aria-label)\n   - Responsive design\n\n6. Integration with OnboardingFlow:\n   - Rendered ExamDatePicker in Step 2\n\n7. Build and lint verification:\n   - Passed npm run lint\n   - Successful npm run build\n\nAll requirements have been successfully implemented.\n</info added on 2025-11-26T13:41:58.585Z>",
+            "status": "done",
+            "testStrategy": "Test date selection functionality, verify validation logic for past dates and far-future dates, test integration with OnboardingContext, and ensure the component is accessible via keyboard navigation."
+          },
+          {
+            "id": 3,
+            "title": "Create Diagnostic Test with Swipeable Questions Interface",
+            "description": "Implement the DiagnosticTest.tsx component with a card-based swipeable interface using Framer Motion for animations.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Develop the DiagnosticTest.tsx component with a swipeable card interface for 10 diagnostic questions. Use Framer Motion to implement smooth swipe animations between questions. Create a question tracking system to record user answers and calculate initial proficiency levels. Implement a progress indicator to show how many questions have been completed. Connect to the API to fetch diagnostic questions based on the selected certification type. Ensure the component handles different question types (multiple choice, true/false, etc.).\n<info added on 2025-11-26T13:45:20.406Z>\nSubtask 4.3 has been completed with the following implementations:\n\n1. DiagnosticTest component (src/pages/onboarding/DiagnosticTest.tsx):\n   - Card-based question interface with 10 diagnostic questions\n   - Answer selection UI for each question\n   - Progress indicator showing current question/total and percentage\n\n2. Framer Motion swipe animations:\n   - Left/right swipe navigation between questions\n   - Card transition animations (fade + slide)\n   - Drag constraints and elastic effects\n   - Swipe threshold configuration (50px)\n\n3. Answer tracking system:\n   - Integration with OnboardingContext to store answers via setDiagnosticAnswer\n   - Per-question answer state management\n   - Visual indication for answered questions (check icon)\n   - Visual feedback on answer selection\n\n4. API integration (src/lib/api/questions.ts):\n   - getDiagnosticQuestions function implementation\n   - Certification-specific question retrieval from Supabase\n   - Error handling and loading state management\n\n5. UX improvements:\n   - Question progress indicators (dots)\n   - Conditional next button activation based on answer completion\n   - Previous/next navigation buttons\n   - Direct navigation to specific question numbers\n   - Swipe guidance messages\n\n6. Integration with OnboardingFlow:\n   - DiagnosticTest rendering in Step 3\n\n7. Build and lint verification:\n   - Passed npm run lint\n   - Successful npm run build\n</info added on 2025-11-26T13:45:20.406Z>",
+            "status": "done",
+            "testStrategy": "Test swipe animations on different devices, verify question progression logic, test answer recording functionality, ensure API integration works correctly for fetching questions, and verify accessibility of the swipeable interface."
+          },
+          {
+            "id": 4,
+            "title": "Develop Diagnostic Results Visualization with Radar Charts",
+            "description": "Create the DiagnosticResults.tsx component using Recharts to visualize the user's diagnostic test results in a radar chart format.",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement the DiagnosticResults.tsx component to display the results of the diagnostic test using a radar chart visualization with Recharts. Process the test results to categorize strengths and weaknesses across different knowledge areas. Add explanatory text to help users understand their results. Include a call-to-action button to proceed to the personalized curriculum. Ensure the visualization is responsive and maintains readability on different screen sizes. Add animations for the chart rendering to enhance user experience.\n<info added on 2025-11-26T13:48:50.932Z>\nSubtask 4.4 has been completed with the following implementations:\n\n1. DiagnosticResults component (src/pages/onboarding/DiagnosticResults.tsx):\n   - Visualization page for diagnostic test results\n   - Average score card display\n   - Radar chart for skill analysis by knowledge area\n   - Weak areas identification and guidance\n\n2. Recharts radar chart visualization:\n   - Implemented using RadarChart component\n   - Configured PolarGrid, PolarAngleAxis, PolarRadiusAxis\n   - Category scores display\n   - 1-second ease-out animation\n   - Responsive design with ResponsiveContainer\n\n3. Diagnostic results calculation logic (src/lib/utils/diagnostic.ts):\n   - Created calculateDiagnosticResults function\n   - Implemented category-based correct answer rate calculation\n   - Converted scores to 0-100 range\n   - Classified categories below 60 points as weak areas\n\n4. Data processing and storage:\n   - Fetched diagnostic questions for answer matching\n   - Calculated and stored results in OnboardingContext\n   - Saved diagnostic results to Supabase (diagnosis_results table)\n   - Updated user information (certification_type, target_exam_date)\n\n5. Framer Motion animations:\n   - Page entry animation (fade + slide)\n   - Sequential section animations with delays\n   - Chart scale animation\n\n6. User experience enhancements:\n   - Evaluation display based on average score (Excellent/Good/Needs Improvement)\n   - Visual emphasis for weak areas (yellow background)\n   - Weak area tags\n   - \"Start Learning\" button (redirects to dashboard)\n\n7. Integration with OnboardingFlow:\n   - DiagnosticResults rendering in Step 4\n\n8. Build and lint verification:\n   - Passed npm run lint\n   - Successful npm run build\n</info added on 2025-11-26T13:48:50.932Z>",
+            "status": "done",
+            "testStrategy": "Test the radar chart with various result patterns, verify correct data visualization, test responsiveness on different screen sizes, ensure color contrast for accessibility, and verify chart animations work correctly."
+          },
+          {
+            "id": 5,
+            "title": "Implement API Integration for Onboarding Data",
+            "description": "Create API functions to save user selections, fetch diagnostic questions, submit test results, and generate personalized curriculum.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Develop API integration functions in a dedicated service file to handle all onboarding data operations. Implement functions to save user certification selection and exam date to Supabase, fetch diagnostic questions based on the selected certification, submit diagnostic test results, and generate a personalized curriculum based on the results. Add proper error handling and loading states for all API calls. Ensure data validation before submission and implement retry logic for failed requests. Create a final submission function that completes the onboarding process and redirects to the home dashboard.\n<info added on 2025-11-26T13:50:39.852Z>\nCompleted tasks for Subtask 4.5 (API Integration for Onboarding Data):\n\n1. Created dedicated API service file (src/lib/api/onboarding.ts) with the following functions:\n   - saveUserCertification: Stores user certification selection and exam date\n   - saveDiagnosticResults: Saves diagnostic test results\n   - submitOnboardingData: Handles integrated submission with retry logic\n   - validateOnboardingData: Performs data validation\n   - checkOnboardingComplete: Verifies onboarding completion status\n\n2. Implemented retry mechanism in submitOnboardingData:\n   - 3 retry attempts by default\n   - Exponential backoff between attempts (1s, 2s, 3s)\n   - Automatic retry on failure\n\n3. Added comprehensive data validation:\n   - Certification selection verification\n   - Exam date validation (prevents past dates, limits to 1 year)\n   - Diagnostic test completion check\n   - Detailed error messaging\n\n4. Enhanced error handling throughout:\n   - Try-catch blocks in all API functions\n   - User-friendly error messages\n   - Console logging for debugging\n   - Graceful handling of partial failures\n\n5. Improved DiagnosticResults component:\n   - Integrated data validation before submission\n   - Implemented unified data submission\n   - Enhanced user experience with result display even after errors\n\n6. Added onboarding completion verification functionality\n\n7. Successfully passed build and lint tests\n</info added on 2025-11-26T13:50:39.852Z>",
+            "status": "done",
+            "testStrategy": "Test all API functions with valid and invalid data, verify error handling, test the complete data flow from certification selection to curriculum generation, verify data persistence in Supabase, and test the onboarding completion process."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Home Dashboard Implementation",
+        "description": "Create the main dashboard screen showing learning progress, daily question sets, and quick access to key features.",
+        "details": "1. Create the following components for the home dashboard:\n\n   a. TopBar.tsx\n   ```typescript\n   // Profile icon, streak counter with flame icon, notification bell\n   ```\n\n   b. DailyQuestionCard.tsx\n   ```typescript\n   // Hero card showing daily question options\n   // PRD 4.2: Offer 3 options - Daily 1문제, Daily 3문제, Daily 5문제\n   // Display estimated completion time for selected option\n   // Start learning button\n   ```\n\n   c. WeaknessAnalysis.tsx\n   ```typescript\n   // Progress bar showing improvement in weak areas\n   // Dynamic text based on progress percentage\n   ```\n\n   d. QuickActionMenu.tsx\n   ```typescript\n   // Buttons for review wrong answers and camera search\n   ```\n\n2. Implement bottom tab navigation (GNB):\n   ```typescript\n   // Home, Learning, Camera, Wrong Answers, My Page tabs\n   // Use react-router for navigation\n   ```\n\n3. Create API functions to:\n   - Fetch daily question set\n   - Get user streak information\n   - Retrieve weakness analysis data\n\n4. Implement animations for card transitions and progress bars using Framer Motion\n\n5. Create loading states and skeleton screens for data fetching\n\n6. Implement pull-to-refresh functionality for updating dashboard data",
+        "testStrategy": "1. Verify all dashboard components render correctly with sample data\n2. Test API integration for fetching real data\n3. Verify streak counter displays correct value\n4. Test navigation between tabs\n5. Verify progress bars update correctly based on user data\n6. Test responsive design on different screen sizes\n7. Verify loading states and skeleton screens\n8. Test pull-to-refresh functionality",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3,
+          4
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement TopBar Component with User Info and Streak Counter",
+            "description": "Create the TopBar.tsx component that displays user profile icon, streak counter with flame icon, and notification bell.",
+            "dependencies": [],
+            "details": "Create a responsive TopBar component that includes: 1) Profile icon that links to user profile page, 2) Streak counter with animated flame icon showing current streak days, 3) Notification bell with badge for unread notifications. Implement API integration to fetch user streak data from the database. Use Framer Motion for subtle animations when the component mounts.\n<info added on 2025-11-26T13:53:44.151Z>\nSubtask 5.1 has been completed with all requirements fulfilled. The implementation includes:\n\n1. TopBar component creation in src/components/dashboard/TopBar.tsx with:\n   - Profile icon linking to profile page\n   - Streak counter with flame icon and day count\n   - Notification bell icon for future expansion\n   - Fully responsive design\n\n2. Framer Motion animations:\n   - Fade and slide animations on component mount\n   - Pulsing animation for the flame icon when user has an active streak\n\n3. API integration through src/lib/api/dashboard.ts:\n   - getUserStreak function implementation\n   - Supabase integration for retrieving user streak data\n   - Error handling and default values\n\n4. Dashboard integration:\n   - TopBar added to Dashboard layout\n   - Sticky positioning for consistent navigation\n\n5. UX improvements:\n   - Skeleton UI for loading states\n   - Fallback for profile images\n   - Accessibility enhancements with aria-labels\n\n6. Build and lint verification:\n   - All lint checks passed\n   - Successful build completion\n</info added on 2025-11-26T13:53:44.151Z>",
+            "status": "done",
+            "testStrategy": "Test component rendering with mock data, verify streak counter displays correct value from API, ensure responsive design works on different screen sizes, and test notification badge visibility based on notification state."
+          },
+          {
+            "id": 2,
+            "title": "Develop Daily Question Card Component with Progress Tracking",
+            "description": "Implement the DailyQuestionCard.tsx component that displays the daily set of 5 questions with estimated completion time and start button.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a prominent card component that shows: 1) Today's 5-question set with a visually appealing layout, 2) Estimated completion time based on question complexity, 3) 'Start Learning' button with hover/press effects, 4) Progress indicator if user has partially completed today's questions. Implement API integration to fetch the daily question set data. Add skeleton loading state while data is being fetched.\n<info added on 2025-11-26T13:59:26.860Z>\nCompleted tasks for Subtask 5.2:\n\n1. DailyQuestionCard component implementation:\n   - Created visual layout for daily 5-question set\n   - Added estimated completion time calculation (2 minutes per question)\n   - Implemented \"Start Learning\" button with appropriate states\n   - Added \"Continue Learning\" option for partially completed sets\n   - Included completion status indicator with button disabling when complete\n\n2. Progress tracking functionality:\n   - Implemented progress bar (0-100%)\n   - Added logic to calculate completed questions based on study_records\n   - Dynamic button text based on completion status\n\n3. API integration in dashboard.ts:\n   - Implemented getTodayDailySet function\n   - Created createDailySet function\n   - Added progress calculation logic\n\n4. Question API integration in questions.ts:\n   - Implemented getDailyQuestionSet function\n   - Added fallback logic for database function failures\n   - Added certification-specific question selection\n\n5. Automatic set generation:\n   - Added logic to create new daily set when none exists\n   - Implemented user certification-based question selection\n   - Added error handling and loading state management\n\n6. UI enhancements:\n   - Added Framer Motion animations for component mounting (fade + slide)\n   - Implemented progress bar animations\n   - Created skeleton loading UI for data fetching states\n\n7. Dashboard integration:\n   - Successfully integrated DailyQuestionCard into Dashboard page\n   - Adjusted layout for proper positioning\n   - Passed all lint and build tests\n</info added on 2025-11-26T13:59:26.860Z>",
+            "status": "done",
+            "testStrategy": "Test component with various data states (loading, empty, partial completion, complete), verify API integration for fetching question data, test responsive layout on different devices, and verify button actions trigger correct navigation."
+          },
+          {
+            "id": 3,
+            "title": "Create Weakness Analysis Component with Dynamic Content",
+            "description": "Develop the WeaknessAnalysis.tsx component showing progress bars for improvement in weak areas with dynamic text based on progress percentage.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement a component that visualizes user's progress in weak subject areas: 1) Create animated progress bars using Framer Motion, 2) Generate dynamic motivational text based on progress percentage (e.g., 'Almost there!' at 80%+, 'Keep going!' at 40-79%), 3) Show most improved and least improved categories, 4) Add small graph visualization of weekly improvement. Integrate with API to fetch weakness analysis data from the database.\n<info added on 2025-11-26T14:03:12.448Z>\nSubtask 5.3 has been completed with the following implementations:\n\n1. WeaknessAnalysis component (src/components/dashboard/WeaknessAnalysis.tsx):\n   - Visualization of weak subject areas\n   - Progress bars for each category\n   - Dynamic motivational text based on scores\n   - Display of most improved areas\n   - Identification of areas needing focused study\n\n2. Framer Motion animations for progress bars:\n   - Sequential animations with delays\n   - Fade and slide animations for categories\n   - Width animations (0.8s duration)\n\n3. Dynamic text implementation with score-based messaging:\n   - 80+ points: \"Excellent!\"\n   - 60-79 points: \"Almost there!\"\n   - 40-59 points: \"Keep going!\"\n   - Below 40 points: \"Needs more focus\"\n\n4. Trend indicators:\n   - Icons for improvement/decline/stability\n   - Score improvement display (+/-)\n   - Color-coded trend visualization\n\n5. Color-coded progress bars:\n   - Green for 80+ points\n   - Primary color for 60-79 points\n   - Yellow for 40-59 points\n   - Red for below 40 points\n\n6. API integration (src/lib/api/dashboard.ts):\n   - getWeaknessAnalysis function\n   - Comparison of two most recent diagnostic results\n   - Calculation of improvement by category\n   - Trend analysis (improving/declining/stable)\n\n7. Data analysis features:\n   - Top 3 most improved areas\n   - 3 areas needing focused study (lowest scores)\n   - Sorting by improvement rate\n\n8. Skeleton loading states:\n   - UI placeholders during data loading\n   - Guidance messages for empty data states\n\n9. Dashboard integration:\n   - WeaknessAnalysis component added to Dashboard page\n\n10. Build and lint verification:\n    - Passed lint checks\n    - Successful build\n</info added on 2025-11-26T14:03:12.448Z>",
+            "status": "done",
+            "testStrategy": "Test progress bar animations and transitions, verify dynamic text changes appropriately with different progress values, test API integration for fetching weakness data, and ensure responsive design adapts to different screen sizes."
+          },
+          {
+            "id": 4,
+            "title": "Implement Bottom Tab Navigation (GNB) with React Router",
+            "description": "Create the Global Navigation Bar (GNB) with tabs for Home, Learning, Camera, Wrong Answers, and My Page using react-router for navigation.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Develop a persistent bottom navigation bar with: 1) Five tabs with icons and labels (Home, Learning, Camera, Wrong Answers, My Page), 2) Visual indicator for active tab, 3) Smooth transitions between tabs using react-router, 4) Optional floating action button for camera functionality. Ensure navigation state is preserved when switching between tabs. Implement accessibility features for tab navigation.\n<info added on 2025-11-26T14:05:32.131Z>\nSubtask 5.4 has been completed with the following implementations:\n\n1. BottomTabNavigation component (src/components/navigation/BottomTabNavigation.tsx):\n   - Fixed bottom navigation bar with 5 tabs: Home, Learning, Camera, Wrong Answers, My Page\n   - Each tab includes appropriate icons and labels\n\n2. React Router integration:\n   - Current path detection using useLocation\n   - Navigation handling with useNavigate\n   - Automatic active tab detection and highlighting\n\n3. Active tab visualization:\n   - Animated active indicator using Framer Motion's layoutId\n   - Color change for active tab (primary color)\n   - Scale effect for active tab icon\n   - Active indicator bar displayed at the top of the tab\n\n4. Framer Motion animations:\n   - Slide up animation on component mount\n   - Smooth transitions for active tab indicator using spring animation\n\n5. Accessibility features:\n   - aria-label descriptions for each tab\n   - aria-current attribute for active tab indication\n   - Keyboard accessibility support\n\n6. New page components:\n   - Learning.tsx\n   - Camera.tsx\n   - WrongAnswers.tsx\n\n7. App.tsx integration:\n   - Bottom tab navigation shown only to logged-in users\n   - All tab routes added\n   - Protected routes implemented\n\n8. Layout adjustments:\n   - Added pb-24 padding for bottom tab spacing\n   - Applied bottom margin to Dashboard, Profile and other pages\n\n9. Build and lint verification:\n   - Passed npm run lint\n   - Successful npm run build\n</info added on 2025-11-26T14:05:32.131Z>",
+            "status": "done",
+            "testStrategy": "Test navigation between all tabs, verify active tab indicator works correctly, test deep linking to specific tabs, ensure navigation state preservation works as expected, and verify accessibility compliance for keyboard navigation."
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Question Solving Interface",
+        "description": "Implement the core question solving interface with card-based UI, answer selection, and immediate feedback.",
+        "details": "1. Create the following components for the question solving interface:\n\n   a. QuestionCard.tsx\n   ```typescript\n   // Display question content in card format\n   // Support for text formatting and images\n   ```\n\n   b. AnswerOptions.tsx\n   ```typescript\n   // 5-choice default (4-choice option available)\n   // Handle selection and validation\n   ```\n\n   c. ProgressIndicator.tsx\n   ```typescript\n   // Show progress (e.g., 1/5) with visual indicator\n   ```\n\n   d. FeedbackAnimation.tsx\n   ```typescript\n   // Green circle animation for correct answers\n   // Red X animation for wrong answers\n   // Haptic feedback integration\n   ```\n\n   e. ResultSummary.tsx\n   ```typescript\n   // PRD 4.3: Display results after completing all questions\n   // Format: 문제-정답-수험생답-해설\n   // Show time spent for each question\n   ```\n\n2. Implement swipe navigation between questions using Framer Motion:\n   ```typescript\n   // Horizontal swipe gestures\n   // Transition animations\n   ```\n\n3. Create API functions to:\n   - Fetch question details\n   - Submit answers\n   - Record time spent on each question\n\n4. Implement haptic feedback using the Web Vibration API:\n   ```typescript\n   // Vibrate on wrong answers\n   // Check browser compatibility\n   ```\n\n5. Create a session management system to track progress within a question set\n\n6. Implement keyboard shortcuts for desktop users\n\n7. PRD 4.3: Implement result display after completing all questions:\n   ```typescript\n   // Show all questions with: 문제-정답-수험생답-해설 format\n   // Display time spent for each question\n   // Allow review of explanations\n   ```",
+        "testStrategy": "1. Test question rendering with various content types\n2. Verify answer selection and validation logic\n3. Test feedback animations and transitions\n4. Verify haptic feedback on supported devices\n5. Test swipe navigation and keyboard shortcuts\n6. Verify progress tracking across multiple questions\n7. Test API integration for submitting answers\n8. Verify time tracking accuracy",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement QuestionCard Component with Content Formatting",
+            "description": "Create the QuestionCard component that displays question content in a card format with support for text formatting and images.",
+            "dependencies": [],
+            "details": "Create QuestionCard.tsx component with the following features: 1) Card-based UI with proper styling and shadows, 2) Support for rendering formatted text using a markdown parser or custom formatting, 3) Image display capability with proper sizing and loading states, 4) Responsive design for different screen sizes, 5) Accessibility considerations including proper semantic HTML and ARIA attributes.\n<info added on 2025-11-26T14:08:10.416Z>\nSubtask 6.1 has been completed with the following components successfully implemented:\n\n1. QuestionCard component (src/components/learning/QuestionCard.tsx):\n   - Card-based UI with styling\n   - Question number and category display\n   - Question content with whitespace-pre-wrap for line breaks\n   - Difficulty level indicator\n   - Tag display\n   - Responsive design\n   - Fade and slide animations using Framer Motion\n\n2. AnswerOptions component (src/components/learning/AnswerOptions.tsx):\n   - Four-choice selection buttons\n   - Selection handling logic\n   - Visual feedback for correct/incorrect answers\n   - Disabled state after selection\n   - Keyboard accessibility with ARIA attributes\n   - Sequential appearance animation\n\n3. ProgressIndicator component (src/components/learning/ProgressIndicator.tsx):\n   - Text progress display (current/total)\n   - Animated progress bar\n   - Question status indicators (completed/current/pending)\n\n4. FeedbackAnimation component (src/components/learning/FeedbackAnimation.tsx):\n   - Green check icon animation for correct answers\n   - Red X icon animation for incorrect answers\n   - Haptic feedback using Web Vibration API\n   - Animation completion callback support\n   - Spring scale animations\n\nAll components include proper accessibility features with semantic HTML and ARIA attributes, and have passed both lint and build tests.\n</info added on 2025-11-26T14:08:10.416Z>",
+            "status": "done",
+            "testStrategy": "Test rendering of various question formats including plain text, formatted text, and images. Verify responsive behavior on different screen sizes. Test accessibility with screen readers."
+          },
+          {
+            "id": 2,
+            "title": "Develop AnswerOptions Component with Selection Handling",
+            "description": "Create the AnswerOptions component that displays multiple-choice options and handles user selection and validation.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement AnswerOptions.tsx with: 1) Four-choice selection buttons with proper styling for default, hover, and selected states, 2) Selection handling logic that tracks user choice, 3) Validation mechanism to check if selected answer is correct, 4) Visual indication of correct/incorrect answers after submission, 5) Disable selection after answer is submitted, 6) Support for keyboard navigation between options.",
+            "status": "done",
+            "testStrategy": "Test selection functionality with mouse clicks and keyboard navigation. Verify correct validation of answers. Test disabled state after submission. Check accessibility for keyboard users."
+          },
+          {
+            "id": 3,
+            "title": "Create Progress Tracking and Navigation Components",
+            "description": "Implement the ProgressIndicator component and navigation controls for moving between questions in a set.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Develop ProgressIndicator.tsx that shows current question position (e.g., 1/5) with a visual progress bar. Implement navigation controls including: 1) Next/Previous buttons, 2) Keyboard shortcut support (arrow keys), 3) Progress persistence when navigating between questions, 4) Visual indication of answered vs. unanswered questions, 5) Integration with the overall question set flow.\n<info added on 2025-11-26T14:10:55.512Z>\nSubtask 6.3 has been completed with the following implementations:\n\n1. ProgressIndicator component (previously implemented in 6.1):\n   - Question progress display (current/total)\n   - Animated progress bar\n   - Question status indicators\n\n2. Navigation controls in Learning.tsx:\n   - Previous/Next buttons functionality\n   - Keyboard shortcut support for navigation (ArrowLeft, ArrowRight)\n   - Progress state persistence\n   - Visual distinction between answered and unanswered questions\n\n3. Keyboard shortcuts implementation:\n   - ArrowLeft: Navigate to previous question\n   - ArrowRight: Navigate to next question (only when current question is answered)\n   - Answer selection via number keys 1-4 (planned for future implementation)\n\n4. Session state management:\n   - Current question index tracking\n   - Answered questions tracking\n   - Session persistence in local storage\n\nAll build and lint tests have passed successfully.\n</info added on 2025-11-26T14:10:55.512Z>",
+            "status": "done",
+            "testStrategy": "Test progress tracking across multiple questions. Verify navigation controls work correctly. Test keyboard shortcuts. Ensure progress state is maintained when navigating between questions."
+          },
+          {
+            "id": 4,
+            "title": "Implement Feedback Animations and Haptic Feedback",
+            "description": "Create the FeedbackAnimation component with animations for correct/incorrect answers and integrate haptic feedback.",
+            "dependencies": [
+              2
+            ],
+            "details": "Develop FeedbackAnimation.tsx with: 1) Green circle animation for correct answers using CSS animations or Framer Motion, 2) Red X animation for incorrect answers, 3) Integration with Web Vibration API for haptic feedback on mobile devices, 4) Browser compatibility checks for vibration API, 5) Fallback visual feedback for unsupported browsers, 6) Animation timing and easing functions for smooth transitions.",
+            "status": "done",
+            "testStrategy": "Test animations on various browsers and devices. Verify haptic feedback works on supported mobile devices. Test fallback behavior on unsupported browsers. Measure animation performance."
+          },
+          {
+            "id": 5,
+            "title": "Implement Swipe Navigation with Framer Motion",
+            "description": "Add swipe gesture support for navigating between questions using Framer Motion animations.",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Implement horizontal swipe navigation with Framer Motion: 1) Configure gesture detection for horizontal swipes, 2) Create smooth transition animations between questions, 3) Handle edge cases (first/last question), 4) Implement velocity-based animation for natural feel, 5) Add visual indicators for swipe direction, 6) Ensure performance optimization for smooth animations, 7) Maintain question state during transitions.",
+            "status": "done",
+            "testStrategy": "Test swipe gestures on touch devices and mouse drag on desktop. Verify animations are smooth and performant. Test edge cases like rapid swiping and partial swipes. Ensure state is preserved during transitions."
+          },
+          {
+            "id": 6,
+            "title": "Create Session Management and Answer Submission System",
+            "description": "Implement the session management system to track progress within a question set and handle answer submissions.",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Develop a session management system that: 1) Tracks user progress through a question set, 2) Records time spent on each question, 3) Creates API functions to fetch question details and submit answers, 4) Handles session persistence across page refreshes, 5) Implements error handling for API failures, 6) Provides analytics data on user performance, 7) Supports resuming from the last attempted question.",
+            "status": "done",
+            "testStrategy": "Test session persistence across page refreshes. Verify answer submission to API endpoints. Test time tracking accuracy. Verify error handling during network failures. Test session resumption functionality."
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Explanation and AI Tutor System",
+        "description": "Implement the explanation card with AI-powered concept explanations for difficult terms.",
+        "details": "1. Create the following components for the explanation system:\n\n   a. ExplanationBottomSheet.tsx\n   ```typescript\n   // Bottom sheet that slides up after answering\n   // Display original explanation text\n   // Highlight difficult terms with dotted underline\n   ```\n\n   b. AITutorPopup.tsx\n   ```typescript\n   // Popup that appears when clicking highlighted terms\n   // Display AI character icon\n   // Show simplified explanation with analogies\n   ```\n\n   c. FeedbackButtons.tsx\n   ```typescript\n   // Thumbs up/down buttons for AI explanations\n   // Handle feedback submission\n   ```\n\n2. Create Supabase Edge Function for AI explanations:\n   ```typescript\n   // Connect to OpenAI API or similar\n   // Generate simplified explanations with analogies\n   // Cache common explanations for performance\n   ```\n\n3. Implement term highlighting logic:\n   ```typescript\n   // Identify difficult terms in explanation text\n   // Apply dotted underline styling\n   // Make terms clickable\n   ```\n\n4. Create animation for bottom sheet and popup using Framer Motion\n\n5. Implement feedback collection and improvement system for AI explanations\n\n6. Add offline support with cached explanations for common terms",
+        "testStrategy": "1. Test bottom sheet sliding animation\n2. Verify term highlighting and click detection\n3. Test AI explanation generation with various terms\n4. Verify feedback submission and storage\n5. Test popup positioning and animation\n6. Verify offline functionality with cached explanations\n7. Test edge cases with very long explanations\n8. Verify accessibility for screen readers",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement ExplanationBottomSheet Component",
+            "description": "Create the bottom sheet component that slides up after answering questions and displays the explanation text with highlighted difficult terms.",
+            "dependencies": [],
+            "details": "Create ExplanationBottomSheet.tsx with slide-up animation using Framer Motion. Implement the layout to display explanation text. Add styling for the component including proper padding, background, and shadow. Ensure the component is responsive and works well on different screen sizes. Include close/dismiss functionality.\n<info added on 2025-11-26T14:18:46.650Z>\nSubtask 7.1 has been completed with the following implementations:\n\n1. ExplanationBottomSheet component created with:\n   - Slide-up animation using Framer Motion\n   - Explanation text display functionality\n   - Close button and ESC key support\n   - Background click dismissal\n   - Responsive design (maximum height 80vh)\n\n2. Term highlighting functionality implemented:\n   - Created termHighlighting.ts utility functions\n   - Defined database of 100+ difficult terms\n   - Developed HighlightedText component\n   - Applied dotted underline styling for terms\n   - Implemented clickable term interaction\n   - Added keyboard accessibility (Enter/Space keys)\n\n3. Animation features:\n   - Bottom sheet slide up/down animations\n   - Background overlay fade animations\n   - Spring animation effects\n\n4. Accessibility features:\n   - Added aria-labels\n   - Implemented keyboard navigation\n   - Set appropriate role attributes\n\nAll requirements have been met, with successful lint and build tests.\n</info added on 2025-11-26T14:18:46.650Z>",
+            "status": "done",
+            "testStrategy": "Test slide-up animation smoothness, verify text display formatting, test close/dismiss functionality, ensure responsive behavior on different screen sizes."
+          },
+          {
+            "id": 2,
+            "title": "Develop Term Highlighting and Detection Logic",
+            "description": "Implement the logic to identify difficult terms in explanation text and apply dotted underline styling to make them clickable.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a utility function to parse explanation text and identify complex terms. Implement text processing to wrap identified terms in special components with dotted underline styling. Add click handlers to these terms. Create a dictionary or algorithm to determine which terms should be highlighted. Ensure the highlighting doesn't break text layout.",
+            "status": "done",
+            "testStrategy": "Test term detection accuracy with various text samples, verify styling is applied correctly, test click handlers functionality, ensure performance with long explanation texts."
+          },
+          {
+            "id": 3,
+            "title": "Create AITutorPopup Component with Animations",
+            "description": "Develop the popup component that appears when clicking highlighted terms, displaying the AI character icon and simplified explanations with analogies.",
+            "dependencies": [
+              2
+            ],
+            "details": "Create AITutorPopup.tsx with proper positioning logic to appear near the clicked term. Implement smooth appear/disappear animations using Framer Motion. Design the popup UI with AI character icon and explanation text area. Add close button and click-outside-to-close functionality. Ensure the popup doesn't get cut off at screen edges.\n<info added on 2025-11-26T14:20:54.346Z>\nCompleted tasks:\n1. AITutorPopup component creation (src/components/learning/AITutorPopup.tsx):\n   - Positioned near clicked terms\n   - AI character icon (Sparkles icon)\n   - Explanation display\n   - Auto-positioning to stay within screen bounds\n   - Multiple closing methods (button, ESC key, background click)\n\n2. Framer Motion animations:\n   - Popup entry/exit animations (scale + fade)\n   - Background overlay fade animation\n   - Spring animation implementation\n\n3. FeedbackButtons component (src/components/learning/FeedbackButtons.tsx):\n   - Like/dislike buttons\n   - Feedback submission logic\n   - Visual feedback for selected buttons\n\n4. API integration (src/lib/api/aiTutor.ts):\n   - getAIExplanation function (temporary explanation data)\n   - submitAIExplanationFeedback function\n   - Prepared for Edge Function integration\n\n5. HighlightedText component improvements:\n   - Term position information on click\n   - Precise positioning with getBoundingClientRect\n\n6. Accessibility features:\n   - Proper ARIA attributes (role=\"dialog\", aria-label, etc.)\n   - Keyboard accessibility\n\n7. Build and lint verification:\n   - Passed npm run lint\n   - Successful npm run build\n</info added on 2025-11-26T14:20:54.346Z>",
+            "status": "done",
+            "testStrategy": "Test popup positioning relative to clicked terms, verify animations are smooth, test edge case handling for screen boundaries, ensure proper rendering of AI character and explanation text."
+          },
+          {
+            "id": 4,
+            "title": "Implement Supabase Edge Function for AI Explanations",
+            "description": "Create a Supabase Edge Function that connects to OpenAI API or similar to generate simplified explanations with analogies for difficult terms.",
+            "dependencies": [
+              2
+            ],
+            "details": "Set up Supabase Edge Function with proper authentication. Implement API connection to OpenAI or similar AI service. Create prompt engineering for generating simplified explanations with analogies. Implement caching mechanism for common explanations to improve performance. Add error handling and fallback explanations for API failures.",
+            "status": "done",
+            "testStrategy": "Test API connection reliability, verify explanation quality for various terms, test caching mechanism effectiveness, measure response times, test error handling and fallbacks."
+          },
+          {
+            "id": 5,
+            "title": "Create Feedback System for AI Explanations",
+            "description": "Implement the feedback collection system with thumbs up/down buttons and a mechanism to improve AI explanations based on user feedback.",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "Create FeedbackButtons.tsx component with thumbs up/down UI. Implement feedback submission logic to store user ratings. Create a database schema for storing feedback data. Implement analytics to track explanation effectiveness. Design a system to use collected feedback for improving future explanations. Add offline support to queue feedback when offline.",
+            "status": "done",
+            "testStrategy": "Test feedback submission process, verify data storage in database, test offline functionality with queued submissions, verify analytics data collection accuracy."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Smart Wrong Answer Note System",
+        "description": "Implement the wrong answer note system with Ebbinghaus forgetting curve-based review scheduling.",
+        "details": "1. Create the following components for the wrong answer note system:\n\n   a. WrongAnswerTabs.tsx\n   ```typescript\n   // Tab navigation: Today's Wrong / Review Alerts / Graduated\n   ```\n\n   b. WrongAnswerList.tsx\n   ```typescript\n   // List of wrong answers with summary and badges\n   // Sort by review date\n   ```\n\n   c. ReviewBadge.tsx\n   ```typescript\n   // Display \"3 days until forgetting\" with warning icon\n   // Color coding based on urgency\n   ```\n\n   d. ReviewButton.tsx\n   ```typescript\n   // Floating button to review all pending items\n   ```\n\n2. Implement Ebbinghaus forgetting curve algorithm:\n   ```typescript\n   // Calculate next review dates based on performance\n   // Intervals: 1 day, 3 days, 7 days, 14 days, 30 days\n   // Graduate questions after 5 successful reviews\n   ```\n\n3. Create API functions to:\n   - Fetch wrong answers by category (today/review/graduated)\n   - Update review status after successful review\n   - Calculate and update next review dates\n\n4. Implement notification system for review reminders\n\n5. Create batch review mode for efficient reviewing\n\n6. Add search and filter functionality for wrong answers",
+        "testStrategy": "1. Test tab navigation and content loading\n2. Verify forgetting curve algorithm with various scenarios\n3. Test review badge display and color coding\n4. Verify batch review functionality\n5. Test notification scheduling and delivery\n6. Verify search and filter functionality\n7. Test graduation logic after successful reviews\n8. Verify data persistence across sessions",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          6
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Tabbed Interface for Wrong Answer Categories",
+            "description": "Create the tabbed navigation interface for different wrong answer categories (Today's Wrong, Review Alerts, Graduated)",
+            "dependencies": [],
+            "details": "Develop WrongAnswerTabs.tsx component with tab navigation using Shadcn UI tabs component. Implement state management for active tab selection. Create placeholder content areas for each tab category. Ensure responsive design for mobile and desktop views. Add transition animations between tab switches.\n<info added on 2025-11-26T14:25:27.722Z>\nSubtask 8.1 has been completed with the following implementations:\n\n1. WrongAnswerTabs component (src/components/wrong-answers/WrongAnswerTabs.tsx):\n   - Successfully integrated Shadcn UI Tabs component\n   - Implemented three tabs: Today's Wrong Answers, Review Alerts, and Graduated\n   - Added state management for tab switching\n   - Connected each tab to the WrongAnswerList component\n\n2. WrongAnswerList component (src/components/wrong-answers/WrongAnswerList.tsx):\n   - Displays wrong answer items by category\n   - Includes skeleton UI for loading states\n   - Shows appropriate empty state messages\n   - Features card-based UI for wrong answer items\n\n3. API integration (src/lib/api/wrongAnswers.ts):\n   - Implemented getWrongAnswers function\n   - Added category filtering (today/review/graduated)\n   - Joined with questions table for complete problem information\n\n4. Successfully integrated WrongAnswerTabs into the WrongAnswers page\n\n5. All code passes linting and builds successfully\n</info added on 2025-11-26T14:25:27.722Z>",
+            "status": "done",
+            "testStrategy": "Test tab switching functionality, verify correct content loading for each tab, test responsive behavior on different screen sizes, verify accessibility compliance for tab navigation"
+          },
+          {
+            "id": 2,
+            "title": "Implement Ebbinghaus Forgetting Curve Algorithm",
+            "description": "Develop the core algorithm for spaced repetition based on the Ebbinghaus forgetting curve",
+            "dependencies": [],
+            "details": "Create utility functions to calculate next review dates based on performance history. Implement the interval schedule (1, 3, 7, 14, 30 days). Add logic to graduate items after 5 successful reviews. Include performance tracking to adjust intervals based on answer correctness. Create test cases to verify algorithm accuracy.\n<info added on 2025-11-26T14:25:34.313Z>\nCompleted tasks:\n1. Implemented Ebbinghaus forgetting curve algorithm in src/lib/api/wrongAnswers.ts:\n   - Created calculateNextReviewDate function\n   - Implemented review intervals (1, 3, 7, 14, 30 days)\n   - Added interval adjustment based on review performance\n\n2. Implemented review completion logic:\n   - Created markReviewComplete function\n   - Added logic for correct answers to calculate next review date\n   - Added logic for incorrect answers to increase error count and schedule immediate review\n   - Implemented graduation logic after 5 successful reviews\n\n3. Verified implementation with:\n   - Successful lint checks (npm run lint)\n   - Successful build process (npm run build)\n\nAll requirements have been successfully implemented.\n</info added on 2025-11-26T14:25:34.313Z>",
+            "status": "done",
+            "testStrategy": "Unit test algorithm with various performance scenarios, verify correct interval calculation, test graduation logic after 5 successful reviews, verify edge cases like missed reviews"
+          },
+          {
+            "id": 3,
+            "title": "Develop Review Scheduling and Notification System",
+            "description": "Create the system for scheduling reviews and sending notifications based on the forgetting curve",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement API functions to fetch wrong answers by category. Create service to calculate and update next review dates. Develop notification scheduling system integrated with device notifications. Add background processes to check for pending reviews. Implement ReviewBadge.tsx component with color-coded urgency indicators.\n<info added on 2025-11-26T14:30:10.896Z>\nSubtask 8.3 has been completed with the following implementations:\n\n1. ReviewBadge component (src/components/wrong-answers/ReviewBadge.tsx):\n   - Shows days remaining until review\n   - Color-coded indicators (red for overdue, orange for urgent, yellow for warning, blue for normal)\n   - Appropriate icons (AlertTriangle for overdue/urgent, Clock for normal)\n   - Dynamic text based on review status (overdue, review today, review in N days)\n\n2. Notification system (src/lib/utils/notifications.ts):\n   - Browser notification permission request function\n   - Review notification display functionality\n   - Scheduling system for review notifications\n   - Navigation to wrong answer page on notification click\n\n3. Enhanced WrongAnswerList component:\n   - ReviewBadge integration (shown only in review tab)\n   - Category badges added\n   - Automatic review notification scheduling\n\n4. API integration:\n   - Using existing getWrongAnswers function\n   - Filtering based on next_review_date\n\nAll code passes linting and builds successfully, meeting all requirements for this subtask.\n</info added on 2025-11-26T14:30:10.896Z>",
+            "status": "done",
+            "testStrategy": "Test notification scheduling and delivery, verify correct badge display for different urgency levels, test background review checking process, verify API endpoints for fetching review items"
+          },
+          {
+            "id": 4,
+            "title": "Create Wrong Answer List with Filtering and Sorting",
+            "description": "Implement the list view for wrong answers with comprehensive filtering and sorting options",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop WrongAnswerList.tsx component to display wrong answers with summary information. Implement sorting functionality by review date, difficulty, and category. Add filtering options for content type and status. Create search functionality with debounced input. Implement pagination or infinite scrolling for large lists. Design and implement list item components with expandable details.\n<info added on 2025-11-26T14:34:49.542Z>\nSubtask 8.4 has been completed with the following implementations:\n\n1. Search functionality:\n   - Search input field with Search icon\n   - Content and category search capability\n   - Real-time filtering of results\n\n2. Filtering functionality:\n   - Category-based filtering using Select component\n   - Automatic generation of unique category list\n   - \"All\" option included for viewing everything\n\n3. Sorting functionality:\n   - Multiple sorting criteria (review date, wrong count, category, difficulty)\n   - Toggle between ascending/descending order\n   - ArrowUpDown icon button for sort direction\n\n4. UI improvements:\n   - Search result count display\n   - Empty search results message\n   - Difficulty badges\n   - Responsive design with flex-wrap\n\n5. Shadcn UI components integration:\n   - Input component\n   - Select component\n\n6. Build and lint verification:\n   - Passed npm run lint\n   - Successful npm run build\n\nAll requirements for the WrongAnswerList component have been fulfilled.\n</info added on 2025-11-26T14:34:49.542Z>",
+            "status": "done",
+            "testStrategy": "Test sorting and filtering functionality, verify search with various queries, test pagination/infinite scroll performance, verify responsive design on different screen sizes"
+          },
+          {
+            "id": 5,
+            "title": "Implement Review Mode and Graduation Logic",
+            "description": "Create the batch review mode for efficient reviewing and implement the graduation logic for mastered items",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Develop ReviewButton.tsx floating action button to initiate batch reviews. Create the review interface with swipeable cards or quiz-like UI. Implement spaced repetition logic during review sessions. Add performance tracking and feedback after each review. Develop graduation ceremony/animation when items are fully mastered. Create ReviewStats.tsx to show progress and performance metrics.\n<info added on 2025-11-26T14:39:35.027Z>\nSubtask 8.5 has been successfully completed with all required components and functionality implemented:\n\n1. Created ReviewButton.tsx component with floating action button that displays review count and navigates to review mode\n2. Developed ReviewStats.tsx to display comprehensive statistics including total questions, correct/incorrect answers, accuracy rate, and graduated items count with Framer Motion animations\n3. Implemented GraduationAnimation.tsx with celebratory effects including sparkles and gradient background\n4. Built ReviewMode.tsx page featuring swipeable cards interface, answer verification, explanation bottom sheet, progress indicators, and keyboard shortcut support\n5. Enhanced API functions in wrongAnswers.ts to track consecutive correct answers, implement graduation logic (5 consecutive correct answers), and calculate next review dates based on the Ebbinghaus forgetting curve\n6. Integrated ReviewButton into WrongAnswers page with real-time updates of reviewable questions\n7. Added /review route to App.tsx\n8. Successfully passed all lint and build tests\n</info added on 2025-11-26T14:39:35.027Z>",
+            "status": "done",
+            "testStrategy": "Test the complete review flow from initiation to completion, verify correct application of spaced repetition during reviews, test graduation logic and animations, verify performance statistics accuracy"
+          }
+        ]
+      },
+      {
+        "id": 19,
+        "title": "Question Input Admin Screen (Phase 2)",
+        "description": "Implement the admin screen for inputting questions according to PRD section 4.6. This is a Phase 2 feature for administrators to add questions to the database.",
+        "details": "1. Create the following components for question input:\n\n   a. CertificationSelector.tsx\n   ```typescript\n   // Select from 6 certifications:\n   // - 정보처리기사(필기)\n   // - 컴퓨터활용능력(필기)\n   // - 빅데이터분석기사(필기)\n   // - 경영정보시각화능력(필기)\n   // - ADsP(필기)\n   // - SQLD(필기)\n   ```\n\n   b. QuestionInputForm.tsx\n   ```typescript\n   // Form fields:\n   // - 문제 제시문 입력란 (Question statement)\n   // - 문제 서브 제시문 입력란 (Sub-statement with image upload support)\n   // - 지문 입력란 (5-choice default, 4-choice option)\n   // - 정답 입력란 (Correct answer)\n   // - 해설 입력란 (Explanation)\n   // - 레이블 입력란 (Labels for recommendation algorithm)\n   // - 난이도 입력란 (Difficulty: 상/중/하, will be auto-classified later based on user performance)\n   // - 출제빈도 입력란 (Question frequency)\n   ```\n\n   c. ImageUploader.tsx\n   ```typescript\n   // Support image upload for sub-statement\n   // Use Supabase Storage\n   // Preview and crop functionality\n   ```\n\n2. Implement form validation:\n   ```typescript\n   // Validate all required fields\n   // Validate answer format matches choice type\n   // Validate image format and size\n   ```\n\n3. Create API functions to:\n   - Save question to Supabase questions table\n   - Upload images to Supabase Storage\n   - Handle form submission with error handling\n\n4. Implement admin authentication check:\n   ```typescript\n   // Verify user has admin role\n   // Redirect non-admin users\n   ```\n\n5. Create question preview component before submission\n\n6. Implement form reset and draft save functionality",
+        "testStrategy": "1. Test form validation with various inputs\n2. Verify image upload functionality\n3. Test question submission to database\n4. Verify admin authentication check\n5. Test form reset and draft save\n6. Verify all 6 certification types are selectable\n7. Test both 4-choice and 5-choice question types\n8. Verify question data is correctly stored in database",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "in-progress",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Personalized Learning Algorithm",
+        "description": "Implement the algorithm for recommending personalized daily question sets based on user performance and weak areas.",
+        "details": "1. Design and implement the recommendation algorithm:\n   ```typescript\n   // src/utils/recommendationEngine.ts\n   // Consider factors:\n   // - User's weak areas from diagnostic test\n   // - Recent performance on questions\n   // - Time since last exposure to a topic\n   // - Question difficulty progression\n   // - Spaced repetition principles\n   ```\n\n2. Create Supabase database function for generating daily sets:\n   ```sql\n   -- Generate 5 questions daily based on user data\n   -- Balance between weak areas and comprehensive coverage\n   -- Avoid recently answered questions\n   ```\n\n3. Implement scheduled job for daily question set generation:\n   ```typescript\n   // Use Supabase scheduled functions\n   // Generate sets at midnight local time\n   // Handle time zone differences\n   ```\n\n4. Create API functions to:\n   - Fetch personalized daily question set\n   - Update user performance metrics\n   - Recalculate weak areas based on ongoing performance\n\n5. Implement caching strategy for quick access to daily sets\n\n6. Add manual refresh option for users who want new questions\n\n7. Create analytics tracking for algorithm effectiveness",
+        "testStrategy": "1. Test recommendation algorithm with various user profiles\n2. Verify daily set generation with different performance patterns\n3. Test scheduled job reliability\n4. Verify weak area recalculation accuracy\n5. Test caching strategy and performance\n6. Verify manual refresh functionality\n7. Test analytics data collection\n8. Verify algorithm adapts to improving performance",
+        "priority": "high",
+        "dependencies": [
+          3,
+          6,
+          8
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Core Recommendation Engine Architecture",
+            "description": "Create the foundational architecture for the recommendation engine that will power personalized learning.",
+            "dependencies": [],
+            "details": "Implement the base recommendation engine in src/utils/recommendationEngine.ts with core interfaces and types. Define the algorithm's main components and data flow. Create utility functions for calculating recommendation scores based on multiple factors. Include documentation for each component and how they interact.\n<info added on 2025-11-26T14:44:18.752Z>\nSubtask 10.1 has been completed with the following implementation:\n\n1. Base recommendation engine architecture implemented in src/lib/utils/recommendationEngine.ts with:\n   - Core type definitions and interfaces:\n     * UserPerformanceData: Structure for user performance data\n     * QuestionMetadata: Structure for question metadata\n     * RecommendationScore: Structure for recommendation score calculation results\n     * RecommendationConfig: Configuration options for the recommendation engine\n\n   - Key algorithm functions implemented:\n     * calculateWeakAreaBoost: Calculates bonus scores for weak areas\n     * calculateRecencyPenalty: Applies penalties for recently solved questions\n     * calculateDifficultyMatch: Determines appropriateness of question difficulty\n     * calculateCategoryBalance: Ensures balanced category distribution\n     * calculateSpacedRepetitionScore: Implements spaced repetition principles\n     * calculateRecommendationScore: Computes overall recommendation score per question\n     * selectRecommendedQuestions: Selects optimal questions from the available pool\n\n   - Default configuration (DEFAULT_CONFIG) defined with:\n     * Target question count: 5\n     * Weighting parameters for all scoring factors\n     * Filtering settings for recent questions and difficulty range\n     * Spaced repetition interval settings\n\n   - Greedy algorithm implementation for question selection that:\n     * Selects highest-scoring questions at each step\n     * Dynamically recalculates scores based on previous selections\n     * Ensures category diversity in recommendations\n\n2. All code successfully passes linting and builds without errors.\n</info added on 2025-11-26T14:44:18.752Z>",
+            "status": "done",
+            "testStrategy": "Create unit tests for core recommendation functions. Test with mock user data representing different learning patterns. Verify score calculations are consistent and logical."
+          },
+          {
+            "id": 2,
+            "title": "Implement Weak Area Analysis and Weighting System",
+            "description": "Develop the component that analyzes user performance data to identify and prioritize weak knowledge areas.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create functions to analyze diagnostic test results and ongoing question performance. Implement a weighted scoring system that prioritizes topics where users struggle most. Design an algorithm to detect patterns in incorrect answers. Build a mechanism to adjust weights dynamically as user performance changes over time.\n<info added on 2025-11-26T14:48:47.997Z>\nImplementation of Weak Area Analysis and Weighting System has been completed with the following components:\n\n1. Weakness analysis and weighting system (src/lib/utils/weaknessAnalysis.ts):\n   - CategoryPerformance interface and calculation functions that track category-specific statistics including accuracy rates, average time spent, and incorrect answer counts by joining study_records with questions\n   - WrongAnswerPattern interface and detection functions that classify patterns as repeated, concentrated, or sporadic with severity ratings\n   - WeightedScore interface and calculation functions that compute scores based on multiple factors including diagnostic test results, ongoing performance, error frequency, time since last study, and performance trends\n   - Performance trend analysis functions that compare recent vs. previous periods to determine if performance is improving, declining, or stable\n   - Weak area identification functions that automatically identify weakness areas based on weighted scores\n   - Dynamic weight adjustment functions that automatically modify weights as user performance changes\n\n2. Recommendation engine integration (src/lib/utils/recommendationEngine.ts):\n   - Successfully imported and utilized the weakness analysis system functions\n   - Enhanced calculateWeakAreaBoost function to leverage weighted scores\n   - Modified selectRecommendedQuestions function to be asynchronous and incorporate weighted scores\n   - Implemented automatic updates for weak areas\n\n3. All code successfully passed linting and build tests.\n</info added on 2025-11-26T14:48:47.997Z>",
+            "status": "done",
+            "testStrategy": "Test with various user performance profiles. Verify weak areas are correctly identified. Ensure weighting system appropriately prioritizes struggling areas while maintaining comprehensive coverage."
+          },
+          {
+            "id": 3,
+            "title": "Integrate Spaced Repetition Principles",
+            "description": "Implement spaced repetition logic to optimize long-term knowledge retention in the recommendation algorithm.",
+            "dependencies": [
+              1
+            ],
+            "details": "Research and implement optimal spaced repetition intervals based on learning science. Create functions to track time since last exposure to topics and calculate ideal re-exposure timing. Develop logic to balance new content introduction with review of previously learned material. Implement difficulty progression that adapts to user performance.\n<info added on 2025-11-26T14:54:20.535Z>\nCompleted tasks for Subtask 10.3 (Integrate Spaced Repetition Principles):\n\n1. Implemented spaced repetition utilities (src/lib/utils/spacedRepetition.ts):\n   - SM-2 algorithm-based interval calculations:\n     * calculateNextInterval function for determining review timing\n     * Dynamic interval adjustment using easeFactor\n     * Interval progression based on consecutive correct answers\n   \n   - Performance-based interval adjustments:\n     * adjustIntervalByPerformance function for dynamic timing based on recent performance\n     * Increased intervals for good performance, decreased for poor performance\n   \n   - Category-specific learning tracking:\n     * getLastExposureByCategory function to retrieve last study time by category\n     * getCategoryReviewStats function for review count and recent accuracy rates\n   \n   - Ideal review timing calculations:\n     * calculateIdealReviewTiming function based on last study time and performance\n     * Urgency assessment (high/medium/low)\n   \n   - New content and review balancing:\n     * calculateReviewNewBalance function to determine daily set ratios\n     * Dynamic ratio adjustment based on review frequency and performance\n   \n   - Difficulty progression implementation:\n     * calculateDifficultyProgression function for user performance-based difficulty adjustment\n     * Progressive difficulty increases for good performance, decreases for poor performance\n   \n   - Comprehensive scoring system:\n     * calculateSpacedRepetitionScore function for combined factor assessment\n     * Urgency and performance-based score adjustments\n\n2. Recommendation engine integration (src/lib/utils/recommendationEngine.ts):\n   - Imported and utilized spaced repetition utility functions\n   - Enhanced calculateSpacedRepetitionScore function with:\n     * Automatic category review statistics retrieval\n     * Ideal review timing integration\n     * Performance-based scoring\n   - Automatic updates for category last study timestamps\n\n3. Successfully passed build and lint tests:\n   - npm run lint completed without errors\n   - npm run build completed successfully\n</info added on 2025-11-26T14:54:20.535Z>",
+            "status": "done",
+            "testStrategy": "Test with simulated user learning over time. Verify topics reappear at appropriate intervals. Ensure difficulty progression adapts correctly to user performance."
+          },
+          {
+            "id": 4,
+            "title": "Create Daily Set Generation Database Function",
+            "description": "Develop the Supabase database function that will generate personalized daily question sets based on the recommendation algorithm.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Write SQL function in Supabase to generate daily sets of 5 questions. Implement logic to query user performance data and apply recommendation algorithm. Ensure balance between weak areas and comprehensive topic coverage. Add constraints to avoid recently answered questions. Optimize query performance for scale.\n<info added on 2025-11-26T14:58:10.498Z>\nImplemented personalized daily set generation database function in Supabase:\n\n- Created `generate_personalized_daily_set` function with:\n  - Weak area identification (categories below 60% accuracy)\n  - Exclusion of questions answered within last day\n  - User accuracy calculation (30-day window)\n  - Dynamic difficulty targeting based on user performance\n  - Category weighting system (3.0 for weak areas, 1.0 for others)\n  - Last study time consideration\n\n- Implemented greedy algorithm for question selection:\n  - Prioritizes weak areas (40% of questions)\n  - Ensures category diversity\n  - Filters by appropriate difficulty (target ±1)\n  - Includes randomization element\n\n- Optimized performance with:\n  - Strategic indexing (certification_type, category, difficulty)\n  - Array operation optimization\n  - Early termination logic\n\n- Updated API in questions.ts to use new function with fallback options\n- Verified with successful lint and build tests\n</info added on 2025-11-26T14:58:10.498Z>",
+            "status": "done",
+            "testStrategy": "Test with various user profiles in development database. Verify question sets are appropriately personalized. Measure query performance and optimize if necessary. Test edge cases like new users with limited history."
+          },
+          {
+            "id": 5,
+            "title": "Implement Scheduled Job for Automatic Set Generation",
+            "description": "Create the scheduled job system that automatically generates new daily question sets for all users.",
+            "dependencies": [
+              4
+            ],
+            "details": "Configure Supabase scheduled functions to run daily set generation at appropriate times. Implement time zone handling to ensure sets are generated at midnight in user's local time. Create fallback mechanisms for job failures. Add logging for monitoring job execution and performance. Implement throttling to handle large user bases.\n<info added on 2025-11-26T15:01:40.394Z>\nCompleted tasks:\n\n1. Database migration (create_scheduled_daily_set_generation):\n   - Created daily_set_generation_logs table:\n     * Tracks job status (pending, processing, completed, failed)\n     * Records error messages and processing time\n     * Implemented RLS policies (users can only view their own logs)\n   \n   - Implemented generate_daily_sets_batch function:\n     * Processes users in batches (default 50 users)\n     * Enforces maximum processing time (default 5 minutes)\n     * Excludes users with already generated sets for today\n     * Prevents duplicate processing jobs\n     * Handles errors with logging\n     * Supports throttling\n   \n   - Implemented retry_failed_daily_set_generations function:\n     * Retries failed jobs from the last 24 hours\n     * Limits maximum retry attempts (default 3)\n     * Processes in batches (default 20 users)\n\n2. Configured pg_cron scheduled jobs:\n   - Main job: Runs daily at UTC 00:00 (KST 09:00)\n     * Calls generate_daily_sets_batch(50, 300000)\n   \n   - Retry job: Runs every 2 hours\n     * Calls retry_failed_daily_set_generations(3, 20)\n\n3. Implemented API functions (src/lib/api/scheduledJobs.ts):\n   - runDailySetGenerationBatch: Manual batch execution\n   - retryFailedGenerations: Manual retry execution\n   - getUserGenerationLogs: Query logs by user\n   - getGenerationStats: Query overall statistics\n   - getRecentFailures: Query recent failed jobs\n\n4. Passed build and lint tests:\n   - npm run lint passed\n   - npm run build successful\n</info added on 2025-11-26T15:01:40.394Z>",
+            "status": "done",
+            "testStrategy": "Test scheduled job execution in development environment. Verify correct handling of different time zones. Test recovery from simulated job failures. Monitor performance with large user datasets."
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Statistics and Analytics Dashboard",
+        "description": "Implement the statistics and analytics features to show learning progress, streak data, and achievement metrics.",
+        "details": "1. Create the following components for the statistics dashboard:\n\n   a. LearningStreakCalendar.tsx\n   ```typescript\n   // Calendar heatmap showing activity\n   // Highlight current streak\n   ```\n\n   b. PerformanceCharts.tsx\n   ```typescript\n   // Line charts for accuracy over time\n   // Bar charts for category performance\n   ```\n\n   c. AchievementCards.tsx\n   ```typescript\n   // Display milestones and badges\n   // Show progress towards next achievement\n   ```\n\n   d. WeakAreaAnalysis.tsx\n   ```typescript\n   // Detailed breakdown of weak areas\n   // Recommendations for improvement\n   ```\n\n2. Implement data aggregation functions:\n   ```typescript\n   // Calculate daily, weekly, monthly statistics\n   // Track improvement rates\n   // Predict exam readiness\n   ```\n\n3. Create Recharts visualizations for data presentation:\n   ```typescript\n   // Responsive charts that work on mobile\n   // Interactive elements for exploring data\n   ```\n\n4. Implement export functionality for statistics (PDF, CSV)\n\n5. Create comparison features (compare to previous periods)\n\n6. Add predictive analytics for exam readiness",
+        "testStrategy": "1. Test data aggregation with various user activity patterns\n2. Verify chart rendering and responsiveness\n3. Test interactive elements and tooltips\n4. Verify export functionality for different formats\n5. Test comparison features with historical data\n6. Verify predictive analytics accuracy\n7. Test dashboard performance with large datasets\n8. Verify accessibility for screen readers",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          5
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Learning Streak Calendar with Heatmap",
+            "description": "Create the LearningStreakCalendar.tsx component with a heatmap visualization showing user activity and current streak highlights.",
+            "dependencies": [],
+            "details": "Implement a calendar heatmap component using Recharts or a specialized library like react-calendar-heatmap. The component should display daily activity intensity with color gradients, highlight the current streak, and show tooltips with activity details on hover. Include functionality to navigate between months and display streak statistics summary.\n<info added on 2025-11-26T15:06:47.557Z>\nSubtask 11.1 \"Implement Learning Streak Calendar with Heatmap\" has been completed successfully. The implementation includes:\n\n1. API functions in src/lib/api/statistics.ts:\n   - getDailyActivity: Retrieves daily activity data for the past year, calculating problem counts, correct answers, and accuracy rates from study records\n   - getStreakData: Calculates current streak, longest streak, and total learning days with streak calculation logic\n\n2. LearningStreakCalendar component features:\n   - GitHub-style heatmap calendar visualization\n   - 5-level color intensity based on activity volume\n   - Current streak dates highlighted with orange rings\n   - Current day highlighted with blue ring\n   - Detailed tooltips on hover\n   - Month navigation (previous/next/today)\n   - Statistics summary showing current streak, longest streak, and total learning days\n   - Legend display\n   - Responsive design implementation\n   - Framer Motion animations for enhanced user experience\n\n3. Dashboard integration:\n   - Successfully integrated into the Dashboard page\n\n4. Build and lint verification:\n   - Passed npm run lint\n   - Successful npm run build\n\nAll requirements for this subtask have been fulfilled.\n</info added on 2025-11-26T15:06:47.557Z>",
+            "status": "done",
+            "testStrategy": "Test with various streak patterns (consecutive days, broken streaks). Verify correct color intensity mapping. Test responsiveness on different screen sizes. Verify tooltip information accuracy. Test month navigation and edge cases like leap years."
+          },
+          {
+            "id": 2,
+            "title": "Develop Performance Charts with Recharts Integration",
+            "description": "Build the PerformanceCharts.tsx component with line and bar charts for visualizing accuracy trends and category performance.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create responsive chart components using Recharts library. Implement line charts showing accuracy over time with interactive tooltips. Add bar charts for category performance comparison. Include toggle options for different time periods (weekly, monthly, all-time). Ensure charts are responsive and maintain readability on mobile devices. Add animations for data transitions.\n<info added on 2025-11-26T15:13:31.102Z>\nAPI functions were added to src/lib/api/statistics.ts:\n- getAccuracyTrend: Retrieves accuracy trend data by period (weekly/7 days, monthly/30 days, all-time/365 days), calculating daily accuracy and problem counts\n- getCategoryPerformance: Retrieves category performance data with period filtering, calculating accuracy, total problems, correct answers per category, sorted by accuracy\n\nThe PerformanceCharts component was implemented with:\n- Line chart for accuracy trends using Recharts LineChart with interactive tooltips, animations, and responsive design\n- Bar chart for category performance using Recharts BarChart with interactive tooltips showing category, accuracy rate, and problem count\n- Period selection toggle (weekly/monthly/all-time) with automatic data updates\n- Statistics summary displaying average accuracy, total problems, learning category count, and highest accuracy\n- Empty data state handling\n- Dark mode support\n- Framer Motion animations\n\nThe component was successfully integrated into the Dashboard page and passed both lint and build tests.\n</info added on 2025-11-26T15:13:31.102Z>",
+            "status": "done",
+            "testStrategy": "Test chart rendering with various data sets. Verify responsive behavior on different screen sizes. Test interactive elements like tooltips and period toggles. Verify correct data aggregation for different time periods. Test edge cases like empty data sets."
+          },
+          {
+            "id": 3,
+            "title": "Create Achievement Cards and Progress Tracking",
+            "description": "Implement the AchievementCards.tsx component to display user milestones, badges, and progress towards next achievements.",
+            "dependencies": [],
+            "details": "Design and implement visually appealing achievement cards with icons and progress indicators. Create animations for newly unlocked achievements. Implement progress bars showing advancement towards next milestones. Include tooltips explaining achievement requirements. Group achievements by categories (streak-based, accuracy-based, completion-based). Store achievement data in Supabase and implement logic to award achievements based on user activity.\n<info added on 2025-11-26T15:09:56.128Z>\n## Completed Tasks:\n\n1. Database Migration (create_achievements_tables):\n   - Created achievements table with fields for code, name, description, category, icon, requirements, and rarity\n   - Categories include streak, accuracy, completion, speed, and mastery\n   - Rarity levels: common, rare, epic, legendary\n   - Created user_achievements table tracking user progress (0-100%), achievement timestamps\n   - Implemented UNIQUE constraint for user_id and achievement_id\n   - Inserted base achievement data for:\n     * Streak-based: 3, 7, 30, 100 consecutive days\n     * Accuracy-based: 50%, 70%, 85%, 95% correct answers\n     * Completion-based: 10, 50, 100, 500, 1000 problems\n     * Daily set completion: 7, 30 days\n     * Mastery-based: 10, 50, 100 mastered problems\n   - Configured RLS policies and triggers\n\n2. API Implementation (src/lib/api/achievements.ts):\n   - getAllAchievements: Retrieves complete achievement list\n   - getUserAchievements: Fetches user-specific achievements\n   - updateAchievementProgress: Updates progress percentage\n   - checkAndUpdateAchievements: Automatically checks and updates based on user statistics\n   - getAchievementIcon: Retrieves icon components\n\n3. AchievementCards Component:\n   - Implemented category grouping and filtering\n   - Added rarity-based color coding\n   - Created progress bars for incomplete achievements\n   - Added achievement date display\n   - Implemented highlight animations for new achievements\n   - Visualized locked/unlocked states\n   - Added statistics summary (completion rate)\n   - Designed responsive grid layout\n   - Integrated Framer Motion animations\n\n4. Dashboard Integration:\n   - Added AchievementCards component to Dashboard page\n\n5. Build and Lint Testing:\n   - Passed npm run lint\n   - Successfully built with npm run build\n</info added on 2025-11-26T15:09:56.128Z>",
+            "status": "done",
+            "testStrategy": "Test achievement unlocking logic with various user activity patterns. Verify visual appearance of locked vs unlocked achievements. Test progress calculation accuracy. Verify animations trigger correctly for new achievements. Test edge cases like 100% completion and zero progress."
+          },
+          {
+            "id": 4,
+            "title": "Develop Weak Area Analysis Component",
+            "description": "Build the WeakAreaAnalysis.tsx component with detailed breakdown of user's weak areas and personalized improvement recommendations.",
+            "dependencies": [
+              2
+            ],
+            "details": "Create a detailed analysis component showing performance breakdowns by topic and subtopic. Implement visualizations like radar charts or heat tables to highlight weak areas. Generate personalized recommendations based on performance patterns. Include trend indicators showing improvement or decline in each area. Add filtering options to focus on specific categories. Implement drill-down functionality to see question-level performance in each weak area.\n<info added on 2025-11-26T15:16:15.990Z>\nSubtask 11.4 \"Develop Weak Area Analysis Component\" has been completed with the following implementations:\n\n1. API functions in src/lib/api/weaknessAnalysis.ts:\n   - getDetailedWeaknessAnalysis: Integrates diagnostic results, weighted scores, and category performance statistics with priority classification and personalized recommendations\n   - generateRecommendation: Creates personalized learning recommendations based on scores, trends, performance statistics, and weights\n   - getQuestionLevelPerformance: Calculates question-level metrics including attempt count, correct answers, and accuracy rates\n\n2. WeakAreaAnalysis component implementation:\n   - Radar chart visualization using Recharts showing overall performance across categories\n   - Priority-based filtering (all/high/medium/low) with real-time application\n   - Expandable category cards showing detailed information on click\n   - Performance trend indicators (improvement/decline/stable) with visual cues\n   - Priority-based color coding (red for high, yellow for medium, green for low)\n   - Animated transitions using Framer Motion\n\n3. Dashboard integration:\n   - Component added to Dashboard page alongside existing WeaknessAnalysis component\n   - Successfully passed build and lint tests\n\nAll requirements have been fulfilled including detailed performance analysis by topic/subtopic, radar chart visualizations, personalized recommendations, trend indicators, priority filtering, and question-level drill-down functionality.\n</info added on 2025-11-26T15:16:15.990Z>",
+            "status": "done",
+            "testStrategy": "Test analysis accuracy with various performance patterns. Verify recommendation relevance for different weak area profiles. Test filtering and drill-down functionality. Verify trend calculations for improvement/decline. Test edge cases like uniformly poor or excellent performance across all areas."
+          },
+          {
+            "id": 5,
+            "title": "Implement Data Aggregation and Export Functionality",
+            "description": "Create data aggregation functions for statistics calculation and implement export functionality for PDF and CSV formats.",
+            "dependencies": [
+              1,
+              2,
+              4
+            ],
+            "details": "Develop efficient data aggregation functions to calculate daily, weekly, and monthly statistics. Implement tracking for improvement rates and exam readiness predictions. Create export functionality allowing users to download statistics in PDF format (with charts and visualizations) and CSV format (raw data). Add comparison features to contrast current performance with previous periods. Implement caching strategies to optimize performance with large datasets.\n<info added on 2025-11-26T15:28:40.302Z>\nSubtask 11.5 has been completed with the following implementations:\n\n1. Data aggregation API functions in src/lib/api/aggregation.ts:\n   - getDailyStatistics: Aggregates daily learning records with problem counts, accuracy rates, average times, and category performance analysis\n   - getWeeklyStatistics: Compiles weekly statistics with daily breakdowns\n   - getMonthlyStatistics: Provides monthly aggregated data with daily details\n   - comparePeriods: Compares current and previous periods for accuracy, problem count, and time changes\n   - predictExamReadiness: Calculates overall scores, readiness levels, predicted scores, identifies strengths/weaknesses, generates personalized recommendations, and calculates days remaining until exam\n\n2. Export utility functions in src/lib/utils/export.ts:\n   - exportToCSV: Generic CSV export with BOM for Korean character support\n   - Specialized CSV exports for daily activity, statistics, and achievements\n   - exportToPDF: PDF generation using jsPDF and html2canvas with chart capture and multi-page support\n   - exportStatisticsReportToPDF: Comprehensive PDF report with statistics, category performance, period comparisons, and exam readiness\n\n3. ExportStatistics component implementation with format selection, period options, export buttons, loading indicators, and user guidance\n\n4. Required packages installed: jspdf and html2canvas\n\n5. Dashboard integration and successful build/lint tests\n\nAll requirements have been fulfilled including daily/weekly/monthly statistics aggregation, improvement tracking, exam readiness prediction, PDF/CSV exports, period comparison features, and performance optimization.\n</info added on 2025-11-26T15:28:40.302Z>",
+            "status": "done",
+            "testStrategy": "Test data aggregation with various activity patterns and time ranges. Verify export functionality produces valid PDF and CSV files with correct data. Test comparison calculations for accuracy. Verify predictive analytics for exam readiness. Test performance with large datasets to ensure efficient processing."
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Gamification and Reward System",
+        "description": "Implement gamification elements such as streaks, achievements, and rewards to increase user engagement.",
+        "details": "1. Design and implement the streak system:\n   ```typescript\n   // Track daily learning activity\n   // Reset streak if a day is missed\n   // Provide streak freeze items as rewards\n   ```\n\n2. Create achievement system:\n   ```typescript\n   // Define achievement categories and levels\n   // Track progress towards achievements\n   // Provide visual badges and rewards\n   ```\n\n3. Implement reward mechanics:\n   ```typescript\n   // Define rewards (streak freezes, hints, theme unlocks)\n   // Create reward distribution logic\n   // Implement reward usage functionality\n   ```\n\n4. Create notification system for achievements and streaks:\n   ```typescript\n   // Push notifications for streak reminders\n   // Achievement unlock celebrations\n   ```\n\n5. Implement visual feedback for progress:\n   ```typescript\n   // Animations for level ups\n   // Progress bars for achievements\n   // Confetti effects for milestones\n   ```\n\n6. Create leaderboards for optional competition (privacy-focused)\n\n7. Implement daily/weekly challenges for bonus rewards",
+        "testStrategy": "1. Test streak counting and reset logic\n2. Verify achievement tracking and unlocking\n3. Test reward distribution and usage\n4. Verify notification scheduling and delivery\n5. Test visual feedback and animations\n6. Verify leaderboard functionality and privacy controls\n7. Test challenge generation and completion tracking\n8. Verify system resilience to date/time manipulation",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          11
+        ],
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Streak Tracking and Freeze Functionality",
+            "description": "Develop the streak system to track daily learning activity and implement streak freeze mechanics to maintain streaks during missed days.",
+            "dependencies": [],
+            "details": "Create a streak counter that increments with daily app usage. Implement logic to detect missed days and reset streaks accordingly. Design and implement streak freeze items that users can earn and apply to prevent streak loss. Handle edge cases like timezone changes and app offline usage. Create database schema for storing streak data and freeze item inventory.\n<info added on 2025-11-26T15:32:21.439Z>\nSubtask 12.1 has been successfully completed with all requirements implemented:\n\n1. Database implementation:\n   - Created streak_freezes table with required fields (user_id, used, used_at, expires_at, created_at)\n   - Added unique constraints and indexes for performance\n   - Implemented Row Level Security policies for data protection\n\n2. Streak tracking functionality:\n   - Enhanced update_user_streak function with improved timezone handling\n   - Implemented automatic streak freeze usage when streaks would break\n   - Added logic for consecutive learning day detection and streak reset\n\n3. Streak freeze management:\n   - Created cleanup_expired_streak_freezes function to handle expired items\n\n4. API implementation in src/lib/api/streak.ts:\n   - getStreakStatus: Returns current streak and available freezes\n   - getStreakFreezes: Lists all streak freeze items\n   - earnStreakFreeze: Allows users to acquire new freeze items\n   - useStreakFreeze: Enables manual freeze usage\n   - updateStreakManually: Supports offline usage synchronization\n   - cleanupExpiredFreezes: Manages expired items\n\nAll code passed linting and build tests, and all requirements have been fulfilled including daily activity tracking, streak counting, missed day detection, freeze item system, timezone handling, and offline usage support.\n</info added on 2025-11-26T15:32:21.439Z>",
+            "status": "done",
+            "testStrategy": "Unit test streak counting logic with various scenarios including timezone changes. Test streak freeze application and expiration. Verify streak persistence across app restarts and device changes."
+          },
+          {
+            "id": 2,
+            "title": "Build Achievement System with Progress Tracking",
+            "description": "Create a comprehensive achievement system with categories, levels, and progress tracking for various user activities.",
+            "dependencies": [
+              1
+            ],
+            "details": "Define achievement categories (learning consistency, quiz performance, content completion, etc.). Implement achievement levels (bronze, silver, gold) with increasing difficulty. Create progress tracking logic for each achievement type. Design and implement visual badges for unlocked achievements. Store achievement progress in database and sync across devices.",
+            "status": "pending",
+            "testStrategy": "Test achievement progress tracking for various user actions. Verify achievement unlocking logic and proper badge display. Test edge cases like partial progress and achievement level upgrades."
+          },
+          {
+            "id": 3,
+            "title": "Develop Reward Mechanics and Distribution System",
+            "description": "Implement the reward system including different reward types, distribution logic, and usage functionality.",
+            "dependencies": [
+              2
+            ],
+            "details": "Define reward types including streak freezes, hints, theme unlocks, and experience points. Create reward distribution logic based on achievements, streaks, and challenges. Implement reward inventory system for storing and managing earned rewards. Develop UI components for displaying available rewards and their usage. Implement reward usage functionality integrated with relevant app features.\n<info added on 2025-11-26T15:36:17.493Z>\nDatabase migration completed (create_rewards_system) with tables for reward_types, user_rewards, and reward_distributions. Added experience_points and level fields to users table with proper indexes and RLS policies. Inserted 10 basic reward types.\n\nImplemented database functions for level calculation and reward distribution. Created comprehensive API functions in rewards.ts for managing rewards, including getAllRewardTypes, getUserRewards, getUserLevel, distributeReward, useReward, getRewardDistributions, and specialized distribution functions for achievements and streaks.\n\nSuccessfully integrated with achievement and streak systems to automatically distribute rewards upon completion. All reward mechanics are now functional, including streak freezes, hints, theme unlocks, experience points, and badges with rarity levels (common to legendary). Build and lint tests passed successfully.\n</info added on 2025-11-26T15:36:17.493Z>",
+            "status": "done",
+            "testStrategy": "Test reward distribution for various trigger events. Verify reward inventory management and persistence. Test reward usage functionality in different app contexts. Verify balance and progression rate."
+          },
+          {
+            "id": 4,
+            "title": "Create Notification System for Achievements and Streaks",
+            "description": "Implement push notifications for streak reminders and achievement celebrations to increase user engagement.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Develop notification scheduling system for streak reminders based on user's typical usage patterns. Create achievement unlock celebration notifications with engaging copy. Implement notification permission handling and fallbacks for users who decline notifications. Design notification settings UI allowing users to customize notification preferences. Integrate with device-specific notification APIs.",
+            "status": "done",
+            "testStrategy": "Test notification scheduling and delivery on various devices. Verify notification content and deep linking. Test user preference settings and their effect on notification behavior. Verify quiet hours are respected."
+          },
+          {
+            "id": 5,
+            "title": "Implement Visual Feedback and Celebration Animations",
+            "description": "Create engaging visual feedback including animations for level ups, progress bars, and confetti effects for milestones.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Design and implement level-up animations with sound effects. Create progress bars for achievement tracking with visual feedback on progress. Implement confetti and particle effects for milestone celebrations. Develop toast notifications for immediate feedback on rewards and achievements. Ensure animations are performant and don't affect app responsiveness. Create animation toggle in settings for users who prefer fewer animations.",
+            "status": "pending",
+            "testStrategy": "Test animation performance on low-end devices. Verify visual consistency across different screen sizes. Test animation triggers for various achievement and reward scenarios. Verify settings toggle properly enables/disables animations."
+          },
+          {
+            "id": 6,
+            "title": "Develop Leaderboards and Challenge Systems",
+            "description": "Implement privacy-focused leaderboards and daily/weekly challenges for additional engagement and rewards.",
+            "dependencies": [
+              3
+            ],
+            "details": "Create privacy-focused leaderboard system with opt-in participation and anonymized usernames. Implement filtering options for leaderboards (friends only, global, local). Develop daily and weekly challenge generation system with varied difficulty and topics. Create challenge reward distribution logic with bonus rewards for streak completion. Implement challenge notification and reminder system. Design UI for displaying active and completed challenges.",
+            "status": "pending",
+            "testStrategy": "Test leaderboard privacy controls and data visibility. Verify challenge generation and completion tracking. Test reward distribution for completed challenges. Verify leaderboard updates and refresh logic. Test challenge difficulty progression."
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "title": "Notification and Reminder System",
+        "description": "Implement the notification system for learning reminders, streak maintenance, and review alerts.",
+        "details": "1. Design and implement notification types:\n   ```typescript\n   // Daily learning reminders\n   // Streak maintenance alerts\n   // Review reminders based on Ebbinghaus curve\n   // Achievement notifications\n   ```\n\n2. Create notification scheduling system:\n   ```typescript\n   // Allow users to set preferred notification times\n   // Implement smart scheduling based on user activity patterns\n   // Respect quiet hours and user preferences\n   ```\n\n3. Implement push notification integration:\n   ```typescript\n   // Use Firebase Cloud Messaging or similar\n   // Handle permission requests\n   // Provide fallback to in-app notifications\n   ```\n\n4. Create notification center in the app:\n   ```typescript\n   // List of recent notifications\n   // Action buttons for quick responses\n   // Clear and dismiss functionality\n   ```\n\n5. Implement notification settings page:\n   ```typescript\n   // Granular control over notification types\n   // Frequency settings\n   // Do Not Disturb scheduling\n   ```\n\n6. Create analytics for notification effectiveness",
+        "testStrategy": "1. Test notification scheduling for different scenarios\n2. Verify push notification delivery on various devices\n3. Test permission handling and fallbacks\n4. Verify notification center functionality\n5. Test settings page and preference saving\n6. Verify analytics data collection\n7. Test notification actions and deep linking\n8. Verify notification batching to prevent spam",
+        "priority": "medium",
+        "dependencies": [
+          8,
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "User Profile and Settings",
+        "description": "Implement user profile management, settings, and preferences.",
+        "details": "1. Create the following components for user profile and settings:\n\n   a. ProfileHeader.tsx\n   ```typescript\n   // Display user info and profile image\n   // Edit profile button\n   // Achievement badges\n   ```\n\n   b. SettingsList.tsx\n   ```typescript\n   // List of settings categories\n   // Navigation to detailed settings\n   ```\n\n   c. PreferenceToggles.tsx\n   ```typescript\n   // Switches and selectors for user preferences\n   // Save changes automatically\n   ```\n\n   d. ThemeSelector.tsx\n   ```typescript\n   // Light/dark mode toggle\n   // Custom theme options (if unlocked)\n   ```\n\n2. Implement profile editing functionality:\n   ```typescript\n   // Change name, email, profile picture\n   // Update certification goals\n   // Adjust exam date\n   ```\n\n3. Create settings categories:\n   ```typescript\n   // Account settings\n   // Notification preferences\n   // Privacy settings\n   // Appearance settings\n   // Learning preferences\n   ```\n\n4. Implement data export and account deletion:\n   ```typescript\n   // GDPR-compliant data export\n   // Account deletion process\n   // Data retention policy\n   ```\n\n5. Create language selection (Korean/English)\n\n6. Implement accessibility settings",
+        "testStrategy": "1. Test profile editing and image upload\n2. Verify settings persistence across sessions\n3. Test theme switching and appearance changes\n4. Verify data export functionality\n5. Test account deletion process\n6. Verify language switching\n7. Test accessibility settings effectiveness\n8. Verify settings sync across devices",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Offline Mode and Data Synchronization",
+        "description": "Implement offline functionality and data synchronization for seamless use without constant internet connection.",
+        "details": "1. Implement service worker for offline capabilities:\n   ```typescript\n   // Register service worker\n   // Cache static assets and API responses\n   // Handle offline navigation\n   ```\n\n2. Create IndexedDB storage for offline data:\n   ```typescript\n   // Store questions, user progress, and settings\n   // Use Dexie.js for easier IndexedDB management\n   ```\n\n3. Implement synchronization logic:\n   ```typescript\n   // Queue changes made offline\n   // Sync when connection is restored\n   // Handle conflict resolution\n   ```\n\n4. Create offline indicator and mode:\n   ```typescript\n   // Visual indicator for offline status\n   // Disable features that require connectivity\n   // Show cached content with timestamp\n   ```\n\n5. Implement background sync using Background Sync API:\n   ```typescript\n   // Register sync tasks\n   // Process queue when online\n   // Notify user of successful sync\n   ```\n\n6. Create prefetching strategy for anticipated content:\n   ```typescript\n   // Prefetch next day's questions\n   // Cache common explanations\n   // Store frequently accessed statistics\n   ```\n\n7. Implement storage management to prevent excessive cache size",
+        "testStrategy": "1. Test offline functionality by disabling network\n2. Verify data persistence in IndexedDB\n3. Test synchronization after reconnection\n4. Verify conflict resolution with various scenarios\n5. Test offline indicator and mode switching\n6. Verify background sync functionality\n7. Test prefetching strategy effectiveness\n8. Verify storage management prevents excessive cache growth",
+        "priority": "medium",
+        "dependencies": [
+          6,
+          7,
+          8,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Performance Optimization",
+        "description": "Optimize application performance for smooth user experience on various devices.",
+        "details": "1. Implement code splitting and lazy loading:\n   ```typescript\n   // Use React.lazy and Suspense\n   // Split code by routes and features\n   // Implement loading fallbacks\n   ```\n\n2. Optimize image loading and processing:\n   ```typescript\n   // Use responsive images\n   // Implement lazy loading for images\n   // Optimize image formats (WebP with fallbacks)\n   ```\n\n3. Implement memoization for expensive calculations:\n   ```typescript\n   // Use React.memo for components\n   // Use useMemo and useCallback hooks\n   // Cache expensive computation results\n   ```\n\n4. Optimize API calls and data fetching:\n   ```typescript\n   // Implement request batching\n   // Use SWR or React Query for caching\n   // Implement pagination for large datasets\n   ```\n\n5. Create performance monitoring system:\n   ```typescript\n   // Track key metrics (FCP, LCP, CLS, TTI)\n   // Log performance issues\n   // Implement user-centric performance metrics\n   ```\n\n6. Optimize animations and transitions:\n   ```typescript\n   // Use will-change property judiciously\n   // Implement hardware acceleration where appropriate\n   // Reduce animation complexity on low-end devices\n   ```\n\n7. Implement bundle size optimization:\n   ```typescript\n   // Tree shaking\n   // Dependency optimization\n   // Code minification and compression\n   ```",
+        "testStrategy": "1. Measure performance metrics before and after optimization\n2. Test on various devices (low-end to high-end)\n3. Verify code splitting reduces initial load time\n4. Test image loading performance\n5. Verify memoization effectiveness with profiling\n6. Test API optimization with network throttling\n7. Verify animation performance on low-end devices\n8. Measure and compare bundle sizes",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          5,
+          6,
+          7,
+          15
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Accessibility Implementation",
+        "description": "Ensure the application is accessible to users with disabilities according to WCAG guidelines.",
+        "details": "1. Implement semantic HTML structure:\n   ```typescript\n   // Use appropriate HTML elements\n   // Implement proper heading hierarchy\n   // Use landmarks and ARIA roles\n   ```\n\n2. Ensure keyboard navigation:\n   ```typescript\n   // Make all interactive elements focusable\n   // Implement logical tab order\n   // Provide keyboard shortcuts\n   // Ensure visible focus indicators\n   ```\n\n3. Implement screen reader support:\n   ```typescript\n   // Add aria-labels and aria-describedby\n   // Implement status announcements\n   // Test with popular screen readers\n   ```\n\n4. Ensure sufficient color contrast:\n   ```typescript\n   // Meet WCAG AA standards (4.5:1 for normal text)\n   // Provide high contrast mode option\n   // Avoid color as the only means of conveying information\n   ```\n\n5. Implement text resizing support:\n   ```typescript\n   // Use relative units (rem, em)\n   // Test with increased font sizes\n   // Ensure layout doesn't break with larger text\n   ```\n\n6. Create accessibility settings page:\n   ```typescript\n   // Font size adjustment\n   // High contrast mode\n   // Reduced motion option\n   // Screen reader optimizations\n   ```\n\n7. Implement accessibility testing in CI/CD pipeline",
+        "testStrategy": "1. Run automated accessibility tests (axe-core)\n2. Test keyboard navigation throughout the app\n3. Verify screen reader compatibility with NVDA and VoiceOver\n4. Check color contrast with WCAG Color Contrast Analyzer\n5. Test with font size increased to 200%\n6. Verify accessibility settings effectiveness\n7. Conduct manual accessibility audit\n8. Test with actual users who have disabilities",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          6,
+          7,
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Testing and Deployment",
+        "description": "Implement comprehensive testing strategy and set up deployment pipeline.",
+        "details": "1. Implement unit testing:\n   ```typescript\n   // Use Jest for unit tests\n   // Test utility functions and hooks\n   // Implement mock services for API calls\n   ```\n\n2. Implement component testing:\n   ```typescript\n   // Use React Testing Library\n   // Test component rendering and interactions\n   // Verify accessibility in component tests\n   ```\n\n3. Implement integration testing:\n   ```typescript\n   // Test feature workflows\n   // Verify component interactions\n   // Test with realistic data scenarios\n   ```\n\n4. Implement end-to-end testing:\n   ```typescript\n   // Use Cypress or Playwright\n   // Test critical user journeys\n   // Verify cross-browser compatibility\n   ```\n\n5. Set up CI/CD pipeline:\n   ```typescript\n   // Use GitHub Actions or similar\n   // Automate testing on pull requests\n   // Implement staging and production deployments\n   ```\n\n6. Configure deployment environments:\n   ```typescript\n   // Set up development, staging, and production\n   // Configure environment variables\n   // Implement feature flags\n   ```\n\n7. Create monitoring and error tracking:\n   ```typescript\n   // Integrate Sentry or similar\n   // Set up performance monitoring\n   // Implement error reporting and alerting\n   ```\n\n8. Implement analytics tracking:\n   ```typescript\n   // Track key user actions and conversions\n   // Implement A/B testing framework\n   // Set up user feedback collection\n   ```",
+        "testStrategy": "1. Verify unit test coverage meets targets\n2. Test component rendering in various states\n3. Verify integration tests cover key workflows\n4. Test end-to-end scenarios across browsers\n5. Verify CI/CD pipeline reliability\n6. Test deployment to all environments\n7. Verify monitoring and error tracking\n8. Test analytics data collection accuracy",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          19
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-11-26T11:35:12.517Z",
+      "updated": "2025-12-02T00:10:23.116Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

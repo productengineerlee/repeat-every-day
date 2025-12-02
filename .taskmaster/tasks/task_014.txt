@@ -1,0 +1,70 @@
+# Task ID: 14
+# Title: User Profile and Settings
+# Status: pending
+# Dependencies: 2, 5
+# Priority: medium
+# Description: Implement user profile management, settings, and preferences.
+# Details:
+1. Create the following components for user profile and settings:
+
+   a. ProfileHeader.tsx
+   ```typescript
+   // Display user info and profile image
+   // Edit profile button
+   // Achievement badges
+   ```
+
+   b. SettingsList.tsx
+   ```typescript
+   // List of settings categories
+   // Navigation to detailed settings
+   ```
+
+   c. PreferenceToggles.tsx
+   ```typescript
+   // Switches and selectors for user preferences
+   // Save changes automatically
+   ```
+
+   d. ThemeSelector.tsx
+   ```typescript
+   // Light/dark mode toggle
+   // Custom theme options (if unlocked)
+   ```
+
+2. Implement profile editing functionality:
+   ```typescript
+   // Change name, email, profile picture
+   // Update certification goals
+   // Adjust exam date
+   ```
+
+3. Create settings categories:
+   ```typescript
+   // Account settings
+   // Notification preferences
+   // Privacy settings
+   // Appearance settings
+   // Learning preferences
+   ```
+
+4. Implement data export and account deletion:
+   ```typescript
+   // GDPR-compliant data export
+   // Account deletion process
+   // Data retention policy
+   ```
+
+5. Create language selection (Korean/English)
+
+6. Implement accessibility settings
+
+# Test Strategy:
+1. Test profile editing and image upload
+2. Verify settings persistence across sessions
+3. Test theme switching and appearance changes
+4. Verify data export functionality
+5. Test account deletion process
+6. Verify language switching
+7. Test accessibility settings effectiveness
+8. Verify settings sync across devices

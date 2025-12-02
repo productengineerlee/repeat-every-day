@@ -1,0 +1,71 @@
+# Task ID: 19
+# Title: Question Input Admin Screen (Phase 2)
+# Status: pending
+# Dependencies: 2, 3
+# Priority: high
+# Description: Implement the admin screen for inputting questions according to PRD section 4.6. This is a Phase 2 feature for administrators to add questions to the database.
+# Details:
+1. Create the following components for question input:
+
+   a. CertificationSelector.tsx
+   ```typescript
+   // Select from 6 certifications:
+   // - 정보처리기사(필기)
+   // - 컴퓨터활용능력(필기)
+   // - 빅데이터분석기사(필기)
+   // - 경영정보시각화능력(필기)
+   // - ADsP(필기)
+   // - SQLD(필기)
+   ```
+
+   b. QuestionInputForm.tsx
+   ```typescript
+   // Form fields:
+   // - 문제 제시문 입력란 (Question statement)
+   // - 문제 서브 제시문 입력란 (Sub-statement with image upload support)
+   // - 지문 입력란 (5-choice default, 4-choice option)
+   // - 정답 입력란 (Correct answer)
+   // - 해설 입력란 (Explanation)
+   // - 레이블 입력란 (Labels for recommendation algorithm)
+   // - 난이도 입력란 (Difficulty: 상/중/하, will be auto-classified later based on user performance)
+   // - 출제빈도 입력란 (Question frequency)
+   ```
+
+   c. ImageUploader.tsx
+   ```typescript
+   // Support image upload for sub-statement
+   // Use Supabase Storage
+   // Preview and crop functionality
+   ```
+
+2. Implement form validation:
+   ```typescript
+   // Validate all required fields
+   // Validate answer format matches choice type
+   // Validate image format and size
+   ```
+
+3. Create API functions to:
+   - Save question to Supabase questions table
+   - Upload images to Supabase Storage
+   - Handle form submission with error handling
+
+4. Implement admin authentication check:
+   ```typescript
+   // Verify user has admin role
+   // Redirect non-admin users
+   ```
+
+5. Create question preview component before submission
+
+6. Implement form reset and draft save functionality
+
+# Test Strategy:
+1. Test form validation with various inputs
+2. Verify image upload functionality
+3. Test question submission to database
+4. Verify admin authentication check
+5. Test form reset and draft save
+6. Verify all 6 certification types are selectable
+7. Test both 4-choice and 5-choice question types
+8. Verify question data is correctly stored in database

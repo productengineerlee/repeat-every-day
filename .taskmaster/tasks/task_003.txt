@@ -1,0 +1,271 @@
+# Task ID: 3
+# Title: Database Schema Implementation
+# Status: done
+# Dependencies: 2
+# Priority: high
+# Description: Create and configure the required database tables in Supabase according to the schema requirements.
+# Details:
+1. Create the following tables in Supabase:
+
+   a. users
+   ```sql
+   CREATE TABLE users (
+     id UUID REFERENCES auth.users NOT NULL PRIMARY KEY,
+     name TEXT,
+     email TEXT UNIQUE NOT NULL,
+     profile_image_url TEXT,
+     certification_type TEXT,
+     target_exam_date DATE,
+     streak_count INTEGER DEFAULT 0,
+     last_streak_date DATE,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+   ```
+
+   b. questions
+   ```sql
+   CREATE TABLE questions (
+     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+     content TEXT NOT NULL,
+     options JSONB NOT NULL,
+     correct_answer TEXT NOT NULL,
+     explanation TEXT NOT NULL,
+     certification_type TEXT NOT NULL,
+     category TEXT NOT NULL,
+     difficulty INTEGER NOT NULL,
+     tags TEXT[],
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+   ```
+
+   c. diagnosis_results
+   ```sql
+   CREATE TABLE diagnosis_results (
+     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+     scores JSONB NOT NULL,
+     weak_areas TEXT[],
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+   ```
+
+   d. study_records
+   ```sql
+   CREATE TABLE study_records (
+     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+     question_id UUID REFERENCES questions(id) ON DELETE CASCADE,
+     user_answer TEXT,
+     is_correct BOOLEAN NOT NULL,
+     time_spent INTEGER,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+   ```
+
+   e. wrong_answers
+   ```sql
+   CREATE TABLE wrong_answers (
+     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+     question_id UUID REFERENCES questions(id) ON DELETE CASCADE,
+     wrong_count INTEGER DEFAULT 1,
+     last_wrong_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+     next_review_date TIMESTAMP WITH TIME ZONE,
+     graduated BOOLEAN DEFAULT FALSE,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+   ```
+
+   f. daily_sets
+   ```sql
+   CREATE TABLE daily_sets (
+     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+     question_ids UUID[] NOT NULL,
+     completed BOOLEAN DEFAULT FALSE,
+     completed_at TIMESTAMP WITH TIME ZONE,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+   ```
+
+2. Set up Row Level Security (RLS) policies for each table
+3. Create database triggers for updating timestamps
+4. Create database functions for common operations
+5. Set up database indexes for performance optimization
+
+# Test Strategy:
+1. Verify all tables are created with correct columns and constraints
+2. Test RLS policies by attempting to access data with different user roles
+3. Insert sample data and verify relationships between tables
+4. Test database triggers for automatic timestamp updates
+5. Verify database functions with sample inputs
+6. Run performance tests on indexed queries
+
+# Subtasks:
+## 1. Create Core Tables (users and questions) [done]
+### Dependencies: None
+### Description: Implement the foundational tables for the application: users and questions tables in Supabase.
+### Details:
+Execute SQL scripts to create the users table with proper auth references and the questions table with all required fields. Verify primary keys, data types, and default values are correctly set. Test the tables by inserting sample data to ensure constraints work properly.
+<info added on 2025-11-26T13:33:35.440Z>
+✅ Subtask 3.1 Completion Verification:
+
+The users table has been successfully created with:
+- UUID primary key referencing auth.users
+- Required email field with UNIQUE constraint
+- Optional fields: name, profile_image_url, certification_type, target_exam_date
+- Learning-related fields: streak_count (default 0), last_streak_date
+- Timestamps: created_at, updated_at (default NOW())
+- Foreign key constraint to auth.users with CASCADE delete
+
+The questions table has been successfully created with:
+- UUID primary key (auto-generated)
+- Required fields: content, options (JSONB), correct_answer, explanation
+- Classification fields: certification_type, category
+- Difficulty field with range check constraint (1-5)
+- Tags field as TEXT array with empty array default
+- Timestamp: created_at (default NOW())
+
+Appropriate indexes have been created:
+- On questions table: certification_type, category, difficulty, tags (GIN index)
+- On users table: email, certification_type
+
+The migration has been applied in Supabase as "create_users_and_questions_tables" with all constraints and indexes verified as working correctly.
+</info added on 2025-11-26T13:33:35.440Z>
+
+## 2. Create Relationship Tables (study_records and wrong_answers) [done]
+### Dependencies: 3.1
+### Description: Implement tables that establish relationships between users and questions: study_records and wrong_answers.
+### Details:
+Create the study_records table to track user interactions with questions, including answer correctness and time spent. Implement the wrong_answers table to manage spaced repetition for incorrectly answered questions. Ensure foreign key constraints are properly set up to reference the users and questions tables.
+<info added on 2025-11-26T13:33:55.460Z>
+✅ Completed Tasks:
+1. study_records table creation:
+   - UUID primary key (auto-generated)
+   - Foreign keys: user_id (references users, CASCADE delete)
+   - Foreign keys: question_id (references questions, CASCADE delete)
+   - Required fields: user_answer, is_correct
+   - Optional fields: time_spent (default 0)
+   - Timestamp: created_at (default NOW())
+   - UNIQUE constraint: (user_id, question_id, created_at) - allows multiple attempts at the same question
+
+2. wrong_answers table creation:
+   - UUID primary key (auto-generated)
+   - Foreign keys: user_id (references users, CASCADE delete)
+   - Foreign keys: question_id (references questions, CASCADE delete)
+   - Wrong answer tracking: wrong_count (default 1), last_wrong_date (default NOW())
+   - Review scheduling: next_review_date (for Ebbinghaus forgetting curve)
+   - Graduation status: graduated (default FALSE)
+   - Timestamps: created_at, updated_at (default NOW())
+   - UNIQUE constraint: (user_id, question_id) - one wrong answer record per user per question
+
+3. Index creation:
+   - study_records: user_id, question_id, created_at (DESC), is_correct
+   - wrong_answers: user_id, question_id, next_review_date, graduated
+
+4. Supabase migration applied:
+   - Migration name: create_study_records_and_wrong_answers_tables
+   - Tables creation verified
+   - Foreign key constraints functioning properly
+
+All requirements have been met.
+</info added on 2025-11-26T13:33:55.460Z>
+
+## 3. Create Analytics Tables (diagnosis_results and daily_sets) [done]
+### Dependencies: 3.1
+### Description: Implement tables for tracking user analytics and progress: diagnosis_results and daily_sets.
+### Details:
+Create the diagnosis_results table to store user diagnostic test outcomes with weak areas identification. Implement the daily_sets table to manage daily question assignments for users. Ensure proper JSONB structure for the scores field in diagnosis_results and array handling for question_ids in daily_sets.
+<info added on 2025-11-26T13:34:11.648Z>
+Completed tasks for Subtask 3.3:
+
+1. diagnosis_results table created with:
+   - UUID primary key (auto-generated)
+   - Foreign key: user_id (references users with CASCADE delete)
+   - scores field (JSONB) for storing category scores
+   - weak_areas field (TEXT array, default empty array)
+   - created_at timestamp (default NOW())
+
+2. daily_sets table created with:
+   - UUID primary key (auto-generated)
+   - Foreign key: user_id (references users with CASCADE delete)
+   - question_ids field (UUID array) for daily question sets
+   - completed field (default FALSE)
+   - completed_at field (nullable)
+   - created_at timestamp (default NOW())
+
+3. Indexes created:
+   - On diagnosis_results: user_id, created_at (DESC), scores (GIN), weak_areas (GIN)
+   - On daily_sets: user_id, created_at (DESC), completed, question_ids (GIN)
+
+4. Migration successfully applied in Supabase:
+   - Migration name: create_analytics_tables
+   - Tables verified
+   - JSONB and array fields confirmed working properly
+</info added on 2025-11-26T13:34:11.648Z>
+
+## 4. Implement Row Level Security (RLS) Policies [done]
+### Dependencies: 3.1, 3.2, 3.3
+### Description: Set up Row Level Security policies for all tables to ensure data access is properly restricted based on user roles and ownership.
+### Details:
+Create RLS policies for each table that restrict read/write access based on user authentication and ownership. For users table, allow users to only access their own records. For questions table, allow read-only access to all authenticated users. For relationship and analytics tables, restrict access to the user who owns the records.
+<info added on 2025-11-26T13:34:36.716Z>
+Implemented Row Level Security (RLS) policies for all database tables:
+
+1. Activated RLS on all tables:
+   - users, questions, diagnosis_results, study_records, wrong_answers, daily_sets
+   - Verified rls_enabled: true on all tables
+
+2. Created table-specific policies:
+   - users: Users can only SELECT, UPDATE, and INSERT their own profile data
+   - questions: Authenticated users have read-only access (SELECT); only service role can INSERT/UPDATE/DELETE
+   - diagnosis_results: Users can only SELECT and INSERT their own diagnostic results
+   - study_records: Users can only SELECT, INSERT, and UPDATE their own learning records
+   - wrong_answers: Users can SELECT, INSERT, UPDATE, and DELETE only their own incorrect answers
+   - daily_sets: Users can SELECT, INSERT, and UPDATE only their own daily question sets
+
+3. Successfully applied all policies through Supabase migration "enable_rls_and_create_policies"
+</info added on 2025-11-26T13:34:36.716Z>
+
+## 5. Set Up Database Triggers and Functions [done]
+### Dependencies: 3.1, 3.2, 3.3
+### Description: Create database triggers for automatic timestamp updates and implement utility functions for common database operations.
+### Details:
+Implement triggers to automatically update the updated_at timestamp when records are modified in tables with this field. Create functions for common operations like generating daily question sets, calculating streak updates, and scheduling next review dates for wrong answers based on spaced repetition algorithms.
+<info added on 2025-11-26T13:35:03.032Z>
+Completed tasks:
+
+1. Automatic timestamp update trigger function:
+   - Created update_updated_at_column() function
+   - Implemented update_users_updated_at trigger for users table
+   - Implemented update_wrong_answers_updated_at trigger for wrong_answers table
+   - Configured automatic updated_at field updates on record modifications
+
+2. Ebbinghaus forgetting curve function:
+   - Implemented calculate_next_review_date() function
+   - Configured review intervals based on wrong_count:
+     * 1 time: 1 day
+     * 2 times: 3 days
+     * 3 times: 7 days
+     * 4 times: 14 days
+     * 5+ times: 30 days
+
+3. Streak update function:
+   - Created update_user_streak() function
+   - Implemented streak calculation logic
+   - Increments streak_count when learning occurs on consecutive days
+   - Resets to 1 when streak is broken
+
+4. Daily question set generation function:
+   - Implemented get_daily_question_set() function
+   - Selects questions based on user and certification type
+   - Returns 5 questions by default (configurable via parameter)
+   - Currently uses random selection (planned future replacement with personalization algorithm)
+
+5. Applied Supabase migration:
+   - Migration name: create_triggers_and_functions
+   - Successfully verified creation of all functions and triggers
+</info added on 2025-11-26T13:35:03.032Z>
+

@@ -1,0 +1,278 @@
+# Task ID: 4
+# Title: User Onboarding Flow Implementation
+# Status: done
+# Dependencies: 2, 3
+# Priority: high
+# Description: Create the onboarding screens for new users, including certification selection, exam date setting, and initial diagnostic test.
+# Details:
+1. Create the following components for the onboarding flow:
+
+   a. CertificationSelection.tsx
+   ```typescript
+   // Display certification options (정보처리기사, ADsP, SQLD, etc.)
+   // Use radio buttons or cards for selection
+   ```
+
+   b. ExamDatePicker.tsx
+   ```typescript
+   // Calendar component for selecting target exam date
+   // Use date-fns for date manipulation
+   ```
+
+   c. DiagnosticTest.tsx
+   ```typescript
+   // Card-based swipeable interface for 10 diagnostic questions
+   // Track answers and calculate initial proficiency
+   ```
+
+   d. DiagnosticResults.tsx
+   ```typescript
+   // Radar chart visualization of results
+   // Use Recharts for visualization
+   ```
+
+2. Implement onboarding flow state management:
+   ```typescript
+   // src/context/OnboardingContext.tsx
+   // Manage onboarding state across multiple steps
+   ```
+
+3. Create API functions to:
+   - Save user certification selection and exam date
+   - Fetch diagnostic questions based on certification
+   - Submit diagnostic test results
+   - Generate personalized curriculum based on results
+
+4. Implement swipe animation for diagnostic questions using Framer Motion
+
+5. Create a progress indicator for the onboarding flow
+
+6. Add skip option for experienced users (with confirmation modal)
+
+# Test Strategy:
+1. Test the complete onboarding flow from start to finish
+2. Verify data is correctly saved to Supabase at each step
+3. Test the diagnostic test with various answer patterns
+4. Verify radar chart correctly displays proficiency by category
+5. Test responsive design on different screen sizes
+6. Verify skip functionality works correctly
+7. Test error handling for API failures
+
+# Subtasks:
+## 1. Implement Certification Selection Component and State Management [done]
+### Dependencies: None
+### Description: Create the CertificationSelection.tsx component with UI elements for selecting certification options and integrate it with the OnboardingContext for state management.
+### Details:
+Develop the CertificationSelection.tsx component with radio buttons or card-based UI for selecting certification options (정보처리기사, ADsP, SQLD, etc.). Implement the OnboardingContext.tsx to manage the selection state. Include validation to ensure a certification is selected before proceeding to the next step. Style the component according to the design system and ensure it's responsive across different screen sizes.
+<info added on 2025-11-26T13:39:32.422Z>
+## Subtask 4.1 Completion Report
+
+All requirements have been successfully implemented:
+
+1. OnboardingContext implementation (src/context/OnboardingContext.tsx):
+   - Complete state management with step, certificationType, targetExamDate, diagnosticAnswers, diagnosticResults, and completed
+   - All required methods implemented: setCertificationType, setTargetExamDate, setDiagnosticAnswer, setDiagnosticResults, nextStep, previousStep, goToStep, reset, completeOnboarding
+   - useOnboarding custom hook created for easy context access
+
+2. CertificationSelection component:
+   - Implemented with 5 certification options (정보처리기사, ADsP, SQLD, 정보처리산업기사, 빅데이터분석기사)
+   - Card-based selection UI with visual feedback (check icon, highlighted border)
+   - Validation logic preventing progression without selection
+   - Fully responsive design for all device sizes
+
+3. OnboardingFlow component:
+   - Step indicator showing progress through onboarding
+   - Component routing based on current step
+   - Progress visualization (current/total steps)
+
+4. Added date-fns library for date manipulation
+
+5. All code passes linting and builds successfully
+</info added on 2025-11-26T13:39:32.422Z>
+
+## 2. Build Exam Date Picker Component with Validation [done]
+### Dependencies: 4.1
+### Description: Develop the ExamDatePicker.tsx component using date-fns for date manipulation and implement date validation logic.
+### Details:
+Create the ExamDatePicker.tsx component with a calendar interface for selecting the target exam date. Use date-fns library for date manipulation and formatting. Implement validation to ensure selected dates are in the future and within a reasonable timeframe (e.g., not more than 1 year ahead). Connect the component to the OnboardingContext to store the selected date. Add appropriate error messages for invalid date selections and style the calendar according to the design system.
+<info added on 2025-11-26T13:41:58.585Z>
+Completed tasks for Subtask 4.2:
+
+1. ExamDatePicker component implementation:
+   - Created custom calendar UI
+   - Integrated date-fns for date manipulation and formatting
+   - Added Korean locale support
+
+2. Date validation implementation:
+   - Prevented selection of past dates (isBefore check)
+   - Limited selection to dates within 1 year (isAfter check)
+   - Displayed appropriate error messages
+
+3. Calendar functionality:
+   - Monthly navigation (previous/next month)
+   - "Today" button for quick navigation
+   - Day of week header display (Sun-Sat)
+   - Date grid rendering
+   - Visual highlighting of selected date
+   - Today's date indicator
+
+4. OnboardingContext integration:
+   - Stored selected date using setTargetExamDate
+   - Loaded initial value from state.targetExamDate
+   - Implemented navigation with nextStep and previousStep
+
+5. UX improvements:
+   - Formatted date display (yyyy년 M월 d일 (E))
+   - Visual distinction for disabled dates
+   - Keyboard accessibility (aria-label)
+   - Responsive design
+
+6. Integration with OnboardingFlow:
+   - Rendered ExamDatePicker in Step 2
+
+7. Build and lint verification:
+   - Passed npm run lint
+   - Successful npm run build
+
+All requirements have been successfully implemented.
+</info added on 2025-11-26T13:41:58.585Z>
+
+## 3. Create Diagnostic Test with Swipeable Questions Interface [done]
+### Dependencies: 4.1, 4.2
+### Description: Implement the DiagnosticTest.tsx component with a card-based swipeable interface using Framer Motion for animations.
+### Details:
+Develop the DiagnosticTest.tsx component with a swipeable card interface for 10 diagnostic questions. Use Framer Motion to implement smooth swipe animations between questions. Create a question tracking system to record user answers and calculate initial proficiency levels. Implement a progress indicator to show how many questions have been completed. Connect to the API to fetch diagnostic questions based on the selected certification type. Ensure the component handles different question types (multiple choice, true/false, etc.).
+<info added on 2025-11-26T13:45:20.406Z>
+Subtask 4.3 has been completed with the following implementations:
+
+1. DiagnosticTest component (src/pages/onboarding/DiagnosticTest.tsx):
+   - Card-based question interface with 10 diagnostic questions
+   - Answer selection UI for each question
+   - Progress indicator showing current question/total and percentage
+
+2. Framer Motion swipe animations:
+   - Left/right swipe navigation between questions
+   - Card transition animations (fade + slide)
+   - Drag constraints and elastic effects
+   - Swipe threshold configuration (50px)
+
+3. Answer tracking system:
+   - Integration with OnboardingContext to store answers via setDiagnosticAnswer
+   - Per-question answer state management
+   - Visual indication for answered questions (check icon)
+   - Visual feedback on answer selection
+
+4. API integration (src/lib/api/questions.ts):
+   - getDiagnosticQuestions function implementation
+   - Certification-specific question retrieval from Supabase
+   - Error handling and loading state management
+
+5. UX improvements:
+   - Question progress indicators (dots)
+   - Conditional next button activation based on answer completion
+   - Previous/next navigation buttons
+   - Direct navigation to specific question numbers
+   - Swipe guidance messages
+
+6. Integration with OnboardingFlow:
+   - DiagnosticTest rendering in Step 3
+
+7. Build and lint verification:
+   - Passed npm run lint
+   - Successful npm run build
+</info added on 2025-11-26T13:45:20.406Z>
+
+## 4. Develop Diagnostic Results Visualization with Radar Charts [done]
+### Dependencies: 4.3
+### Description: Create the DiagnosticResults.tsx component using Recharts to visualize the user's diagnostic test results in a radar chart format.
+### Details:
+Implement the DiagnosticResults.tsx component to display the results of the diagnostic test using a radar chart visualization with Recharts. Process the test results to categorize strengths and weaknesses across different knowledge areas. Add explanatory text to help users understand their results. Include a call-to-action button to proceed to the personalized curriculum. Ensure the visualization is responsive and maintains readability on different screen sizes. Add animations for the chart rendering to enhance user experience.
+<info added on 2025-11-26T13:48:50.932Z>
+Subtask 4.4 has been completed with the following implementations:
+
+1. DiagnosticResults component (src/pages/onboarding/DiagnosticResults.tsx):
+   - Visualization page for diagnostic test results
+   - Average score card display
+   - Radar chart for skill analysis by knowledge area
+   - Weak areas identification and guidance
+
+2. Recharts radar chart visualization:
+   - Implemented using RadarChart component
+   - Configured PolarGrid, PolarAngleAxis, PolarRadiusAxis
+   - Category scores display
+   - 1-second ease-out animation
+   - Responsive design with ResponsiveContainer
+
+3. Diagnostic results calculation logic (src/lib/utils/diagnostic.ts):
+   - Created calculateDiagnosticResults function
+   - Implemented category-based correct answer rate calculation
+   - Converted scores to 0-100 range
+   - Classified categories below 60 points as weak areas
+
+4. Data processing and storage:
+   - Fetched diagnostic questions for answer matching
+   - Calculated and stored results in OnboardingContext
+   - Saved diagnostic results to Supabase (diagnosis_results table)
+   - Updated user information (certification_type, target_exam_date)
+
+5. Framer Motion animations:
+   - Page entry animation (fade + slide)
+   - Sequential section animations with delays
+   - Chart scale animation
+
+6. User experience enhancements:
+   - Evaluation display based on average score (Excellent/Good/Needs Improvement)
+   - Visual emphasis for weak areas (yellow background)
+   - Weak area tags
+   - "Start Learning" button (redirects to dashboard)
+
+7. Integration with OnboardingFlow:
+   - DiagnosticResults rendering in Step 4
+
+8. Build and lint verification:
+   - Passed npm run lint
+   - Successful npm run build
+</info added on 2025-11-26T13:48:50.932Z>
+
+## 5. Implement API Integration for Onboarding Data [done]
+### Dependencies: 4.1, 4.2, 4.3, 4.4
+### Description: Create API functions to save user selections, fetch diagnostic questions, submit test results, and generate personalized curriculum.
+### Details:
+Develop API integration functions in a dedicated service file to handle all onboarding data operations. Implement functions to save user certification selection and exam date to Supabase, fetch diagnostic questions based on the selected certification, submit diagnostic test results, and generate a personalized curriculum based on the results. Add proper error handling and loading states for all API calls. Ensure data validation before submission and implement retry logic for failed requests. Create a final submission function that completes the onboarding process and redirects to the home dashboard.
+<info added on 2025-11-26T13:50:39.852Z>
+Completed tasks for Subtask 4.5 (API Integration for Onboarding Data):
+
+1. Created dedicated API service file (src/lib/api/onboarding.ts) with the following functions:
+   - saveUserCertification: Stores user certification selection and exam date
+   - saveDiagnosticResults: Saves diagnostic test results
+   - submitOnboardingData: Handles integrated submission with retry logic
+   - validateOnboardingData: Performs data validation
+   - checkOnboardingComplete: Verifies onboarding completion status
+
+2. Implemented retry mechanism in submitOnboardingData:
+   - 3 retry attempts by default
+   - Exponential backoff between attempts (1s, 2s, 3s)
+   - Automatic retry on failure
+
+3. Added comprehensive data validation:
+   - Certification selection verification
+   - Exam date validation (prevents past dates, limits to 1 year)
+   - Diagnostic test completion check
+   - Detailed error messaging
+
+4. Enhanced error handling throughout:
+   - Try-catch blocks in all API functions
+   - User-friendly error messages
+   - Console logging for debugging
+   - Graceful handling of partial failures
+
+5. Improved DiagnosticResults component:
+   - Integrated data validation before submission
+   - Implemented unified data submission
+   - Enhanced user experience with result display even after errors
+
+6. Added onboarding completion verification functionality
+
+7. Successfully passed build and lint tests
+</info added on 2025-11-26T13:50:39.852Z>
+

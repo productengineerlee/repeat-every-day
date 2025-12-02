@@ -1,0 +1,181 @@
+# Task ID: 1
+# Title: Project Setup and Configuration
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Initialize the project with React, TypeScript, and Vite. Set up Shadcn UI, Tailwind CSS, and other required dependencies.
+# Details:
+1. Create a new Vite project with React and TypeScript: `npm create vite@latest certiq -- --template react-ts`
+2. Install and configure Tailwind CSS: `npm install -D tailwindcss postcss autoprefixer` and initialize with `npx tailwindcss init -p`
+3. Set up Shadcn UI: `npm install shadcn-ui` and configure theme
+4. Install additional dependencies:
+   - Lucide React (v0.292.0+): `npm install lucide-react`
+   - Framer Motion (v10.16.4+): `npm install framer-motion`
+   - Recharts (v2.9.0+): `npm install recharts`
+   - React Router (v6.18.0+): `npm install react-router-dom`
+5. Configure project structure:
+   ```
+   src/
+     components/
+     pages/
+     hooks/
+     utils/
+     types/
+     assets/
+     styles/
+     context/
+   ```
+6. Set up ESLint and Prettier for code quality
+7. Create basic theme configuration with Tailwind CSS variables for consistent styling
+
+# Test Strategy:
+1. Verify all dependencies are installed correctly
+2. Ensure the development server starts without errors: `npm run dev`
+3. Confirm hot module replacement (HMR) is working
+4. Validate TypeScript configuration
+5. Test basic component rendering with Shadcn UI
+
+# Subtasks:
+## 1. Initial Vite Project Creation with React and TypeScript [done]
+### Dependencies: None
+### Description: Set up the base project using Vite with React and TypeScript template, and configure essential development tools.
+### Details:
+1. Create a new Vite project with React and TypeScript using the command: `npm create vite@latest certiq -- --template react-ts`
+2. Navigate to the project directory: `cd certiq`
+3. Install base dependencies: `npm install`
+4. Set up ESLint and Prettier for code quality:
+   - Install: `npm install -D eslint prettier eslint-config-prettier eslint-plugin-react eslint-plugin-react-hooks @typescript-eslint/eslint-plugin @typescript-eslint/parser`
+   - Create configuration files (.eslintrc.js, .prettierrc)
+5. Test the development server: `npm run dev`
+6. Create a basic .gitignore file for the project
+<info added on 2025-11-26T11:49:03.613Z>
+✅ Completed Tasks:
+1. Verified existing Vite project with React + TypeScript template
+2. Completed Prettier installation and configuration:
+   - Installed prettier and eslint-config-prettier packages
+   - Created .prettierrc file with Korean project-specific settings
+   - Added format script to package.json
+3. Updated ESLint configuration:
+   - Integrated prettierConfig in eslint.config.js
+   - Configured to prevent ESLint and Prettier conflicts
+4. Tested development server:
+   - Confirmed server runs with npm run dev command
+   - Verified Hot Module Replacement (HMR) functionality
+5. Verified TypeScript configuration:
+   - Confirmed tsconfig.json and tsconfig.app.json are working properly
+   - Verified path alias (@/*) configuration
+6. Confirmed .gitignore file is properly set up
+
+All requirements have been met.
+</info added on 2025-11-26T11:49:03.613Z>
+
+## 2. UI Framework Setup with Tailwind CSS and Shadcn UI [done]
+### Dependencies: 1.1
+### Description: Install and configure Tailwind CSS and Shadcn UI for consistent styling and component library integration.
+### Details:
+1. Install Tailwind CSS and its dependencies: `npm install -D tailwindcss postcss autoprefixer`
+2. Initialize Tailwind configuration: `npx tailwindcss init -p`
+3. Configure Tailwind CSS in tailwind.config.js to include proper content paths
+4. Set up Shadcn UI: `npm install shadcn-ui`
+5. Configure Shadcn UI theme settings
+6. Create basic theme configuration with Tailwind CSS variables in a globals.css file
+7. Update the main CSS file to include Tailwind directives (@tailwind base, components, utilities)
+8. Create a sample component to test the UI framework integration
+<info added on 2025-11-26T12:54:07.163Z>
+✅ Completed Tasks:
+1. Tailwind CSS Setup Verification:
+   - Tailwind CSS v4 was already installed (@tailwindcss/vite plugin used)
+   - Verified Tailwind plugin integration in Vite configuration
+   - Confirmed @import "tailwindcss" in index.css
+
+2. Shadcn UI Setup Completion:
+   - Verified components.json file configuration
+   - Added Shadcn UI button component (npx shadcn@latest add button)
+   - Components successfully generated in src/components/ui/ directory
+
+3. Theme Configuration Verification:
+   - Completed CSS variable-based theme setup in index.css
+   - Confirmed light/dark mode support
+   - All Shadcn UI standard theme variables properly configured
+
+4. Sample Component Testing:
+   - Added Shadcn UI button component to App.tsx
+   - Tested various button variants (default, secondary, outline, ghost)
+   - Confirmed proper functioning of Tailwind CSS classes
+
+5. Build and Lint Testing:
+   - Successful npm run build (build time: 1.87 seconds)
+   - Passed npm run lint
+   - No TypeScript compilation errors
+
+All requirements have been met.
+</info added on 2025-11-26T12:54:07.163Z>
+
+## 3. Project Structure Organization and Additional Dependencies [done]
+### Dependencies: 1.1, 1.2
+### Description: Set up the project folder structure and install remaining dependencies required for the application.
+### Details:
+1. Create the recommended project structure:
+   ```
+   src/
+     components/
+     pages/
+     hooks/
+     utils/
+     types/
+     assets/
+     styles/
+     context/
+   ```
+2. Install additional dependencies:
+   - Lucide React: `npm install lucide-react`
+   - Framer Motion: `npm install framer-motion`
+   - Recharts: `npm install recharts`
+   - React Router: `npm install react-router-dom`
+3. Create basic index files in each directory to maintain structure
+4. Set up a basic routing configuration with React Router
+5. Create type definition files for common interfaces
+6. Configure import aliases in tsconfig.json for cleaner imports
+<info added on 2025-11-26T13:00:20.806Z>
+✅ Completed Tasks:
+1. Project folder structure creation:
+   - src/pages/ folder created with Home.tsx, TestLibraries.tsx
+   - src/hooks/ folder created with index.ts
+   - src/types/ folder created with index.ts containing common type definitions
+   - src/styles/ folder created
+   - src/context/ folder created with index.ts
+   - src/components/ folder with index.ts added
+
+2. Additional libraries installation completed:
+   - Framer Motion: installed and animation tests successful
+   - Recharts: installed and chart component tests successful
+   - React Router: installed and routing configuration completed
+   - Lucide React: already installed and icon tests successful
+
+3. Basic routing configuration:
+   - BrowserRouter added to main.tsx
+   - Routes and Route configured in App.tsx
+   - Navigation bar added (Home, Library Test pages)
+   - Routing functionality verified
+
+4. Type definition files created:
+   - Common type definitions added to src/types/index.ts
+   - User, Question, StudyRecord, WrongAnswer, DailySet, DiagnosisResult types defined
+
+5. Import alias configuration:
+   - @/* path alias already configured in tsconfig.json
+   - Alias functionality verified across all components
+
+6. Library testing:
+   - TestLibraries.tsx page created to test all libraries
+   - Framer Motion animations verified
+   - Recharts chart rendering verified
+   - React Router navigation verified
+   - Lucide React icons display verified
+
+7. Build and lint testing:
+   - npm run build successful (build time: 11.30 seconds)
+   - npm run lint passed
+   - No TypeScript compilation errors
+</info added on 2025-11-26T13:00:20.806Z>
+

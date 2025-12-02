@@ -1,0 +1,156 @@
+# Task ID: 7
+# Title: Explanation and AI Tutor System
+# Status: done
+# Dependencies: 6
+# Priority: medium
+# Description: Implement the explanation card with AI-powered concept explanations for difficult terms.
+# Details:
+1. Create the following components for the explanation system:
+
+   a. ExplanationBottomSheet.tsx
+   ```typescript
+   // Bottom sheet that slides up after answering
+   // Display original explanation text
+   // Highlight difficult terms with dotted underline
+   ```
+
+   b. AITutorPopup.tsx
+   ```typescript
+   // Popup that appears when clicking highlighted terms
+   // Display AI character icon
+   // Show simplified explanation with analogies
+   ```
+
+   c. FeedbackButtons.tsx
+   ```typescript
+   // Thumbs up/down buttons for AI explanations
+   // Handle feedback submission
+   ```
+
+2. Create Supabase Edge Function for AI explanations:
+   ```typescript
+   // Connect to OpenAI API or similar
+   // Generate simplified explanations with analogies
+   // Cache common explanations for performance
+   ```
+
+3. Implement term highlighting logic:
+   ```typescript
+   // Identify difficult terms in explanation text
+   // Apply dotted underline styling
+   // Make terms clickable
+   ```
+
+4. Create animation for bottom sheet and popup using Framer Motion
+
+5. Implement feedback collection and improvement system for AI explanations
+
+6. Add offline support with cached explanations for common terms
+
+# Test Strategy:
+1. Test bottom sheet sliding animation
+2. Verify term highlighting and click detection
+3. Test AI explanation generation with various terms
+4. Verify feedback submission and storage
+5. Test popup positioning and animation
+6. Verify offline functionality with cached explanations
+7. Test edge cases with very long explanations
+8. Verify accessibility for screen readers
+
+# Subtasks:
+## 1. Implement ExplanationBottomSheet Component [done]
+### Dependencies: None
+### Description: Create the bottom sheet component that slides up after answering questions and displays the explanation text with highlighted difficult terms.
+### Details:
+Create ExplanationBottomSheet.tsx with slide-up animation using Framer Motion. Implement the layout to display explanation text. Add styling for the component including proper padding, background, and shadow. Ensure the component is responsive and works well on different screen sizes. Include close/dismiss functionality.
+<info added on 2025-11-26T14:18:46.650Z>
+Subtask 7.1 has been completed with the following implementations:
+
+1. ExplanationBottomSheet component created with:
+   - Slide-up animation using Framer Motion
+   - Explanation text display functionality
+   - Close button and ESC key support
+   - Background click dismissal
+   - Responsive design (maximum height 80vh)
+
+2. Term highlighting functionality implemented:
+   - Created termHighlighting.ts utility functions
+   - Defined database of 100+ difficult terms
+   - Developed HighlightedText component
+   - Applied dotted underline styling for terms
+   - Implemented clickable term interaction
+   - Added keyboard accessibility (Enter/Space keys)
+
+3. Animation features:
+   - Bottom sheet slide up/down animations
+   - Background overlay fade animations
+   - Spring animation effects
+
+4. Accessibility features:
+   - Added aria-labels
+   - Implemented keyboard navigation
+   - Set appropriate role attributes
+
+All requirements have been met, with successful lint and build tests.
+</info added on 2025-11-26T14:18:46.650Z>
+
+## 2. Develop Term Highlighting and Detection Logic [done]
+### Dependencies: 7.1
+### Description: Implement the logic to identify difficult terms in explanation text and apply dotted underline styling to make them clickable.
+### Details:
+Create a utility function to parse explanation text and identify complex terms. Implement text processing to wrap identified terms in special components with dotted underline styling. Add click handlers to these terms. Create a dictionary or algorithm to determine which terms should be highlighted. Ensure the highlighting doesn't break text layout.
+
+## 3. Create AITutorPopup Component with Animations [done]
+### Dependencies: 7.2
+### Description: Develop the popup component that appears when clicking highlighted terms, displaying the AI character icon and simplified explanations with analogies.
+### Details:
+Create AITutorPopup.tsx with proper positioning logic to appear near the clicked term. Implement smooth appear/disappear animations using Framer Motion. Design the popup UI with AI character icon and explanation text area. Add close button and click-outside-to-close functionality. Ensure the popup doesn't get cut off at screen edges.
+<info added on 2025-11-26T14:20:54.346Z>
+Completed tasks:
+1. AITutorPopup component creation (src/components/learning/AITutorPopup.tsx):
+   - Positioned near clicked terms
+   - AI character icon (Sparkles icon)
+   - Explanation display
+   - Auto-positioning to stay within screen bounds
+   - Multiple closing methods (button, ESC key, background click)
+
+2. Framer Motion animations:
+   - Popup entry/exit animations (scale + fade)
+   - Background overlay fade animation
+   - Spring animation implementation
+
+3. FeedbackButtons component (src/components/learning/FeedbackButtons.tsx):
+   - Like/dislike buttons
+   - Feedback submission logic
+   - Visual feedback for selected buttons
+
+4. API integration (src/lib/api/aiTutor.ts):
+   - getAIExplanation function (temporary explanation data)
+   - submitAIExplanationFeedback function
+   - Prepared for Edge Function integration
+
+5. HighlightedText component improvements:
+   - Term position information on click
+   - Precise positioning with getBoundingClientRect
+
+6. Accessibility features:
+   - Proper ARIA attributes (role="dialog", aria-label, etc.)
+   - Keyboard accessibility
+
+7. Build and lint verification:
+   - Passed npm run lint
+   - Successful npm run build
+</info added on 2025-11-26T14:20:54.346Z>
+
+## 4. Implement Supabase Edge Function for AI Explanations [done]
+### Dependencies: 7.2
+### Description: Create a Supabase Edge Function that connects to OpenAI API or similar to generate simplified explanations with analogies for difficult terms.
+### Details:
+Set up Supabase Edge Function with proper authentication. Implement API connection to OpenAI or similar AI service. Create prompt engineering for generating simplified explanations with analogies. Implement caching mechanism for common explanations to improve performance. Add error handling and fallback explanations for API failures.
+
+## 5. Create Feedback System for AI Explanations [done]
+### Dependencies: 7.3, 7.4
+### Description: Implement the feedback collection system with thumbs up/down buttons and a mechanism to improve AI explanations based on user feedback.
+### Details:
+Create FeedbackButtons.tsx component with thumbs up/down UI. Implement feedback submission logic to store user ratings. Create a database schema for storing feedback data. Implement analytics to track explanation effectiveness. Design a system to use collected feedback for improving future explanations. Add offline support to queue feedback when offline.
+
