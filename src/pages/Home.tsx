@@ -387,7 +387,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
       {/* 진단 테스트 섹션 */}
-      <section className="container mx-auto px-4 py-12">
+      <section className="container mx-auto px-4 py-20 md:py-32">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
