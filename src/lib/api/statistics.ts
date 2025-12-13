@@ -44,11 +44,15 @@ export async function getDailyActivity(
       throw error
     }
 
-    // 날짜별로 집계
+    // 날짜별로 집계 (한국 시간대 기준)
     const activityMap: Record<string, { count: number; correctCount: number }> = {}
 
     records?.forEach((record) => {
-      const date = new Date(record.created_at).toISOString().split('T')[0]
+      // UTC 시간을 한국 시간(UTC+9)으로 변환
+      const utcDate = new Date(record.created_at)
+      const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000)
+      const date = kstDate.toISOString().split('T')[0]
+      
       if (!activityMap[date]) {
         activityMap[date] = { count: 0, correctCount: 0 }
       }
@@ -212,11 +216,15 @@ export async function getAccuracyTrend(
       throw error
     }
 
-    // 날짜별로 집계
+    // 날짜별로 집계 (한국 시간대 기준)
     const trendMap: Record<string, { count: number; correctCount: number }> = {}
 
     records?.forEach((record) => {
-      const date = new Date(record.created_at).toISOString().split('T')[0]
+      // UTC 시간을 한국 시간(UTC+9)으로 변환
+      const utcDate = new Date(record.created_at)
+      const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000)
+      const date = kstDate.toISOString().split('T')[0]
+      
       if (!trendMap[date]) {
         trendMap[date] = { count: 0, correctCount: 0 }
       }

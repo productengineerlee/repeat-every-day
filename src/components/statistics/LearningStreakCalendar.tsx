@@ -20,7 +20,6 @@ export default function LearningStreakCalendar() {
   const [activityData, setActivityData] = useState<DailyActivity[]>([])
   const [streakData, setStreakData] = useState<StreakData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [hoveredDate, setHoveredDate] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,7 +44,7 @@ export default function LearningStreakCalendar() {
     }
 
     fetchData()
-  }, [user])
+  }, [user, currentMonth]) // currentMonth를 의존성에 추가하여 월 변경 시 데이터 새로고침
 
   // 활동 맵 생성
   const activityMap = useMemo(() => {
@@ -87,13 +86,13 @@ export default function LearningStreakCalendar() {
     })
   }, [currentMonth, activityMap])
 
-  // 색상 강도 계산
+  // 색상 강도 계산 (더 연한 색상으로 가독성 향상)
   const getIntensityColor = (count: number): string => {
     if (count === 0) return 'bg-muted'
-    if (count >= 10) return 'bg-green-600 dark:bg-green-500'
-    if (count >= 5) return 'bg-green-500 dark:bg-green-600'
-    if (count >= 3) return 'bg-green-400 dark:bg-green-700'
-    if (count >= 1) return 'bg-green-300 dark:bg-green-800'
+    if (count >= 10) return 'bg-green-200 dark:bg-green-800/40'
+    if (count >= 5) return 'bg-green-100 dark:bg-green-800/30'
+    if (count >= 3) return 'bg-green-50 dark:bg-green-800/20'
+    if (count >= 1) return 'bg-green-50/50 dark:bg-green-800/10'
     return 'bg-muted'
   }
 
@@ -231,8 +230,8 @@ export default function LearningStreakCalendar() {
           {calendarDays.map((day, index) => {
             const dateStr = format(day.date, 'yyyy-MM-dd')
             const isStreakDay = streakDates.has(dateStr)
-            const isHovered = hoveredDate === dateStr
             const intensity = day.activity?.count || 0
+            const hasActivity = intensity > 0
 
             return (
               <motion.div
@@ -240,40 +239,41 @@ export default function LearningStreakCalendar() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: index * 0.01 }}
-                className={`relative aspect-square rounded-md transition-all cursor-pointer ${
+                className={`relative h-20 rounded-md transition-all flex flex-col items-center justify-center p-1 ${
                   !day.isInCurrentMonth
                     ? 'opacity-30'
-                    : isHovered
-                    ? 'ring-2 ring-primary scale-110 z-10'
                     : ''
                 } ${getIntensityColor(intensity)} ${
                   day.isToday ? 'ring-2 ring-primary' : ''
                 } ${isStreakDay ? 'ring-2 ring-orange-500 dark:ring-orange-400' : ''}`}
-                onMouseEnter={() => setHoveredDate(dateStr)}
-                onMouseLeave={() => setHoveredDate(null)}
-                title={
-                  day.activity
-                    ? `${format(day.date, 'yyyy년 M월 d일')}: ${day.activity.count}문제 (정답률: ${day.activity.accuracy}%)`
-                    : format(day.date, 'yyyy년 M월 d일')
-                }
               >
-                {/* 툴팁 */}
-                {isHovered && day.activity && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-popover border rounded-lg shadow-lg text-sm whitespace-nowrap z-20">
-                    <div className="font-semibold">
-                      {format(day.date, 'yyyy년 M월 d일')}
-                    </div>
-                    <div className="text-muted-foreground">
-                      {day.activity.count}문제 풀이
-                    </div>
-                    <div className="text-muted-foreground">
-                      정답률: {day.activity.accuracy}%
-                    </div>
-                    {isStreakDay && (
-                      <div className="text-orange-600 dark:text-orange-400 font-medium mt-1">
-                        🔥 연속 학습 중
-                      </div>
-                    )}
+                {/* 날짜 (숫자만, bold) */}
+                <div className={`text-sm font-bold mb-1 ${
+                  hasActivity ? 'text-foreground' : 'text-muted-foreground'
+                }`}>
+                  {format(day.date, 'd')}
+                </div>
+                
+                {/* 학습 여부 아이콘 */}
+                <div className="text-lg mb-0.5">
+                  {hasActivity ? (
+                    <span className="text-green-600 dark:text-green-400">○</span>
+                  ) : (
+                    <span className="text-muted-foreground/40">✕</span>
+                  )}
+                </div>
+                
+                {/* 학습 정보 (간결한 형식) */}
+                {day.activity && day.activity.count > 0 && (
+                  <div className="text-xs font-medium text-foreground">
+                    {day.activity.correctCount}/{day.activity.count}({day.activity.accuracy}%)
+                  </div>
+                )}
+                
+                {/* 스트릭 아이콘 */}
+                {isStreakDay && (
+                  <div className="absolute top-0.5 right-0.5">
+                    <Flame className="h-3 w-3 text-orange-500" />
                   </div>
                 )}
               </motion.div>
@@ -290,19 +290,19 @@ export default function LearningStreakCalendar() {
           <span>없음</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-green-300 dark:bg-green-800" />
+          <div className="w-3 h-3 rounded bg-green-50/50 dark:bg-green-800/10" />
           <span>1-2문제</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-green-400 dark:bg-green-700" />
+          <div className="w-3 h-3 rounded bg-green-50 dark:bg-green-800/20" />
           <span>3-4문제</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-green-500 dark:bg-green-600" />
+          <div className="w-3 h-3 rounded bg-green-100 dark:bg-green-800/30" />
           <span>5-9문제</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-green-600 dark:bg-green-500" />
+          <div className="w-3 h-3 rounded bg-green-200 dark:bg-green-800/40" />
           <span>10문제+</span>
         </div>
       </div>
