@@ -8,7 +8,17 @@ import { getDailyQuestionSet, getExamQuestionSet } from '@/lib/api/questions'
 import { supabase } from '@/lib/supabaseClient'
 import { BookOpen, Clock, Play, CheckCircle } from 'lucide-react'
 
-type CertificationType = '빅데이터분석기사' | 'ADsP' | '기출문제-빅데이터분석기사' | '기출문제-ADsP'
+// 모든 지원되는 자격증 타입
+type CertificationType = 
+  | '정보처리기사' 
+  | '컴퓨터활용능력' 
+  | '빅데이터분석기사' 
+  | '경영정보시각화능력' 
+  | 'ADsP' 
+  | 'SQLD' 
+  | '사회조사분석사' 
+  | 'TESAT' 
+  | '공인중개사'
 
 export default function DailyQuestionCard() {
   const { user } = useAuth()
@@ -17,12 +27,7 @@ export default function DailyQuestionCard() {
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
   const [selectedCertification, setSelectedCertification] = useState<CertificationType | null>(null)
-  const [dailyQuestionCounts, setDailyQuestionCounts] = useState<Record<string, number | null>>({
-    '빅데이터분석기사': null,
-    'ADsP': null,
-    '기출문제-빅데이터분석기사': null,
-    '기출문제-ADsP': null,
-  })
+  const [dailyQuestionCounts, setDailyQuestionCounts] = useState<Record<string, number | null>>({})
 
   // 자격증별 문제 수 가져오기 (null이면 0 반환하여 문제를 불러오지 않음)
   const getQuestionCountForCertification = useCallback((certificationType: CertificationType): number => {
@@ -127,21 +132,11 @@ export default function DailyQuestionCard() {
       
       // 일일 문제 수 설정 (JSONB 형식 또는 INTEGER 형식 지원)
       const counts = userData?.daily_question_count
-      let updatedCounts: Record<string, number | null> = {
-        '빅데이터분석기사': null,
-        'ADsP': null,
-        '기출문제-빅데이터분석기사': null,
-        '기출문제-ADsP': null,
-      }
+      let updatedCounts: Record<string, number | null> = {}
       
       if (typeof counts === 'object' && counts !== null) {
-        // JSONB 형식
-        updatedCounts = {
-          '빅데이터분석기사': (counts as any)['빅데이터분석기사'] || null,
-          'ADsP': (counts as any)['ADsP'] || null,
-          '기출문제-빅데이터분석기사': (counts as any)['기출문제-빅데이터분석기사'] || null,
-          '기출문제-ADsP': (counts as any)['기출문제-ADsP'] || null,
-        }
+        // JSONB 형식 - DB에서 가져온 값을 그대로 사용
+        updatedCounts = { ...counts }
       }
       
       setDailyQuestionCounts(updatedCounts)
@@ -256,21 +251,11 @@ export default function DailyQuestionCard() {
         // 일일 문제 수 설정 (JSONB 형식 또는 INTEGER 형식 지원)
         const counts = userData?.daily_question_count
         if (typeof counts === 'object' && counts !== null) {
-          // JSONB 형식
-          setDailyQuestionCounts({
-            '빅데이터분석기사': (counts as any)['빅데이터분석기사'] || null,
-            'ADsP': (counts as any)['ADsP'] || null,
-            '기출문제-빅데이터분석기사': (counts as any)['기출문제-빅데이터분석기사'] || null,
-            '기출문제-ADsP': (counts as any)['기출문제-ADsP'] || null,
-          })
+          // JSONB 형식 - DB에서 가져온 값을 그대로 사용
+          setDailyQuestionCounts({ ...counts })
         } else {
-          // INTEGER 형식이거나 없으면 null로 초기화
-          setDailyQuestionCounts({
-            '빅데이터분석기사': null,
-            'ADsP': null,
-            '기출문제-빅데이터분석기사': null,
-            '기출문제-ADsP': null,
-          })
+          // INTEGER 형식이거나 없으면 빈 객체로 초기화
+          setDailyQuestionCounts({})
         }
         
         console.log(`🔄 오늘의 일일 세트 가져오기 시작: userId=${user.id}`)

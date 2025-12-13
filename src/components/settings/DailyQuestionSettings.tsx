@@ -10,30 +10,36 @@ import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
 import { BookOpen, Loader2 } from 'lucide-react'
 
-type CertificationType = '빅데이터분석기사' | 'ADsP' | '기출문제-빅데이터분석기사' | '기출문제-ADsP'
+type CertificationType = 
+  | '정보처리기사' 
+  | '컴퓨터활용능력' 
+  | '빅데이터분석기사' 
+  | '경영정보시각화능력' 
+  | 'ADsP' 
+  | 'SQLD' 
+  | '사회조사분석사' 
+  | 'TESAT' 
+  | '공인중개사'
 
 interface DailyQuestionCounts {
-  '빅데이터분석기사': number | null
-  'ADsP': number | null
-  '기출문제-빅데이터분석기사': number | null
-  '기출문제-ADsP': number | null
+  [key: string]: number | null
 }
 
 const CERTIFICATIONS: { type: CertificationType; label: string }[] = [
+  { type: '정보처리기사', label: '정보처리기사' },
+  { type: '컴퓨터활용능력', label: '컴퓨터활용능력' },
   { type: '빅데이터분석기사', label: '빅데이터분석기사' },
+  { type: '경영정보시각화능력', label: '경영정보시각화능력' },
   { type: 'ADsP', label: 'ADsP' },
-  { type: '기출문제-빅데이터분석기사', label: '기출문제 - 빅데이터분석기사' },
-  { type: '기출문제-ADsP', label: '기출문제 - ADsP' },
+  { type: 'SQLD', label: 'SQLD' },
+  { type: '사회조사분석사', label: '사회조사분석사' },
+  { type: 'TESAT', label: 'TESAT' },
+  { type: '공인중개사', label: '공인중개사' },
 ]
 
 export default function DailyQuestionSettings() {
   const { user } = useAuth()
-  const [questionCounts, setQuestionCounts] = useState<DailyQuestionCounts>({
-    '빅데이터분석기사': null,
-    'ADsP': null,
-    '기출문제-빅데이터분석기사': null,
-    '기출문제-ADsP': null,
-  })
+  const [questionCounts, setQuestionCounts] = useState<DailyQuestionCounts>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -59,64 +65,31 @@ export default function DailyQuestionSettings() {
 
       if (fetchError) {
         console.error('Error loading daily question settings:', fetchError)
-        // 컬럼이 없을 수 있으므로 기본값 사용 (null)
+        // 컬럼이 없을 수 있으므로 기본값 사용
         // 에러 코드 42703은 컬럼이 없음을 의미
         if (fetchError.code === '42703' || fetchError.message?.includes('column') || fetchError.message?.includes('컬럼')) {
           // 컬럼이 없는 경우 조용히 처리 (에러 메시지 표시 안 함)
-          setQuestionCounts({
-            '빅데이터분석기사': null,
-            'ADsP': null,
-            '기출문제-빅데이터분석기사': null,
-            '기출문제-ADsP': null,
-          })
+          setQuestionCounts({})
         } else {
           // 다른 에러인 경우에만 에러 메시지 표시
           setError('설정을 불러오는데 실패했습니다.')
-          setQuestionCounts({
-            '빅데이터분석기사': null,
-            'ADsP': null,
-            '기출문제-빅데이터분석기사': null,
-            '기출문제-ADsP': null,
-          })
+          setQuestionCounts({})
         }
       } else {
-        // JSONB 형식이면 그대로 사용, INTEGER 형식이면 변환
+        // JSONB 형식이면 그대로 사용
         const counts = data?.daily_question_count
         if (typeof counts === 'object' && counts !== null) {
-          // JSONB 형식
-          setQuestionCounts({
-            '빅데이터분석기사': (counts as any)['빅데이터분석기사'] || null,
-            'ADsP': (counts as any)['ADsP'] || null,
-            '기출문제-빅데이터분석기사': (counts as any)['기출문제-빅데이터분석기사'] || null,
-            '기출문제-ADsP': (counts as any)['기출문제-ADsP'] || null,
-          })
-        } else if (typeof counts === 'number') {
-          // 기존 INTEGER 형식 (마이그레이션 전) - null로 초기화
-          setQuestionCounts({
-            '빅데이터분석기사': null,
-            'ADsP': null,
-            '기출문제-빅데이터분석기사': null,
-            '기출문제-ADsP': null,
-          })
+          // JSONB 형식 - DB에서 가져온 값을 그대로 사용
+          setQuestionCounts({ ...counts })
         } else {
-          // 기본값 (null)
-          setQuestionCounts({
-            '빅데이터분석기사': null,
-            'ADsP': null,
-            '기출문제-빅데이터분석기사': null,
-            '기출문제-ADsP': null,
-          })
+          // INTEGER 형식이거나 없으면 빈 객체로 초기화
+          setQuestionCounts({})
         }
       }
     } catch (err) {
       console.error('Error loading settings:', err)
       setError('설정을 불러오는데 실패했습니다.')
-      setQuestionCounts({
-        '빅데이터분석기사': null,
-        'ADsP': null,
-        '기출문제-빅데이터분석기사': null,
-        '기출문제-ADsP': null,
-      })
+      setQuestionCounts({})
     } finally {
       setLoading(false)
     }

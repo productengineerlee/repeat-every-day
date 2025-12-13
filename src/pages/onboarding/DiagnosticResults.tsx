@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -8,6 +8,7 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   ResponsiveContainer,
+  Tooltip,
 } from 'recharts'
 import { useOnboarding } from '@/context'
 import { useAuth } from '@/context'
@@ -15,10 +16,10 @@ import { Button } from '@/components/ui/button'
 import { calculateDiagnosticResults } from '@/lib/utils/diagnostic'
 import { getDiagnosticQuestions } from '@/lib/api/questions'
 import { submitOnboardingData, validateOnboardingData } from '@/lib/api/onboarding'
-import { CheckCircle, TrendingUp, AlertCircle } from 'lucide-react'
+import { CheckCircle, TrendingUp, AlertCircle, RotateCcw } from 'lucide-react'
 
 export default function DiagnosticResults() {
-  const { state, setDiagnosticResults, completeOnboarding } = useOnboarding()
+  const { state, setDiagnosticResults, completeOnboarding, reset, nextStep } = useOnboarding()
   const { user } = useAuth()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
@@ -26,17 +27,46 @@ export default function DiagnosticResults() {
   const [results, setResults] = useState<{
     scores: Record<string, number>
     weakAreas: string[]
+    totalScore?: number
+    totalQuestions?: number
+    subjectGroups?: Record<string, {
+      subjectName: string
+      subjectNumber: number
+      topics: Array<{ 
+        topicName: string
+        categoryCode: string
+        correct: number
+        total: number
+        percentage: number
+      }>
+      totalCorrect: number
+      totalQuestions: number
+    }>
+    categoryDetails?: Record<string, { correct: number; total: number; name: string }>
   } | null>(null)
-  const [chartData, setChartData] = useState<Array<{ category: string; score: number }>>([])
+  const [chartData, setChartData] = useState<Array<{ 
+    id: string
+    category: string
+    score: number 
+  }>>([])
 
   // 처리 완료 플래그로 무한 루프 방지
   const [processed, setProcessed] = useState(false)
 
+  const handleRetakeDiagnostic = () => {
+    // localStorage 플래그 초기화 (재진단 허용)
+    localStorage.removeItem('diagnostic_completed')
+    localStorage.removeItem('diagnostic_certification')
+    
+    reset() // 온보딩 상태 초기화
+    navigate('/onboarding')
+  }
+
   useEffect(() => {
     // 이미 처리했거나 필수 정보가 없으면 스킵
-    if (processed || !state.certificationType || !user || !state.targetExamDate) {
-      if (!state.certificationType || !user || !state.targetExamDate) {
-        setError('필수 정보가 누락되었습니다.')
+    if (processed || !state.certificationType) {
+      if (!state.certificationType) {
+        setError('자격증이 선택되지 않았습니다.')
         setLoading(false)
       }
       return
@@ -47,10 +77,10 @@ export default function DiagnosticResults() {
         setLoading(true)
         setProcessed(true) // 처리 시작 표시
 
-        // 데이터 검증
+        // 데이터 검증 (targetExamDate는 선택 사항)
         const validation = validateOnboardingData({
           certificationType: state.certificationType,
-          targetExamDate: state.targetExamDate,
+          targetExamDate: state.targetExamDate || undefined,
           diagnosticAnswers: state.diagnosticAnswers,
         })
 
@@ -61,7 +91,9 @@ export default function DiagnosticResults() {
         }
 
         // 진단 문제 다시 가져오기 (답안과 매칭하기 위해)
+        console.log('🔄 진단 문제 다시 가져오는 중...')
         const questions = await getDiagnosticQuestions(state.certificationType, 10)
+        console.log('📦 가져온 문제 수:', questions.length)
 
         if (questions.length === 0) {
           setError('진단 문제를 찾을 수 없습니다.')
@@ -69,42 +101,66 @@ export default function DiagnosticResults() {
           return
         }
 
+        console.log('📝 사용자 답안:', state.diagnosticAnswers)
+        console.log('📝 답안 개수:', Object.keys(state.diagnosticAnswers).length)
+
         // 결과 계산
+        console.log('🧮 결과 계산 시작...')
         const calculatedResults = calculateDiagnosticResults(
           questions,
           state.diagnosticAnswers
         )
+        console.log('📊 계산된 결과:', calculatedResults)
 
         setResults(calculatedResults)
         // setDiagnosticResults는 한 번만 호출 (무한 루프 방지)
         setDiagnosticResults(calculatedResults)
+        
+        // 진단 완료 표시 저장 (로그인 유도용)
+        localStorage.setItem('diagnostic_completed', 'true')
+        localStorage.setItem('diagnostic_certification', state.certificationType)
 
-        // 차트 데이터 형식으로 변환
-        const chartDataArray = Object.entries(calculatedResults.scores).map(
-          ([category, score]) => ({
-            category,
-            score,
+        // 차트 데이터 형식으로 변환 (0-100 범위의 퍼센트)
+        const chartDataArray = Object.entries(calculatedResults.categoryDetails || {})
+          .filter(([_, details]) => details && details.total > 0) // 유효한 데이터만 필터링
+          .map(([categoryCode, details]) => {
+            const percentage = (details.correct / details.total) * 100
+            return {
+              id: categoryCode, // 고유 ID로 원본 카테고리 코드 사용
+              category: details.name, // 표시용 카테고리 이름
+              score: Math.round(percentage),
+            }
           })
-        )
+        
+        console.log('📊 차트 데이터:', chartDataArray)
         setChartData(chartDataArray)
 
-        // 온보딩 데이터 제출 (재시도 로직 포함)
-        // 에러가 발생해도 결과는 표시 (사용자가 결과를 볼 수 있도록)
-        try {
-          const submitResult = await submitOnboardingData(user.id, {
-            certificationType: state.certificationType,
-            targetExamDate: state.targetExamDate,
-            diagnosticAnswers: state.diagnosticAnswers,
-          })
+        // 로그인한 사용자만 온보딩 데이터 제출 (재시도 로직 포함)
+        // 로그인하지 않은 사용자는 결과만 확인하고 저장하지 않음
+        if (user) {
+          try {
+            const submitResult = await submitOnboardingData(user.id, {
+              certificationType: state.certificationType,
+              targetExamDate: state.targetExamDate || undefined,
+              diagnosticAnswers: state.diagnosticAnswers,
+            })
 
-          if (!submitResult.success) {
-            console.warn('⚠️ 온보딩 데이터 저장 실패:', submitResult.error)
-            // 에러가 발생해도 결과는 표시 (사용자가 결과를 볼 수 있도록)
-            // setError는 호출하지 않음 (결과는 표시되어야 함)
+            if (!submitResult.success) {
+              console.warn('⚠️ 온보딩 데이터 저장 실패:', submitResult.error)
+              // 에러가 발생해도 결과는 표시 (사용자가 결과를 볼 수 있도록)
+              // setError는 호출하지 않음 (결과는 표시되어야 함)
+            }
+            
+            // 로그인한 사용자는 DB에 저장되므로 localStorage 플래그 제거
+            localStorage.removeItem('diagnostic_completed')
+            localStorage.removeItem('diagnostic_certification')
+          } catch (submitError) {
+            console.warn('⚠️ 온보딩 데이터 제출 중 예외 발생:', submitError)
+            // 에러가 발생해도 결과는 표시
           }
-        } catch (submitError) {
-          console.warn('⚠️ 온보딩 데이터 제출 중 예외 발생:', submitError)
-          // 에러가 발생해도 결과는 표시
+        } else {
+          // 로그인하지 않은 사용자는 결과만 확인
+          console.log('로그인하지 않은 사용자: 진단 결과는 표시만 하고 저장하지 않습니다.')
         }
       } catch (err) {
         console.error('❌ 결과 처리 중 오류:', err)
@@ -118,10 +174,26 @@ export default function DiagnosticResults() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // 빈 배열로 한 번만 실행
 
-  const handleComplete = () => {
-    completeOnboarding()
-    navigate('/dashboard')
-  }
+  const handleComplete = useCallback(() => {
+    try {
+      console.log('✅ 완료 버튼 클릭됨!')
+      console.log('User 상태:', user)
+      
+      if (user) {
+        // 로그인한 사용자는 다음 단계(학습 설정)로 이동
+        console.log('→ nextStep() 호출 (학습 설정으로 이동)...')
+        nextStep()
+      } else {
+        // 로그인하지 않은 사용자는 회원가입으로 이동
+        console.log('→ navigate("/signup") 호출...')
+        setTimeout(() => {
+          navigate('/signup', { replace: true })
+        }, 100)
+      }
+    } catch (error) {
+      console.error('❌ 완료 처리 중 오류:', error)
+    }
+  }, [user, navigate, nextStep])
 
   if (loading) {
     return (
@@ -148,13 +220,13 @@ export default function DiagnosticResults() {
     )
   }
 
-  const averageScore = Math.round(
-    Object.values(results.scores).reduce((sum, score) => sum + score, 0) /
-      Object.values(results.scores).length
-  )
+  // 전체 점수 (10점 만점)
+  const totalScore = results.totalScore ?? 0
+  const totalQuestions = results.totalQuestions ?? 10
+  const categoryCount = Object.keys(results.scores).length
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 pb-24">
       <div className="w-full max-w-4xl space-y-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -177,19 +249,21 @@ export default function DiagnosticResults() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold mb-2">전체 평균 점수</h2>
+              <h2 className="text-lg font-semibold mb-2">전체 점수</h2>
               <p className="text-sm text-muted-foreground">
-                {Object.keys(results.scores).length}개 영역의 평균
+                총 {totalQuestions}문제 · {categoryCount}개 주요항목
               </p>
             </div>
             <div className="text-right">
-              <div className="text-4xl font-bold text-primary">{averageScore}점</div>
+              <div className="text-4xl font-bold text-primary">
+                {totalScore}<span className="text-2xl text-muted-foreground">/{totalQuestions}</span>
+              </div>
               <div className="flex items-center gap-1 mt-2">
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  {averageScore >= 80
+                  {totalScore >= 8
                     ? '우수'
-                    : averageScore >= 60
+                    : totalScore >= 6
                     ? '양호'
                     : '보완 필요'}
                 </span>
@@ -199,18 +273,19 @@ export default function DiagnosticResults() {
         </motion.div>
 
         {/* 레이더 차트 */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-card border rounded-lg p-6"
-        >
-          <h2 className="text-xl font-semibold mb-6 text-center">
-            영역별 실력 분석
-          </h2>
-          <div className="h-96">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={chartData}>
+        {chartData && chartData.length > 0 && chartData.every(item => item.category && typeof item.score === 'number') && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-card border rounded-lg p-6"
+          >
+            <h2 className="text-xl font-semibold mb-6 text-center">
+              과목별 실력 분석
+            </h2>
+            <div style={{ width: '100%', height: '400px', minHeight: '400px', position: 'relative' }}>
+              <ResponsiveContainer width="100%" height={400}>
+                <RadarChart data={chartData} width={500} height={400}>
                 <PolarGrid />
                 <PolarAngleAxis
                   dataKey="category"
@@ -221,8 +296,16 @@ export default function DiagnosticResults() {
                   domain={[0, 100]}
                   tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
                 />
+                <Tooltip 
+                  formatter={(value: number) => [`${value}%`, '정답률']}
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                  }}
+                />
                 <Radar
-                  name="점수"
+                  name="정답률"
                   dataKey="score"
                   stroke="hsl(var(--primary))"
                   fill="hsl(var(--primary))"
@@ -234,13 +317,79 @@ export default function DiagnosticResults() {
             </ResponsiveContainer>
           </div>
         </motion.div>
+        )}
+
+        {/* 과목별 상세 분석 */}
+        {results.subjectGroups && Object.keys(results.subjectGroups).length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="bg-card border rounded-lg p-6"
+          >
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-3 py-1 bg-primary/10 text-primary text-sm font-semibold rounded-full">
+                  {state.certificationType}
+                </span>
+              </div>
+              <h2 className="text-xl font-semibold">과목별 상세 분석</h2>
+            </div>
+            <div className="space-y-6">
+              {Object.entries(results.subjectGroups)
+                .sort(([, a], [, b]) => a.subjectNumber - b.subjectNumber)
+                .map(([subjectCode, subjectData]) => {
+                  const avgPercentage = subjectData.totalQuestions > 0 
+                    ? ((subjectData.totalCorrect / subjectData.totalQuestions) * 100).toFixed(1)
+                    : '0.0'
+                  
+                  return (
+                    <div key={subjectCode} className="border-l-4 border-primary pl-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-lg font-semibold text-primary">
+                          {subjectData.subjectNumber}과목 - {subjectData.subjectName}
+                        </h3>
+                        <span className="text-sm text-muted-foreground">
+                          {subjectData.totalCorrect}/{subjectData.totalQuestions} ({avgPercentage}%)
+                        </span>
+                      </div>
+                    <div className="space-y-2">
+                      {subjectData.topics.map((topic, index) => (
+                        <div 
+                          key={index}
+                          className="flex items-center justify-between py-2 px-3 bg-muted/30 rounded-md hover:bg-muted/50 transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">{topic.topicName}</span>
+                            <span className="text-xs text-muted-foreground">({topic.categoryCode})</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-primary transition-all"
+                                style={{ width: `${topic.percentage}%` }}
+                              />
+                            </div>
+                            <span className="text-sm font-bold text-primary min-w-[4rem] text-right">
+                              {topic.correct}/{topic.total} ({topic.percentage.toFixed(0)}%)
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                      </div>
+                    </div>
+                  )
+                })}
+            </div>
+          </motion.div>
+        )}
 
         {/* 취약 영역 */}
         {results.weakAreas.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ duration: 0.5, delay: 0.35 }}
             className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6"
           >
             <div className="flex items-start gap-3">
@@ -271,13 +420,39 @@ export default function DiagnosticResults() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex justify-center"
+          transition={{ duration: 0.5, delay: 0.45 }}
+          className="flex flex-col items-center gap-4 bg-card border rounded-lg p-6"
         >
-          <Button onClick={handleComplete} size="lg" className="min-w-64">
-            <CheckCircle className="mr-2 h-5 w-5" />
-            맞춤형 커리큘럼 시작하기
-          </Button>
+          {!user && (
+            <p className="text-sm text-muted-foreground text-center">
+              학습을 시작하려면 회원가입이 필요합니다.
+            </p>
+          )}
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <Button 
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                console.log('🔵 버튼 클릭됨!')
+                handleComplete()
+              }} 
+              size="lg" 
+              className="w-full sm:flex-1"
+              type="button"
+            >
+              <CheckCircle className="mr-2 h-5 w-5" />
+              {user ? '다음 단계 (학습 설정)' : '회원가입하고 시작하기'}
+            </Button>
+            <Button 
+              onClick={handleRetakeDiagnostic} 
+              variant="outline" 
+              size="lg" 
+              className="w-full sm:flex-1 border-2"
+            >
+              <RotateCcw className="mr-2 h-5 w-5" />
+              진단 다시 보기
+            </Button>
+          </div>
         </motion.div>
       </div>
     </div>

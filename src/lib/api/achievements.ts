@@ -167,7 +167,7 @@ export async function updateAchievementProgress(
         throw updateError
       }
     } else {
-      // 새 기록 생성
+      // 새 기록 생성 (upsert 사용하여 중복 방지)
       const insertData: {
         user_id: string
         achievement_id: string
@@ -185,10 +185,16 @@ export async function updateAchievementProgress(
 
       const { error: insertError } = await supabase
         .from('user_achievements')
-        .insert(insertData)
+        .upsert(insertData, {
+          onConflict: 'user_id,achievement_id',
+          ignoreDuplicates: false
+        })
 
       if (insertError) {
-        throw insertError
+        // 중복 키 에러는 무시 (이미 존재하는 경우)
+        if (insertError.code !== '23505') {
+          throw insertError
+        }
       }
     }
 

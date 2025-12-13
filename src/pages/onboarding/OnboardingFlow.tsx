@@ -1,8 +1,8 @@
 import { useOnboarding } from '@/context'
 import CertificationSelection from './CertificationSelection'
-import ExamDatePicker from './ExamDatePicker'
 import DiagnosticTest from './DiagnosticTest'
 import DiagnosticResults from './DiagnosticResults'
+import DailyQuestionSetup from './DailyQuestionSetup'
 
 export default function OnboardingFlow() {
   const { state } = useOnboarding()
@@ -12,11 +12,11 @@ export default function OnboardingFlow() {
       case 1:
         return <CertificationSelection />
       case 2:
-        return <ExamDatePicker />
-      case 3:
         return <DiagnosticTest />
-      case 4:
+      case 3:
         return <DiagnosticResults />
+      case 4:
+        return <DailyQuestionSetup />
       default:
         return <CertificationSelection />
     }
@@ -24,9 +24,9 @@ export default function OnboardingFlow() {
 
   const stepLabels = [
     '자격증 선택',
-    '시험 날짜 선택',
     '진단 테스트',
     '결과 확인',
+    '학습 설정',
   ]
 
   return (

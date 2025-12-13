@@ -5,7 +5,7 @@ import { calculateDiagnosticResults } from '../utils/diagnostic'
 
 export interface OnboardingData {
   certificationType: CertificationType
-  targetExamDate: Date
+  targetExamDate?: Date | null
   diagnosticAnswers: Record<string, string>
 }
 
@@ -21,7 +21,7 @@ export interface SaveOnboardingResult {
 export async function saveUserCertification(
   userId: string,
   certificationType: CertificationType,
-  targetExamDate: Date
+  targetExamDate?: Date | null
 ): Promise<{ success: boolean; error?: string }> {
   try {
     // 먼저 사용자가 존재하는지 확인
@@ -31,14 +31,23 @@ export async function saveUserCertification(
       .eq('id', userId)
       .maybeSingle()
 
+    const updateData: {
+      certification_type: CertificationType
+      target_exam_date?: string
+    } = {
+      certification_type: certificationType,
+    }
+
+    // targetExamDate가 있으면 추가
+    if (targetExamDate) {
+      updateData.target_exam_date = targetExamDate.toISOString().split('T')[0]
+    }
+
     if (existingUser) {
       // 사용자가 존재하면 업데이트
       const { error } = await supabase
         .from('users')
-        .update({
-          certification_type: certificationType,
-          target_exam_date: targetExamDate.toISOString().split('T')[0],
-        })
+        .update(updateData)
         .eq('id', userId)
 
       if (error) {
@@ -52,14 +61,25 @@ export async function saveUserCertification(
         throw new Error('인증된 사용자를 찾을 수 없습니다.')
       }
 
+      const insertData: {
+        id: string
+        email: string
+        certification_type: CertificationType
+        target_exam_date?: string
+      } = {
+        id: userId,
+        email: authUser.user.email || '',
+        certification_type: certificationType,
+      }
+
+      // targetExamDate가 있으면 추가
+      if (targetExamDate) {
+        insertData.target_exam_date = targetExamDate.toISOString().split('T')[0]
+      }
+
       const { error } = await supabase
         .from('users')
-        .insert({
-          id: userId,
-          email: authUser.user.email || '',
-          certification_type: certificationType,
-          target_exam_date: targetExamDate.toISOString().split('T')[0],
-        })
+        .insert(insertData)
 
       if (error) {
         throw error
@@ -224,9 +244,8 @@ export function validateOnboardingData(data: Partial<OnboardingData>): {
     errors.push('자격증을 선택해주세요.')
   }
 
-  if (!data.targetExamDate) {
-    errors.push('시험 날짜를 선택해주세요.')
-  } else {
+  // targetExamDate는 선택 사항이지만, 제공된 경우 유효성 검사
+  if (data.targetExamDate) {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const examDate = new Date(data.targetExamDate)
@@ -273,7 +292,8 @@ export async function checkOnboardingComplete(
       // 에러가 있어도 계속 진행 (사용자가 없을 수 있음)
     }
 
-    const hasCertification = !!userData?.certification_type && !!userData?.target_exam_date
+    // target_exam_date는 선택 사항이므로 certification_type만 확인
+    const hasCertification = !!userData?.certification_type
 
     // 진단 결과 확인 (maybeSingle 사용 - 데이터가 없어도 에러 없음)
     const { data: diagnosisData, error: diagnosisError } = await supabase

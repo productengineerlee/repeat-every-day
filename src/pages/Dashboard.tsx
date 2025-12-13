@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context'
+import { useOnboarding } from '@/context'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
 import TopBar from '@/components/dashboard/TopBar'
@@ -11,14 +13,19 @@ import LearningStreakCalendar from '@/components/statistics/LearningStreakCalend
 import AchievementCards from '@/components/statistics/AchievementCards'
 import PerformanceCharts from '@/components/statistics/PerformanceCharts'
 import ExportStatistics from '@/components/statistics/ExportStatistics'
-import { BookOpen, TrendingUp, Award } from 'lucide-react'
+import { BookOpen, TrendingUp, Award, RotateCcw } from 'lucide-react'
 
-// 자격증명 매핑
+// 자격증명 매핑 (모든 지원 자격증)
 const CERTIFICATION_LABELS: Record<string, string> = {
+  '정보처리기사': '정보처리기사',
+  '컴퓨터활용능력': '컴퓨터활용능력',
   '빅데이터분석기사': '빅데이터분석기사',
+  '경영정보시각화능력': '경영정보시각화능력',
   'ADsP': 'ADsP',
-  '기출문제-빅데이터분석기사': '기출문제 - 빅데이터분석기사',
-  '기출문제-ADsP': '기출문제 - ADsP',
+  'SQLD': 'SQLD',
+  '사회조사분석사': '사회조사분석사',
+  'TESAT': 'TESAT',
+  '공인중개사': '공인중개사',
 }
 
 interface SelectedCertification {
@@ -28,9 +35,24 @@ interface SelectedCertification {
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const { reset } = useOnboarding()
+  const navigate = useNavigate()
   const [selectedCertifications, setSelectedCertifications] = useState<SelectedCertification[]>([])
   const [userName, setUserName] = useState<string>('')
   const [loading, setLoading] = useState(true)
+
+  const handleStartDiagnostic = () => {
+    navigate('/onboarding')
+  }
+
+  const handleRetakeDiagnostic = () => {
+    // localStorage 플래그 초기화 (재진단 허용)
+    localStorage.removeItem('diagnostic_completed')
+    localStorage.removeItem('diagnostic_certification')
+    
+    reset() // 온보딩 상태 초기화
+    navigate('/onboarding')
+  }
 
   useEffect(() => {
     const loadSelectedCertifications = async () => {
@@ -44,25 +66,29 @@ export default function Dashboard() {
           .from('users')
           .select('daily_question_count, name')
           .eq('id', user.id)
-          .maybeSingle()
+          .maybeSingle<{
+            daily_question_count: Record<string, number | null> | null
+            name: string | null
+          }>()
 
         if (error) {
           console.error('Error loading certifications:', error)
           setSelectedCertifications([])
-        } else {
+        } else if (data) {
           // 사용자 이름 설정 (users 테이블의 name 또는 user_metadata의 name)
-          const name = data?.name || user.user_metadata?.name || user.email?.split('@')[0] || ''
+          const name = data.name || user.user_metadata?.name || user.email?.split('@')[0] || ''
           setUserName(name)
 
-          const counts = data?.daily_question_count
+          const counts = data.daily_question_count
           if (typeof counts === 'object' && counts !== null) {
             // null이 아닌 값들을 찾아서 자격증명과 문제 수 추출
             const selected: SelectedCertification[] = []
-            Object.keys(CERTIFICATION_LABELS).forEach((key) => {
+            Object.keys(counts).forEach((key) => {
               const count = counts[key]
-              if (count !== null && count !== undefined && typeof count === 'number') {
+              if (count !== null && count !== undefined && typeof count === 'number' && count > 0) {
+                // CERTIFICATION_LABELS에 있으면 사용, 없으면 키 그대로 사용
                 selected.push({
-                  name: CERTIFICATION_LABELS[key],
+                  name: CERTIFICATION_LABELS[key] || key,
                   count: count
                 })
               }
@@ -186,10 +212,16 @@ export default function Dashboard() {
 
         <div className="p-6 border rounded-lg">
           <h2 className="text-xl font-semibold mb-4">빠른 시작</h2>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <Button>오늘의 문제 풀기</Button>
             <Button variant="outline">오답 노트 보기</Button>
-            <Button variant="outline">진단 테스트 시작</Button>
+            <Button variant="outline" onClick={handleStartDiagnostic}>
+              진단 테스트 시작
+            </Button>
+            <Button variant="outline" onClick={handleRetakeDiagnostic} className="gap-2">
+              <RotateCcw className="h-4 w-4" />
+              진단 다시 보기
+            </Button>
           </div>
         </div>
       </div>
