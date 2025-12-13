@@ -3,10 +3,14 @@ import React, { createContext, useContext, useState, useCallback } from 'react'
 
 export type CertificationType =
   | '정보처리기사'
+  | '컴퓨터활용능력'
+  | '빅데이터분석기사'
+  | '경영정보시각화능력'
   | 'ADsP'
   | 'SQLD'
-  | '정보처리산업기사'
-  | '빅데이터분석기사'
+  | '사회조사분석사'
+  | 'TESAT'
+  | '공인중개사'
 
 export interface OnboardingState {
   step: number

@@ -18,3 +18,8 @@ COMMENT ON COLUMN questions.sub_content_image_url IS '서브 제시문 이미지
 -- FROM information_schema.columns 
 -- WHERE table_name = 'questions';
 
+
+
+
+
+

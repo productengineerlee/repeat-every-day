@@ -10,7 +10,7 @@ interface AuthContextType {
   session: Session | null
   loading: boolean
   signIn: (credentials: SignInCredentials) => Promise<{ error: AuthError | null }>
-  signUp: (credentials: SignUpCredentials) => Promise<{ error: AuthError | null }>
+  signUp: (credentials: SignUpCredentials) => Promise<{ error: AuthError | null; user: User | null }>
   signOut: () => Promise<{ error: AuthError | null }>
   signInWithGoogle: () => Promise<{ error: AuthError | null }>
   signInWithApple: () => Promise<{ error: AuthError | null }>
@@ -73,8 +73,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const handleSignUp = async (credentials: SignUpCredentials) => {
     setLoading(true)
     try {
-      const { error } = await signUp(credentials)
-      return { error }
+      const result = await signUp(credentials)
+      return { error: result.error, user: result.user }
     } finally {
       setLoading(false)
     }

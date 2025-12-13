@@ -36,3 +36,8 @@ SELECT
 FROM pg_policies 
 WHERE tablename = 'questions' AND cmd = 'UPDATE';
 
+
+
+
+
+

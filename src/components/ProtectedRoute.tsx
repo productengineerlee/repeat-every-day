@@ -37,9 +37,12 @@ export default function ProtectedRoute({
   }
 
   // 인증이 필요 없는데 사용자가 로그인한 경우 (예: 로그인/회원가입 페이지)
-  if (!requireAuth && user) {
+  // 단, 회원가입 페이지에서는 성공 화면을 보여주기 위해 리다이렉트하지 않음
+  // 또한 로그인 페이지도 리다이렉트하지 않음 (사용자가 로그아웃 후 다시 로그인할 수 있도록)
+  if (!requireAuth && user && location.pathname !== '/signup' && location.pathname !== '/login') {
     // 원래 목적지가 있으면 그곳으로, 없으면 홈으로 리다이렉트
     const from = location.state?.from?.pathname || '/'
+    console.log('🔄 ProtectedRoute 리다이렉트:', { pathname: location.pathname, from })
     return <Navigate to={from} replace />
   }
 

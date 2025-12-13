@@ -14,3 +14,8 @@ COMMENT ON COLUMN questions.exam_number IS '기출번호 (해당 회차 내 문�
 CREATE INDEX IF NOT EXISTS idx_questions_exam_session_number 
 ON questions(exam_session, exam_number);
 
+
+
+
+
+

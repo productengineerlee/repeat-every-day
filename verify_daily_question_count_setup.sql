@@ -44,3 +44,8 @@ WHERE tablename = 'users'
 
 -- 7. RLS 정책이 없다면 생성 (add_users_daily_question_count_rls.sql 실행)
 
+
+
+
+
+

@@ -65,7 +65,7 @@ export async function showStreakReminderNotification(
 
     const randomMessage = messages[Math.floor(Math.random() * messages.length)]
 
-    const notification = new Notification('Certiq 스트릭 리마인더', {
+    const notification = new Notification('certiQ 스트릭 리마인더', {
       body: randomMessage,
       icon: '/favicon.ico',
       badge: '/favicon.ico',
@@ -134,7 +134,7 @@ export async function showAchievementNotification(
       ? `${randomMessage}\n${achievementDescription}`
       : randomMessage
 
-    const notification = new Notification('Certiq 성취도 달성', {
+    const notification = new Notification('certiQ 성취도 달성', {
       body,
       icon: '/favicon.ico',
       badge: '/favicon.ico',
@@ -203,7 +203,7 @@ export async function showDailyLearningReminder(userId: string): Promise<void> {
         ? `${randomMessage}\n현재 ${streakStatus.currentStreak}일 연속 학습 중입니다.`
         : randomMessage
 
-    const notification = new Notification('Certiq 일일 학습 리마인더', {
+    const notification = new Notification('certiQ 일일 학습 리마인더', {
       body,
       icon: '/favicon.ico',
       badge: '/favicon.ico',

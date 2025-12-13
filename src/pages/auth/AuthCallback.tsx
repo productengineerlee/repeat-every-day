@@ -45,6 +45,30 @@ export default function AuthCallback() {
 
         if (session) {
           console.log('✅ 인증 성공:', { userId: session.user.id })
+          
+          // users 테이블에 사용자 정보 저장 (회원가입 직후 세션이 없었던 경우 대비)
+          try {
+            const { error: userError } = await supabase
+              .from('users')
+              .upsert({
+                id: session.user.id,
+                email: session.user.email || '',
+                name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || '',
+              }, {
+                onConflict: 'id'
+              })
+
+            if (userError) {
+              console.error('❌ users 테이블 저장 실패:', userError)
+              // users 테이블 저장 실패해도 로그인은 계속 진행
+            } else {
+              console.log('✅ users 테이블 저장 성공')
+            }
+          } catch (userSaveError) {
+            console.error('❌ users 테이블 저장 중 예외:', userSaveError)
+            // 에러가 발생해도 로그인은 계속 진행
+          }
+          
           // 로그인 성공 - 대시보드로 리다이렉트
           navigate('/dashboard', { replace: true })
         } else {

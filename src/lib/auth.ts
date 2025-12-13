@@ -77,6 +77,27 @@ export async function signIn({
   try {
     console.log('🔑 로그인 시도:', { email })
     
+    // 더미 클라이언트 사용 중인지 확인
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
+    const isDummy = supabaseUrl.includes('placeholder') || 
+                    supabaseUrl.includes('your-project-url') ||
+                    !supabaseUrl || 
+                    supabaseUrl.trim() === ''
+    
+    if (isDummy) {
+      const errorMessage = 'Supabase가 설정되지 않았습니다. .env.local 파일에 실제 Supabase 프로젝트 정보를 입력하세요.'
+      console.error('❌ 더미 Supabase 클라이언트 사용 중:', errorMessage)
+      return {
+        user: null,
+        session: null,
+        error: {
+          name: 'ConfigurationError',
+          message: errorMessage,
+          status: 500,
+        } as AuthError,
+      }
+    }
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
@@ -88,6 +109,25 @@ export async function signIn({
         status: error.status,
         name: error.name,
       })
+      
+      // 에러 메시지 한글화
+      let userFriendlyMessage = error.message
+      if (error.message.includes('Invalid login credentials')) {
+        userFriendlyMessage = '이메일 또는 비밀번호가 올바르지 않습니다.'
+      } else if (error.message.includes('Email not confirmed')) {
+        userFriendlyMessage = '이메일 인증이 필요합니다. 받은 이메일의 인증 링크를 클릭해주세요.'
+      } else if (error.message.includes('Too many requests')) {
+        userFriendlyMessage = '너무 많은 로그인 시도가 있었습니다. 잠시 후 다시 시도해주세요.'
+      }
+      
+      return {
+        user: data?.user || null,
+        session: data?.session || null,
+        error: {
+          ...error,
+          message: userFriendlyMessage,
+        },
+      }
     } else {
       console.log('✅ 로그인 성공:', {
         userId: data.user?.id,

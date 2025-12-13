@@ -48,6 +48,9 @@ function getCategoriesByCertification(certificationType: string): string[] {
     'SQLD': ['SQL 기본', 'SQL 활용', 'SQL 최적화', '데이터 모델링'],
     '정보처리산업기사': ['데이터베이스', '운영체제', '네트워크', '프로그래밍'],
     '빅데이터분석기사': ['빅데이터 기초', '데이터 분석', '머신러닝', '데이터 시각화'],
+    '사회조사분석사': ['조사방법과 설계', '조사관리와 자료처리', '통계분석과 활용'],
+    'TESAT': ['경제이론(기초, 응용)', '경제시사(기초, 응용)', '상황판단(응용복합)'],
+    '공인중개사': ['부동산학개론', '민법 및 민사특별법', '공인중개사법령', '부동산공법', '부동산공시법령', '부동산세법'],
   }
 
   return categoryMap[certificationType] || ['기본', '일반', '응용', '심화']
@@ -205,15 +208,31 @@ function getMockExplanation(
 }
 
 /**
+ * 선택지 텍스트에서 숫자 접두사 제거
+ */
+function cleanOptionText(text: string): string {
+  // "숫자. " 또는 "숫자." 형식으로 시작하는 경우 제거
+  return text.replace(/^\d+\.\s*/, '').trim()
+}
+
+/**
  * Supabase 데이터를 Question 타입으로 변환
  */
 function transformSupabaseQuestion(data: any): DiagnosticQuestion {
   // options가 JSONB이면 배열로 변환, 아니면 그대로 사용
-  const options = Array.isArray(data.options) 
-    ? data.options 
-    : typeof data.options === 'string' 
-      ? JSON.parse(data.options) 
-      : []
+  let options: string[] = []
+  if (Array.isArray(data.options)) {
+    options = data.options.map(opt => cleanOptionText(opt))
+  } else if (typeof data.options === 'string') {
+    try {
+      const parsed = JSON.parse(data.options)
+      options = Array.isArray(parsed) 
+        ? parsed.map((opt: string) => cleanOptionText(opt))
+        : []
+    } catch {
+      options = []
+    }
+  }
 
   // correct_answer 또는 correctAnswer 처리
   const correctAnswer = data.correct_answer || data.correctAnswer || '1'
@@ -233,11 +252,275 @@ function transformSupabaseQuestion(data: any): DiagnosticQuestion {
 }
 
 /**
- * 진단 테스트용 문제 가져오기
+ * 자격증별 과목별 문항 수 가져오기
+ */
+async function getSubjectWeights(
+  certificationType: string
+): Promise<Record<number, number>> {
+  try {
+    const { data, error } = await supabase
+      .from('certification_subject_weights')
+      .select('subject_number, question_count')
+      .eq('certification_type', certificationType)
+      .gt('question_count', 0) // 문항 수가 0보다 큰 것만
+
+    if (error) {
+      console.warn('⚠️ 과목별 문항 수 조회 실패:', error)
+      return {}
+    }
+
+    const weights: Record<number, number> = {}
+    if (data) {
+      data.forEach((item) => {
+        weights[item.subject_number] = item.question_count
+      })
+    }
+
+    return weights
+  } catch (error) {
+    console.error('❌ 과목별 문항 수 조회 중 예외 발생:', error)
+    return {}
+  }
+}
+
+/**
+ * 과목별 더미 문제 생성
+ */
+function generateMockQuestionsBySubject(
+  certificationType: string,
+  subjectNumber: number,
+  count: number
+): DiagnosticQuestion[] {
+  const questions: DiagnosticQuestion[] = []
+  const certificationToCategoryMap: Record<string, string> = {
+    '정보처리기사': '1',
+    '컴퓨터활용능력': '2',
+    '빅데이터분석기사': '3',
+    '경영정보시각화능력': '4',
+    'ADsP': '5',
+    'SQLD': '6',
+    '사회조사분석사': '7',
+    'TESAT': '8',
+    '공인중개사': '9',
+  }
+  
+  const 대분류번호 = certificationToCategoryMap[certificationType] || '0'
+  const categoryPrefix = `${대분류번호}-${subjectNumber}`
+
+  for (let i = 1; i <= count; i++) {
+    const category = `${categoryPrefix}-dummy-${i}`
+    const mockOptions = getMockOptions(certificationType, `과목${subjectNumber}`, i)
+    
+    questions.push({
+      id: `mock-diagnostic-${certificationType}-${subjectNumber}-${i}`,
+      content: `${certificationType} ${subjectNumber}과목 진단 문제 ${i}`,
+      options: mockOptions,
+      correctAnswer: 'A',
+      explanation: `${certificationType} ${subjectNumber}과목 영역의 핵심 개념을 이해하는 것이 중요합니다.`,
+      certificationType,
+      category,
+      difficulty: Math.floor(Math.random() * 3) + 2,
+      tags: [`${subjectNumber}과목`],
+      createdAt: new Date(),
+    })
+  }
+
+  return questions
+}
+
+/**
+ * 진단 테스트용 문제 가져오기 (과목별 비중 기반)
  * @param certificationType 자격증 유형
  * @param count 가져올 문제 수 (기본값: 10)
  */
 export async function getDiagnosticQuestions(
+  certificationType: string,
+  count: number = 10
+): Promise<DiagnosticQuestion[]> {
+  try {
+    console.log(`🎯 진단테스트 문제 가져오기 시작: ${certificationType}, 필요 개수: ${count}`)
+    
+    // 1. 과목별 문항 수 가져오기
+    const subjectWeights = await getSubjectWeights(certificationType)
+    console.log('📊 과목별 문항 수:', subjectWeights)
+    
+    // 과목별 비중이 설정되지 않은 경우 기존 로직 사용
+    if (Object.keys(subjectWeights).length === 0) {
+      console.log('⚠️ 과목별 비중이 설정되지 않아 기존 로직을 사용합니다.')
+      return getDiagnosticQuestionsLegacy(certificationType, count)
+    }
+
+    // 2. 자격증별 대분류 번호 매핑
+    const certificationToCategoryMap: Record<string, string> = {
+      '정보처리기사': '1',
+      '컴퓨터활용능력': '2',
+      '빅데이터분석기사': '3',
+      '경영정보시각화능력': '4',
+      'ADsP': '5',
+      'SQLD': '6',
+      '사회조사분석사': '7',
+      'TESAT': '8',
+      '공인중개사': '9',
+    }
+    const 대분류번호 = certificationToCategoryMap[certificationType] || '0'
+
+    // 3. 과목별 목표 문항 수 계산
+    const subjectTargets: Array<{ subjectNumber: number; targetCount: number }> = []
+    Object.entries(subjectWeights).forEach(([subjectNum, questionCount]) => {
+      subjectTargets.push({
+        subjectNumber: parseInt(subjectNum),
+        targetCount: questionCount,
+      })
+    })
+
+    // 배정 문항 수가 큰 순서로 정렬 (재배분 우선순위용)
+    subjectTargets.sort((a, b) => b.targetCount - a.targetCount)
+
+    // 4. 각 과목별로 문제 추출
+    const subjectResults: Array<{
+      subjectNumber: number
+      targetCount: number
+      questions: DiagnosticQuestion[]
+    }> = []
+
+    for (const { subjectNumber, targetCount } of subjectTargets) {
+      const categoryFilter = `${대분류번호}-${subjectNumber}-%`
+      console.log(`🔍 ${subjectNumber}과목 검색 중... 필터: ${categoryFilter}, 목표: ${targetCount}개`)
+      
+      try {
+        const { data, error } = await supabase
+          .from('questions')
+          .select('*')
+          .eq('certification_type', certificationType)
+          .like('category', categoryFilter)
+          .limit(targetCount)
+
+        if (error) {
+          console.warn(`⚠️ ${subjectNumber}과목 문제 조회 실패:`, error)
+        }
+
+        const questions = data
+          ? data.map(transformSupabaseQuestion)
+          : []
+
+        console.log(`✅ ${subjectNumber}과목: ${questions.length}개 가져옴 (목표: ${targetCount}개)`)
+
+        subjectResults.push({
+          subjectNumber,
+          targetCount,
+          questions,
+        })
+      } catch (error) {
+        console.error(`❌ ${subjectNumber}과목 문제 조회 중 예외:`, error)
+        subjectResults.push({
+          subjectNumber,
+          targetCount,
+          questions: [],
+        })
+      }
+    }
+
+    // 5. 부족한 문항 수 계산 및 재배분
+    let totalCollected = 0
+    const shortage: Array<{ subjectNumber: number; shortage: number }> = []
+
+    subjectResults.forEach((result) => {
+      totalCollected += result.questions.length
+      const shortageCount = result.targetCount - result.questions.length
+      if (shortageCount > 0) {
+        shortage.push({
+          subjectNumber: result.subjectNumber,
+          shortage: shortageCount,
+        })
+      }
+    })
+
+    // 6. 재배분 로직 (배정 문항 수가 큰 과목 우선)
+    if (shortage.length > 0) {
+      const totalShortage = shortage.reduce((sum, s) => sum + s.shortage, 0)
+      
+      // 재배분 대상 과목 찾기 (원래 배정 문항 수가 큰 순서)
+      for (const target of subjectTargets) {
+        if (totalShortage <= 0) break
+
+        const result = subjectResults.find((r) => r.subjectNumber === target.subjectNumber)
+        if (!result) continue
+
+        // 해당 과목에서 추가로 가져올 수 있는 문제 수 확인
+        const categoryFilter = `${대분류번호}-${target.subjectNumber}-%`
+        try {
+          const { data: additionalData } = await supabase
+            .from('questions')
+            .select('*')
+            .eq('certification_type', certificationType)
+            .like('category', categoryFilter)
+            .limit(target.targetCount + totalShortage)
+
+          if (additionalData) {
+            const additionalQuestions = additionalData
+              .map(transformSupabaseQuestion)
+              .filter(
+                (q) => !result.questions.some((rq) => rq.id === q.id)
+              )
+              .slice(0, totalShortage)
+
+            result.questions.push(...additionalQuestions)
+            totalCollected += additionalQuestions.length
+            break // 첫 번째 우선순위 과목에 모두 재배분
+          }
+        } catch (error) {
+          console.warn(`⚠️ ${target.subjectNumber}과목 재배분 실패:`, error)
+        }
+      }
+    }
+
+    // 7. 최종 문제 수집
+    const allQuestions: DiagnosticQuestion[] = []
+    subjectResults.forEach((result) => {
+      allQuestions.push(...result.questions)
+    })
+
+    // 8. 부족한 경우 더미 데이터 생성
+    if (allQuestions.length < count) {
+      const needed = count - allQuestions.length
+      console.log(`📝 부족한 ${needed}개 문제를 더미 데이터로 생성합니다.`)
+
+      // 각 과목별로 부족한 만큼 더미 데이터 생성
+      for (const { subjectNumber, targetCount } of subjectTargets) {
+        const result = subjectResults.find((r) => r.subjectNumber === subjectNumber)
+        if (!result) continue
+
+        const currentCount = result.questions.length
+        const shortage = targetCount - currentCount
+
+        if (shortage > 0 && allQuestions.length < count) {
+          const toGenerate = Math.min(shortage, count - allQuestions.length)
+          const mockQuestions = generateMockQuestionsBySubject(
+            certificationType,
+            subjectNumber,
+            toGenerate
+          )
+          allQuestions.push(...mockQuestions)
+        }
+      }
+    }
+
+    // 9. 최종 결과 반환 (정확히 count개)
+    const finalQuestions = allQuestions.slice(0, count)
+    console.log(`🎉 최종 반환: ${finalQuestions.length}개 문제`)
+    console.log('문제 ID 목록:', finalQuestions.map(q => q.id))
+    return finalQuestions
+  } catch (error) {
+    console.error('❌ Error fetching diagnostic questions:', error)
+    // 에러 발생 시 기존 로직 사용
+    return getDiagnosticQuestionsLegacy(certificationType, count)
+  }
+}
+
+/**
+ * 기존 진단 문제 추출 로직 (과목별 비중 미설정 시 사용)
+ */
+async function getDiagnosticQuestionsLegacy(
   certificationType: string,
   count: number = 10
 ): Promise<DiagnosticQuestion[]> {
@@ -250,19 +533,15 @@ export async function getDiagnosticQuestions(
 
     if (error) {
       console.warn('⚠️ 데이터베이스에서 문제를 가져오는 중 에러 발생:', error)
-      // 에러가 발생해도 임시 문제 생성
     }
 
-    // 데이터베이스에서 문제를 가져왔고 개수가 충분한 경우
     if (data && data.length >= count) {
       return data.map(transformSupabaseQuestion)
     }
 
-    // 데이터베이스에 문제가 없거나 부족한 경우 임시 문제 생성
     console.log(`📝 데이터베이스에 문제가 없어 임시 진단 문제 ${count}개를 생성합니다.`)
     const mockQuestions = generateMockDiagnosticQuestions(certificationType, count)
     
-    // 데이터베이스에서 일부 문제를 가져온 경우, 부족한 만큼만 임시 문제 추가
     if (data && data.length > 0) {
       const transformedData = data.map(transformSupabaseQuestion)
       const needed = count - data.length
@@ -272,8 +551,7 @@ export async function getDiagnosticQuestions(
 
     return mockQuestions
   } catch (error) {
-    console.error('❌ Error fetching diagnostic questions:', error)
-    // 에러 발생 시에도 임시 문제 반환
+    console.error('❌ Error fetching diagnostic questions (legacy):', error)
     console.log(`📝 에러 발생으로 인해 임시 진단 문제 ${count}개를 생성합니다.`)
     return generateMockDiagnosticQuestions(certificationType, count)
   }
@@ -387,6 +665,9 @@ export async function getDailyQuestionSet(
       '경영정보시각화능력': '4',
       'ADsP': '5',
       'SQLD': '6',
+      '사회조사분석사': '7',
+      'TESAT': '8',
+      '공인중개사': '9',
     }
     
     // 자격증에 해당하는 카테고리 필터 적용
@@ -480,6 +761,9 @@ export async function getExamQuestionSet(
       '경영정보시각화능력': '4',
       'ADsP': '5',
       'SQLD': '6',
+      '사회조사분석사': '7',
+      'TESAT': '8',
+      '공인중개사': '9',
     }
     
     // 자격증에 해당하는 카테고리 필터 적용 + 기출문제만 (exam_session이 null이 아닌 문제)
@@ -576,7 +860,8 @@ export interface QuestionInput {
   difficulty: '상' | '중' | '하' // 난이도
   tags: string[] // 레이블/태그 배열
   frequency?: number // 출제빈도
-  examSession?: string // 기출회차 (예: 2024년 1회차)
+  examYear?: number // 기출년도 (예: 2024)
+  examSession?: string // 기출회차 (예: 01, 02)
   examNumber?: number // 기출번호
 }
 
@@ -591,6 +876,9 @@ export interface QuestionListItem {
   difficulty: number
   createdAt: string
   optionsCount: number
+  examYear?: number
+  examSession?: string
+  examNumber?: number
 }
 
 /**
@@ -609,6 +897,7 @@ export interface QuestionDetail {
   difficulty: number // 1-5 (상=5, 중=3, 하=1)
   tags: string[]
   frequency?: number
+  examYear?: number // 기출년도
   examSession?: string // 기출회차
   examNumber?: number // 기출번호
   createdAt: string
@@ -621,6 +910,7 @@ export async function getQuestionsList(options?: {
   certificationType?: string
   category?: string
   search?: string
+  examYear?: number // 기출년도 필터
   examSession?: string // 기출회차 필터
   limit?: number
   offset?: number
@@ -636,6 +926,7 @@ export async function getQuestionsList(options?: {
       certificationType,
       category,
       search,
+      examYear,
       examSession,
       limit = 50,
       offset = 0,
@@ -655,20 +946,45 @@ export async function getQuestionsList(options?: {
     if (search) {
       query = query.ilike('content', `%${search}%`)
     }
+    if (examYear) {
+      // exam_year는 숫자 타입이므로 정확히 일치하는 값만 검색
+      // 숫자와 문자열 모두 처리 (데이터베이스 타입에 따라)
+      query = query.eq('exam_year', examYear)
+      console.log('🔍 기출년도 필터 적용:', examYear, '(타입:', typeof examYear, ')')
+    }
     if (examSession) {
-      query = query.eq('exam_session', examSession)
+      // exam_session은 문자열이므로 정확히 일치하는 값만 검색
+      // 숫자로 변환하여 비교 (예: "37" 또는 "01")
+      const sessionStr = String(examSession).trim().padStart(2, '0')
+      query = query.eq('exam_session', sessionStr)
+      console.log('🔍 기출회차 필터 적용:', sessionStr)
     }
 
-    // 정렬: 기출회차가 선택된 경우 기출번호로 정렬, 아니면 지정된 정렬 사용
-    if (examSession && orderBy === 'created_at') {
-      // 기출회차가 선택되면 기본적으로 기출번호 오름차순으로 정렬
-      query = query.order('exam_number', { ascending: true })
-    } else {
-      query = query.order(orderBy, { ascending: order === 'asc' })
-    }
+    // 복합 정렬: 년도↓ → 회차↓ → 문제번호↑ → 등록일↓
+    // exam_year는 숫자로 정렬 가능
+    query = query.order('exam_year', { ascending: false, nullsFirst: false })
+    
+    // exam_session은 문자열이므로 CAST 없이 그냥 정렬
+    // '01', '02', '37' 등은 문자열로도 순서가 맞음
+    query = query.order('exam_session', { ascending: false, nullsFirst: false })
+    
+    // exam_number는 숫자로 정렬
+    query = query.order('exam_number', { ascending: true, nullsFirst: false })
+    
+    // 등록일로 최종 정렬
+    query = query.order('created_at', { ascending: false })
 
     // 페이지네이션
     query = query.range(offset, offset + limit - 1)
+
+    console.log('📊 쿼리 실행:', {
+      examYear,
+      examSession,
+      certificationType,
+      limit,
+      offset,
+      totalRange: `${offset} ~ ${offset + limit - 1}`,
+    })
 
     const { data, error, count } = await query
 
@@ -681,6 +997,13 @@ export async function getQuestionsList(options?: {
       }
     }
 
+    console.log('📊 쿼리 결과:', {
+      count: count || 0,
+      dataLength: data?.length || 0,
+      examYear,
+      examSession,
+    })
+
     const questions: QuestionListItem[] =
       data?.map((q: any) => ({
         id: q.id,
@@ -690,6 +1013,7 @@ export async function getQuestionsList(options?: {
         difficulty: q.difficulty,
         createdAt: q.created_at,
         optionsCount: Array.isArray(q.options) ? q.options.length : 0,
+        examYear: q.exam_year,
         examSession: q.exam_session,
         examNumber: q.exam_number,
       })) || []
@@ -740,10 +1064,13 @@ export async function getQuestionById(questionId: string): Promise<{
     // options 처리
     let options: string[] = []
     if (Array.isArray(data.options)) {
-      options = data.options
+      options = data.options.map(opt => cleanOptionText(opt))
     } else if (typeof data.options === 'string') {
       try {
-        options = JSON.parse(data.options)
+        const parsed = JSON.parse(data.options)
+        options = Array.isArray(parsed)
+          ? parsed.map((opt: string) => cleanOptionText(opt))
+          : []
       } catch (e) {
         console.warn('options 파싱 실패:', e)
         options = []
@@ -773,6 +1100,7 @@ export async function getQuestionById(questionId: string): Promise<{
       difficulty: data.difficulty,
       tags: Array.isArray(data.tags) ? data.tags : [],
       frequency: data.frequency,
+      examYear: data.exam_year,
       examSession: data.exam_session,
       examNumber: data.exam_number,
       createdAt: data.created_at,
@@ -843,21 +1171,28 @@ export async function updateQuestion(
       updateData.frequency = question.frequency
     }
 
-    // 기출회차가 있으면 추가 (빈 문자열이 아닐 때만)
-    if (question.examSession && question.examSession.trim() !== '') {
-      updateData.exam_session = question.examSession.trim()
-    } else {
-      // 빈 문자열이거나 undefined/null이면 null로 설정 (기존 값 제거)
-      updateData.exam_session = null
+    // 기출년도가 있으면 추가 (값이 명시적으로 전달된 경우만 업데이트)
+    if (question.examYear !== undefined && question.examYear !== null) {
+      updateData.exam_year = question.examYear
     }
+    // undefined/null이면 필드를 포함하지 않음 (기존 값 유지)
 
-    // 기출번호가 있으면 추가 (없으면 null로 설정)
+    // 기출회차가 있으면 추가 (값이 명시적으로 전달된 경우만 업데이트)
+    if (question.examSession !== undefined && question.examSession !== null) {
+      if (question.examSession.trim() !== '') {
+        updateData.exam_session = question.examSession.trim()
+      } else {
+        // 빈 문자열이면 null로 설정 (기존 값 제거)
+        updateData.exam_session = null
+      }
+    }
+    // undefined/null이면 필드를 포함하지 않음 (기존 값 유지)
+
+    // 기출번호가 있으면 추가 (값이 명시적으로 전달된 경우만 업데이트)
     if (question.examNumber !== undefined && question.examNumber !== null) {
       updateData.exam_number = question.examNumber
-    } else {
-      // undefined/null이면 null로 설정 (기존 값 제거)
-      updateData.exam_number = null
     }
+    // undefined/null이면 필드를 포함하지 않음 (기존 값 유지)
 
     // 데이터베이스에 업데이트
     console.log('📝 업데이트 데이터:', JSON.stringify(updateData, null, 2))
@@ -1099,19 +1434,44 @@ export async function updateQuestion(
  */
 export async function deleteQuestion(questionId: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const { error } = await supabase
+    console.log('🗑️ deleteQuestion 호출:', { questionId })
+    
+    // 현재 사용자 확인
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      console.error('❌ 사용자 인증 실패:', userError)
+      return {
+        success: false,
+        error: '로그인이 필요합니다.',
+      }
+    }
+    console.log('✅ 사용자 확인:', { userId: user.id, email: user.email })
+    
+    const { data, error } = await supabase
       .from('questions')
       .delete()
       .eq('id', questionId)
+      .select()
+
+    console.log('🗑️ 삭제 응답:', { data, error })
 
     if (error) {
-      console.error('문제 삭제 오류:', error)
+      console.error('❌ 문제 삭제 오류:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+      })
       
       // RLS 정책 에러 체크
-      if (error.message?.includes('RLS') || error.message?.includes('policy') || error.message?.includes('permission')) {
+      if (error.message?.includes('RLS') || 
+          error.message?.includes('policy') || 
+          error.message?.includes('permission') ||
+          error.message?.includes('row-level security') ||
+          error.code === '42501') {
         return {
           success: false,
-          error: `권한 오류: ${error.message}. 관리자 권한이 필요합니다.`,
+          error: `권한 오류: 관리자 권한이 필요합니다. Supabase Dashboard → Authentication → Policies에서 DELETE 정책을 확인하세요.`,
         }
       }
 
@@ -1121,15 +1481,84 @@ export async function deleteQuestion(questionId: string): Promise<{ success: boo
       }
     }
 
+    console.log('✅ 삭제 성공:', { deletedRows: data?.length || 0 })
     return {
       success: true,
     }
   } catch (error) {
-    console.error('문제 삭제 중 예외 발생:', error)
+    console.error('❌ 문제 삭제 중 예외 발생:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : '문제 삭제 중 알 수 없는 오류가 발생했습니다.',
     }
+  }
+}
+
+/**
+ * 관리자용 문제 일괄 삭제
+ */
+export async function deleteQuestions(questionIds: string[]): Promise<{ 
+  success: boolean
+  deletedCount: number
+  errors: Array<{ questionId: string; error: string }>
+}> {
+  const errors: Array<{ questionId: string; error: string }> = []
+  let deletedCount = 0
+
+  // 현재 사용자 확인
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    return {
+      success: false,
+      deletedCount: 0,
+      errors: [{ questionId: 'all', error: '로그인이 필요합니다.' }],
+    }
+  }
+
+  // 배치로 삭제 (한 번에 최대 100개)
+  const BATCH_SIZE = 100
+  for (let i = 0; i < questionIds.length; i += BATCH_SIZE) {
+    const batch = questionIds.slice(i, i + BATCH_SIZE)
+    
+    try {
+      const { data, error } = await supabase
+        .from('questions')
+        .delete()
+        .in('id', batch)
+        .select('id')
+
+      if (error) {
+        console.error('❌ 일괄 삭제 오류:', error)
+        // 개별 삭제 시도
+        for (const questionId of batch) {
+          const result = await deleteQuestion(questionId)
+          if (result.success) {
+            deletedCount++
+          } else {
+            errors.push({ questionId, error: result.error || '삭제 실패' })
+          }
+        }
+      } else {
+        deletedCount += data?.length || 0
+      }
+    } catch (err) {
+      console.error('❌ 일괄 삭제 중 예외:', err)
+      // 개별 삭제 시도
+      for (const questionId of batch) {
+        const result = await deleteQuestion(questionId)
+        if (result.success) {
+          deletedCount++
+        } else {
+          errors.push({ questionId, error: result.error || '삭제 실패' })
+        }
+      }
+    }
+  }
+
+  return {
+    success: errors.length === 0,
+    deletedCount,
+    errors,
   }
 }
 
@@ -1191,14 +1620,28 @@ export async function saveQuestion(question: QuestionInput): Promise<{ id: strin
       questionData.frequency = question.frequency
     }
 
+    // 기출년도가 있으면 추가
+    if (question.examYear !== undefined && question.examYear !== null) {
+      questionData.exam_year = question.examYear
+      console.log(`✅ 기출년도 저장: ${question.examYear}`)
+    } else {
+      console.log(`⚠️ 기출년도 없음 (값: ${question.examYear})`)
+    }
+
     // 기출회차가 있으면 추가
     if (question.examSession) {
       questionData.exam_session = question.examSession
+      console.log(`✅ 기출회차 저장: ${question.examSession}`)
+    } else {
+      console.log(`⚠️ 기출회차 없음 (값: ${question.examSession})`)
     }
 
     // 기출번호가 있으면 추가
     if (question.examNumber !== undefined && question.examNumber !== null) {
       questionData.exam_number = question.examNumber
+      console.log(`✅ 기출번호 저장: ${question.examNumber}`)
+    } else {
+      console.log(`⚠️ 기출번호 없음 (값: ${question.examNumber})`)
     }
 
     // 현재 사용자 확인

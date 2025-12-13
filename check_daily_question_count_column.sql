@@ -20,3 +20,8 @@ WHERE table_name = 'users'
 -- ALTER TABLE users
 -- ADD COLUMN IF NOT EXISTS daily_question_count JSONB DEFAULT '{"빅데이터분석기사": null, "ADsP": null, "기출문제-빅데이터분석기사": null, "기출문제-ADsP": null}'::jsonb;
 
+
+
+
+
+

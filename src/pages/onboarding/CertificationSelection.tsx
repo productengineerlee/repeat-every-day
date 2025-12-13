@@ -1,6 +1,5 @@
 import { useOnboarding, type CertificationType } from '@/context'
 import { Button } from '@/components/ui/button'
-import { Check } from 'lucide-react'
 
 const certifications: {
   value: CertificationType
@@ -13,6 +12,21 @@ const certifications: {
     description: '정보시스템 개발 및 운영에 필요한 기술과 지식',
   },
   {
+    value: '컴퓨터활용능력',
+    label: '컴퓨터활용능력',
+    description: '컴퓨터 활용 능력 자격증',
+  },
+  {
+    value: '빅데이터분석기사',
+    label: '빅데이터분석기사',
+    description: '빅데이터 분석 및 활용 전문가',
+  },
+  {
+    value: '경영정보시각화능력',
+    label: '경영정보시각화능력',
+    description: '경영정보 시각화 능력 자격증',
+  },
+  {
     value: 'ADsP',
     label: 'ADsP',
     description: '데이터 분석 준전문가 (Advanced Data Analytics Semi-Professional)',
@@ -23,14 +37,19 @@ const certifications: {
     description: 'SQL 개발자 (SQL Developer)',
   },
   {
-    value: '정보처리산업기사',
-    label: '정보처리산업기사',
-    description: '정보처리 분야의 산업기사 자격증',
+    value: '사회조사분석사',
+    label: '사회조사분석사',
+    description: '사회조사 및 통계분석 전문가 자격증',
   },
   {
-    value: '빅데이터분석기사',
-    label: '빅데이터분석기사',
-    description: '빅데이터 분석 및 활용 전문가',
+    value: 'TESAT',
+    label: 'TESAT',
+    description: '경제 이해력 검증시험 (Test of Economic Sense And Thinking)',
+  },
+  {
+    value: '공인중개사',
+    label: '공인중개사',
+    description: '부동산 중개 전문가 자격증',
   },
 ]
 
@@ -49,44 +68,55 @@ export default function CertificationSelection() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl space-y-8">
+      <div className="w-full max-w-6xl space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">자격증 선택</h1>
-          <p className="text-muted-foreground text-lg">
-            준비하실 자격증을 선택해주세요
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {certifications.map((cert) => (
-            <button
+            <label
               key={cert.value}
-              type="button"
-              onClick={() => handleSelect(cert.value)}
-              className={`relative p-6 border-2 rounded-lg text-left transition-all hover:shadow-md ${
+              htmlFor={cert.value}
+              className={`relative flex items-center justify-center p-6 border-2 rounded-xl cursor-pointer transition-all hover:border-primary/50 hover:shadow-md ${
                 state.certificationType === cert.value
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border hover:border-primary/50'
+                  ? 'border-primary bg-primary/10 shadow-lg scale-105'
+                  : 'border-border bg-card hover:bg-accent/50'
               }`}
             >
-              {state.certificationType === cert.value && (
-                <div className="absolute top-4 right-4">
-                  <div className="rounded-full bg-primary text-primary-foreground p-1">
-                    <Check className="h-4 w-4" />
-                  </div>
+              <input
+                type="radio"
+                id={cert.value}
+                name="certification"
+                value={cert.value}
+                checked={state.certificationType === cert.value}
+                onChange={() => handleSelect(cert.value)}
+                className="sr-only"
+              />
+              <div className="flex items-center justify-center w-full">
+                <div className={`mr-3 h-5 w-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                  state.certificationType === cert.value
+                    ? 'border-primary bg-primary'
+                    : 'border-gray-300'
+                }`}>
+                  {state.certificationType === cert.value && (
+                    <div className="h-2 w-2 rounded-full bg-white" />
+                  )}
                 </div>
-              )}
-              <h3 className="text-xl font-semibold mb-2">{cert.label}</h3>
-              <p className="text-sm text-muted-foreground">{cert.description}</p>
-            </button>
+                <h3 className="text-lg font-semibold text-center flex-1">
+                  {cert.label}
+                </h3>
+              </div>
+            </label>
           ))}
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-4">
           <Button
             onClick={handleNext}
             disabled={!state.certificationType}
             className="min-w-32"
+            size="lg"
           >
             다음
           </Button>

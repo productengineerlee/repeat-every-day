@@ -9,6 +9,9 @@ export type CertificationOption =
   | '경영정보시각화능력'
   | 'ADsP'
   | 'SQLD'
+  | '사회조사분석사'
+  | 'TESAT'
+  | '공인중개사'
 
 interface CertificationSelectorProps {
   value: CertificationOption | null
@@ -23,6 +26,9 @@ const CERTIFICATIONS: CertificationOption[] = [
   '경영정보시각화능력',
   'ADsP',
   'SQLD',
+  '사회조사분석사',
+  'TESAT',
+  '공인중개사',
 ]
 
 export default function CertificationSelector({

@@ -1,4 +1,4 @@
-// Common type definitions for the Certiq application
+// Common type definitions for the certiQ application
 
 // User types
 export interface User {

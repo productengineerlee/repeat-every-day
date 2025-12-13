@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context'
 import ProtectedRoute from './components/ProtectedRoute'
 import OnboardingRoute from './components/OnboardingRoute'
@@ -19,14 +19,16 @@ import OnboardingFlow from './pages/onboarding/OnboardingFlow'
 import AdminQuestionInput from './pages/admin/AdminQuestionInput'
 import AdminQuestionList from './pages/admin/AdminQuestionList'
 import AdminQuestionEdit from './pages/admin/AdminQuestionEdit'
+import AdminDiagnosticSettings from './pages/admin/AdminDiagnosticSettings'
 import AdminProtectedRoute from './components/AdminProtectedRoute'
 import { Button } from '@/components/ui/button'
 import { useNotificationScheduler } from './hooks/useNotificationScheduler'
-import { Settings } from 'lucide-react'
+import { Settings, LogOut } from 'lucide-react'
 import './App.css'
 
 function App() {
-  const { user, loading } = useAuth()
+  const { user, loading, signOut } = useAuth()
+  const location = useLocation()
   
   // 알림 스케줄러는 user가 있을 때만 초기화
   useNotificationScheduler()
@@ -34,37 +36,47 @@ function App() {
   // 관리자 이메일 목록 (추가 가능)
   const adminEmails = ['gtsu0707@gmail.com']
   const isAdmin = user?.email && adminEmails.includes(user.email)
+  
+  // 랜딩 페이지인지 확인 (홈 페이지가 아닌 경우 서브 페이지로 간주)
+  const isLandingPage = location.pathname === '/'
+
+  const handleSignOut = async () => {
+    const { error } = await signOut()
+    if (!error) {
+      window.location.href = '/'
+    }
+  }
 
   return (
     <div className="min-h-screen">
       {/* 데스크톱 네비게이션 (로그인하지 않은 사용자용) */}
       {!user && (
-        <nav className="border-b p-4">
-          <div className="container mx-auto flex gap-4 items-center justify-between">
-            <div className="flex gap-4">
+        <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex items-center justify-between">
               <Link to="/">
-                <Button variant="ghost">홈</Button>
+                <h1 className="text-xl font-bold">certiQ</h1>
               </Link>
-              <Link to="/test">
-                <Button variant="ghost">라이브러리 테스트</Button>
-              </Link>
-              <Link to="/supabase-test">
-                <Button variant="ghost">Supabase 테스트</Button>
-              </Link>
-            </div>
-            <div className="flex gap-4">
-              {loading ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
-              ) : (
-                <>
-                  <Link to="/login">
-                    <Button variant="ghost">로그인</Button>
-                  </Link>
-                  <Link to="/signup">
-                    <Button variant="ghost">회원가입</Button>
-                  </Link>
-                </>
-              )}
+              <div className="flex items-center gap-2">
+                {loading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
+                ) : (
+                  <>
+                    {/* 랜딩 페이지가 아닐 때만 대시보드 버튼 표시 */}
+                    {!isLandingPage && (
+                      <Link to="/dashboard">
+                        <Button variant="ghost" size="sm">대시보드</Button>
+                      </Link>
+                    )}
+                    <Link to="/login">
+                      <Button variant="ghost" size="sm">로그인</Button>
+                    </Link>
+                    <Link to="/signup">
+                      <Button size="sm">회원가입</Button>
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </nav>
@@ -75,10 +87,10 @@ function App() {
         <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
-              <Link to="/dashboard">
-                <h1 className="text-xl font-bold">Certiq</h1>
+              <Link to="/">
+                <h1 className="text-xl font-bold">certiQ</h1>
               </Link>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
                 {isAdmin && (
                   <Link to="/admin/question-input">
                     <Button variant="outline" size="sm" className="gap-2">
@@ -92,6 +104,15 @@ function App() {
                     {user.email}
                   </Button>
                 </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="gap-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  로그아웃
+                </Button>
               </div>
             </div>
           </div>
@@ -218,6 +239,14 @@ function App() {
           element={
             <AdminProtectedRoute>
               <AdminQuestionEdit />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/diagnostic-settings"
+          element={
+            <AdminProtectedRoute>
+              <AdminDiagnosticSettings />
             </AdminProtectedRoute>
           }
         />

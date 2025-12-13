@@ -25,17 +25,20 @@ export default function DiagnosticTest() {
 
       try {
         setLoading(true)
+        console.log('🔄 진단테스트 문제 가져오기 시작:', state.certificationType)
         const fetchedQuestions = await getDiagnosticQuestions(
           state.certificationType,
           10
         )
+        console.log('📦 받은 문제 개수:', fetchedQuestions.length)
+        console.log('📝 문제 목록:', fetchedQuestions)
         setQuestions(fetchedQuestions)
         if (fetchedQuestions.length === 0) {
           setError('진단 문제를 찾을 수 없습니다.')
         }
       } catch (err) {
         setError('문제를 불러오는 중 오류가 발생했습니다.')
-        console.error(err)
+        console.error('❌ 문제 가져오기 에러:', err)
       } finally {
         setLoading(false)
       }
@@ -43,6 +46,13 @@ export default function DiagnosticTest() {
 
     fetchQuestions()
   }, [state.certificationType])
+
+  // 인덱스를 문자(A, B, C, D, E)로 변환
+  const indexToLetter = (index: string): string => {
+    const letters = ['A', 'B', 'C', 'D', 'E']
+    const numIndex = parseInt(index)
+    return letters[numIndex] || index
+  }
 
   const currentQuestion = questions[currentIndex]
   const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0
@@ -53,7 +63,10 @@ export default function DiagnosticTest() {
   // 이미 답한 문제의 경우 선택된 답 표시
   useEffect(() => {
     if (currentQuestion && state.diagnosticAnswers[currentQuestion.id]) {
-      setSelectedAnswer(state.diagnosticAnswers[currentQuestion.id])
+      const savedAnswer = state.diagnosticAnswers[currentQuestion.id]
+      // 저장된 답안이 숫자 형식이면 문자로 변환
+      const convertedAnswer = /^\d+$/.test(savedAnswer) ? indexToLetter(savedAnswer) : savedAnswer
+      setSelectedAnswer(convertedAnswer)
     } else {
       setSelectedAnswer(null)
     }
@@ -62,16 +75,25 @@ export default function DiagnosticTest() {
   const handleAnswerSelect = (answer: string) => {
     if (!currentQuestion) return
 
+    console.log('💾 답안 저장:', {
+      questionId: currentQuestion.id,
+      answer,
+      questionContent: currentQuestion.content.substring(0, 50) + '...'
+    })
+
     setSelectedAnswer(answer)
     setDiagnosticAnswer(currentQuestion.id, answer)
   }
 
   const handleNext = () => {
     if (currentIndex < questions.length - 1) {
+      console.log(`➡️ 다음 문제로 이동 (${currentIndex + 1} → ${currentIndex + 2})`)
       setCurrentIndex(currentIndex + 1)
       setSelectedAnswer(null)
     } else {
       // 모든 문제를 완료했으므로 다음 단계로
+      console.log('✅ 모든 문제 완료! 결과 페이지로 이동')
+      console.log('💬 저장된 답안들:', state.diagnosticAnswers)
       nextStep()
     }
   }
@@ -122,7 +144,21 @@ export default function DiagnosticTest() {
     )
   }
 
-  const options = currentQuestion?.options || {}
+  // 선택지 텍스트에서 접두사 제거 함수
+  const cleanOptionText = (text: string): string => {
+    // "숫자. " 또는 "문자. " 형식으로 시작하는 경우 제거
+    // 예: "1. ", "A. ", "① " 등
+    return text.replace(/^[①-⑤\d+A-E]+\.\s*/, '').trim()
+  }
+
+  const rawOptions = currentQuestion?.options || {}
+  
+  // options의 키를 A, B, C, D, E로 변환
+  const options: Record<string, unknown> = {}
+  Object.entries(rawOptions).forEach(([key, value]) => {
+    const letter = indexToLetter(key)
+    options[letter] = value
+  })
 
   return (
     <div className="min-h-screen flex flex-col p-4">
@@ -183,13 +219,14 @@ export default function DiagnosticTest() {
 
                 {/* 문제 내용 */}
                 <div className="mb-8">
-                  <p className="text-lg leading-relaxed">{currentQuestion.content}</p>
+                  <p className="text-lg leading-relaxed text-left">{currentQuestion.content}</p>
                 </div>
 
                 {/* 선택지 */}
                 <div className="space-y-3">
                   {Object.entries(options).map(([key, value]) => {
                     const isSelected = selectedAnswer === key
+                    const cleanedValue = cleanOptionText(value as string)
 
                     return (
                       <button
@@ -220,8 +257,7 @@ export default function DiagnosticTest() {
                               <div className="w-2 h-2 rounded-full bg-current" />
                             )}
                           </div>
-                          <span className="font-medium mr-2">{key}.</span>
-                          <span className="flex-1">{value as string}</span>
+                          <span className="flex-1 text-left">{cleanedValue}</span>
                         </div>
                       </button>
                     )

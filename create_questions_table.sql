@@ -47,3 +47,8 @@ COMMENT ON COLUMN questions.frequency IS '출제빈도 (선택사항)';
 -- 테이블 확인
 -- SELECT * FROM information_schema.tables WHERE table_name = 'questions';
 
+
+
+
+
+

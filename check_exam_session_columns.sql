@@ -15,3 +15,8 @@ ORDER BY column_name;
 -- 2. 컬럼이 없으면 아래 스크립트 실행:
 -- add_exam_session_columns.sql 파일의 내용을 실행하세요
 
+
+
+
+
+

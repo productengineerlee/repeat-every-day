@@ -32,7 +32,7 @@ export async function showReviewNotification(
     return
   }
 
-  const notification = new Notification('Certiq 복습 알림', {
+  const notification = new Notification('certiQ 복습 알림', {
     body: `복습할 문제 ${count}개가 있습니다.`,
     icon: '/favicon.ico',
     badge: '/favicon.ico',

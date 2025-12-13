@@ -1,8 +1,8 @@
 import { useAuth } from '@/context'
 import { Button } from '@/components/ui/button'
-import { LogOut, User as UserIcon, Bell, BookOpen, Settings } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { User as UserIcon, Bell, BookOpen } from 'lucide-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import NotificationSettings from '@/components/settings/NotificationSettings'
 import DailyQuestionSettings from '@/components/settings/DailyQuestionSettings'
 import UserInfoSettings from '@/components/settings/UserInfoSettings'
@@ -11,16 +11,9 @@ import { cn } from '@/lib/utils'
 type ProfileTab = 'user-info' | 'daily-settings' | 'notifications'
 
 export default function Profile() {
-  const { user, signOut, loading } = useAuth()
+  const { user, loading } = useAuth()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<ProfileTab>('user-info')
-
-  const handleSignOut = async () => {
-    const { error } = await signOut()
-    if (!error) {
-      navigate('/login')
-    }
-  }
 
   if (loading) {
     return (
@@ -110,18 +103,6 @@ export default function Profile() {
             )
           })}
         </nav>
-
-        {/* 로그아웃 버튼 */}
-        <div className="p-4 border-t border-border">
-          <Button
-            variant="destructive"
-            className="w-full"
-            onClick={handleSignOut}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            로그아웃
-          </Button>
-        </div>
       </aside>
 
       {/* 메인 컨텐츠 영역 */}

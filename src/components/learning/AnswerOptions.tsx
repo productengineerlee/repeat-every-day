@@ -22,9 +22,6 @@ export default function AnswerOptions({
   useEffect(() => {
     setSelectedAnswer(null)
   }, [questionId])
-
-  // 원형 숫자 배열
-  const circleNumbers = ['①', '②', '③', '④', '⑤']
   
   // options가 배열인 경우 객체로 변환 (A, B, C, D, E 키 사용)
   const optionsObj: Record<string, string> =
@@ -43,11 +40,19 @@ export default function AnswerOptions({
     onAnswerSelect(key, isCorrect)
   }
 
+  // 선택지 텍스트에서 앞의 숫자 접두사 제거 (예: "0. ", "1. ", "2. " 등)
+  const cleanOptionText = (text: string): string => {
+    // "숫자. " 또는 "숫자." 형식으로 시작하는 경우 제거
+    // 예: "0. ① 수익비용대응 원칙" → "① 수익비용대응 원칙"
+    // 예: "1. ② 발생주의 원칙" → "② 발생주의 원칙"
+    return text.replace(/^\d+\.\s*/, '').trim()
+  }
+
   return (
     <div className="space-y-3">
       {Object.entries(optionsObj).map(([key, value], index) => {
         const isSelected = selectedAnswer === key
-        const circleNumber = circleNumbers[index] // ①, ②, ③, ④, ⑤
+        const cleanedValue = cleanOptionText(value)
 
         return (
           <motion.label
@@ -90,10 +95,8 @@ export default function AnswerOptions({
                 <div className="w-3 h-3 rounded-full bg-primary-foreground" />
               )}
             </div>
-            {/* 원형 숫자 표시 */}
-            <span className="text-lg font-medium">{circleNumber}</span>
-            {/* 선택지 텍스트 */}
-            <span className="flex-1">{value}</span>
+            {/* 선택지 텍스트 (질문지 원본 번호 포함) */}
+            <span className="flex-1">{cleanedValue}</span>
           </motion.label>
         )
       })}

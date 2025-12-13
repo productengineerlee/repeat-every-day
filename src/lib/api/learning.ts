@@ -41,6 +41,9 @@ function getCategoriesForCertification(certificationType: string): string[] {
     'SQLD': ['SQL 기본', 'SQL 활용', 'SQL 최적화', '데이터 모델링'],
     '정보처리산업기사': ['데이터베이스', '운영체제', '네트워크', '프로그래밍'],
     '빅데이터분석기사': ['빅데이터 기초', '데이터 분석', '머신러닝', '데이터 시각화'],
+    '사회조사분석사': ['조사방법과 설계', '조사관리와 자료처리', '통계분석과 활용'],
+    'TESAT': ['경제이론(기초, 응용)', '경제시사(기초, 응용)', '상황판단(응용복합)'],
+    '공인중개사': ['부동산학개론', '민법 및 민사특별법', '공인중개사법령', '부동산공법', '부동산공시법령', '부동산세법'],
   }
   return categoryMap[certificationType] || ['기본', '일반', '응용', '심화']
 }
@@ -267,15 +270,25 @@ export async function getQuestions(
             category: data[0].category,
           })
         }
+        // 선택지 텍스트에서 숫자 접두사 제거 함수
+        const cleanOptionText = (text: string): string => {
+          // "숫자. " 또는 "숫자." 형식으로 시작하는 경우 제거
+          // 예: "0. ① 수익비용대응 원칙" → "① 수익비용대응 원칙"
+          return text.replace(/^\d+\.\s*/, '').trim()
+        }
+
         // 데이터 변환 (Supabase 형식을 Question 타입으로)
         realQuestions = data.map((q: any) => {
           // options 처리
           let options: string[] = []
           if (Array.isArray(q.options)) {
-            options = q.options
+            options = q.options.map(opt => cleanOptionText(opt))
           } else if (typeof q.options === 'string') {
             try {
-              options = JSON.parse(q.options)
+              const parsedOptions = JSON.parse(q.options)
+              options = Array.isArray(parsedOptions) 
+                ? parsedOptions.map((opt: string) => cleanOptionText(opt))
+                : []
             } catch (e) {
               console.warn('⚠️ options 파싱 실패:', e)
               options = []

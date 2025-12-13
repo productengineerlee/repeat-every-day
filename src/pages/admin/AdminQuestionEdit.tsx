@@ -14,6 +14,7 @@ export default function AdminQuestionEdit() {
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [questionData, setQuestionData] = useState<Partial<QuestionInput> | null>(null)
+  const [description, setDescription] = useState<string>('문제 정보를 불러오는 중...')
 
   // 문제 데이터 로드
   useEffect(() => {
@@ -69,11 +70,20 @@ export default function AdminQuestionEdit() {
           difficulty: difficultyText,
           tags: q.tags,
           frequency: q.frequency,
+          examYear: q.examYear,
           examSession: q.examSession,
           examNumber: q.examNumber,
         }
 
         setQuestionData(formData)
+        
+        // description 생성 (의미있는 정보 표시)
+        const descParts = [q.certificationType]
+        if (q.examYear) descParts.push(`${q.examYear}년`)
+        if (q.examSession) descParts.push(`${q.examSession}회차`)
+        if (q.examNumber) descParts.push(`${q.examNumber}번`)
+        if (descParts.length === 1) descParts.push(q.category)
+        setDescription(descParts.join(' · '))
       } catch (err) {
         console.error('문제 로드 실패:', err)
         setError(err instanceof Error ? err.message : '문제를 불러오는 중 오류가 발생했습니다.')
@@ -167,7 +177,7 @@ export default function AdminQuestionEdit() {
   return (
     <AdminLayout
       title="문제 수정"
-      description={`문제 ID: ${id}`}
+      description={description}
     >
 
         {/* 성공/에러 메시지 */}

@@ -21,7 +21,7 @@ import { getExamQuestionSet } from '@/lib/api/questions'
 import { supabase } from '@/lib/supabaseClient'
 import { BookOpen, Clock, Play } from 'lucide-react'
 
-type CertificationType = '정보처리기사' | '컴퓨터활용능력' | '빅데이터분석기사' | '경영정보시각화능력' | 'ADsP' | 'SQLD'
+type CertificationType = '정보처리기사' | '컴퓨터활용능력' | '빅데이터분석기사' | '경영정보시각화능력' | 'ADsP' | 'SQLD' | '사회조사분석사' | 'TESAT' | '공인중개사'
 
 const CERTIFICATIONS: CertificationType[] = [
   '정보처리기사',
@@ -30,6 +30,9 @@ const CERTIFICATIONS: CertificationType[] = [
   '경영정보시각화능력',
   'ADsP',
   'SQLD',
+  '사회조사분석사',
+  'TESAT',
+  '공인중개사',
 ]
 
 type ExamSubject = '1과목' | '2과목' | '3과목' | '4과목' | '5과목' | '전체'

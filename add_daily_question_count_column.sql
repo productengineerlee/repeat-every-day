@@ -9,3 +9,8 @@ UPDATE users
 SET daily_question_count = 5
 WHERE daily_question_count IS NULL;
 
+
+
+
+
+

@@ -3,9 +3,15 @@ import { motion } from 'framer-motion'
 import { CheckCircle, XCircle } from 'lucide-react'
 import AdminLayout from '@/components/admin/AdminLayout'
 import QuestionInputForm from '@/components/admin/QuestionInputForm'
+import BatchQuestionUpload from '@/components/admin/BatchQuestionUpload'
 import { saveQuestion, type QuestionInput } from '@/lib/api/questions'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+
+type TabType = 'single' | 'batch'
 
 export default function AdminQuestionInput() {
+  const [activeTab, setActiveTab] = useState<TabType>('single')
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -61,8 +67,31 @@ export default function AdminQuestionInput() {
       title="문제 입력"
       description="관리자용 문제 입력 화면입니다."
     >
+      {/* 탭 메뉴 */}
+      <div className="flex gap-2 border-b mb-6">
+        <Button
+          variant="ghost"
+          onClick={() => setActiveTab('single')}
+          className={cn(
+            'rounded-none border-b-2 border-transparent',
+            activeTab === 'single' && 'border-primary text-primary'
+          )}
+        >
+          개별 입력
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => setActiveTab('batch')}
+          className={cn(
+            'rounded-none border-b-2 border-transparent',
+            activeTab === 'batch' && 'border-primary text-primary'
+          )}
+        >
+          일괄 업로드
+        </Button>
+      </div>
 
-        {/* 성공/에러 메시지 */}
+      {/* 성공/에러 메시지 */}
         {success && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -157,16 +186,22 @@ WITH CHECK (true);`}
           </motion.div>
         )}
 
-      {/* 폼 */}
-      <div className="bg-card border border-border rounded-lg p-6">
-        <QuestionInputForm 
-          onSubmit={handleSubmit}
-          onSuccess={() => {
-            // 성공 후 추가 작업 (필요시)
-            console.log('폼이 초기화되었습니다.')
-          }}
-        />
-      </div>
+      {/* 탭 컨텐츠 */}
+      {activeTab === 'single' && (
+        <div className="bg-card border border-border rounded-lg p-6">
+          <QuestionInputForm 
+            onSubmit={handleSubmit}
+            onSuccess={() => {
+              // 성공 후 추가 작업 (필요시)
+              console.log('폼이 초기화되었습니다.')
+            }}
+          />
+        </div>
+      )}
+
+      {activeTab === 'batch' && (
+        <BatchQuestionUpload />
+      )}
     </AdminLayout>
   )
 }

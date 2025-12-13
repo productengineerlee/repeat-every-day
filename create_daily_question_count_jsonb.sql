@@ -12,3 +12,8 @@ WHERE daily_question_count IS NULL;
 
 COMMENT ON COLUMN users.daily_question_count IS '자격증별 매일 배달받을 문제 수 (JSONB 형식)';
 
+
+
+
+
+

@@ -91,3 +91,8 @@ FROM pg_policies
 WHERE tablename = 'users'
   AND (policyname LIKE '%daily_question_count%' OR policyname LIKE '%read%' OR policyname LIKE '%update%');
 
+
+
+
+
+

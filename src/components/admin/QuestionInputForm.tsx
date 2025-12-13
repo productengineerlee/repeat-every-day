@@ -1,9 +1,38 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
 import { Plus, X, Upload, XCircle } from 'lucide-react'
-import CertificationSelector, { type CertificationOption } from './CertificationSelector'
+
+type CertificationOption =
+  | '정보처리기사'
+  | '컴퓨터활용능력'
+  | '빅데이터분석기사'
+  | '경영정보시각화능력'
+  | 'ADsP'
+  | 'SQLD'
+  | '사회조사분석사'
+  | 'TESAT'
+  | '공인중개사'
+
+const CERTIFICATIONS: CertificationOption[] = [
+  '정보처리기사',
+  '컴퓨터활용능력',
+  '빅데이터분석기사',
+  '경영정보시각화능력',
+  'ADsP',
+  'SQLD',
+  '사회조사분석사',
+  'TESAT',
+  '공인중개사',
+]
 import { uploadImage, deleteImage } from '@/lib/api/storage'
 import type { QuestionInput } from '@/lib/api/questions'
 
@@ -55,59 +84,82 @@ export default function QuestionInputForm({
 
   // 기출년도와 기출회차를 분리하여 관리
   const [examYear, setExamYear] = useState<string>(() => {
+    // examYear가 직접 있으면 사용
+    if (initialData?.examYear) {
+      return String(initialData.examYear)
+    }
+    // examSession이 "2024-01" 형식인 경우에만 년도 추출
     if (initialData?.examSession) {
-      // "2024-01" 형식에서 년도 추출
       const parts = initialData.examSession.split('-')
-      return parts[0] || ''
+      // 첫 번째 부분이 4자리 숫자(년도)인 경우만 사용
+      if (parts.length === 2 && /^\d{4}$/.test(parts[0])) {
+        return parts[0]
+      }
     }
     return ''
   })
   const [examSessionNumber, setExamSessionNumber] = useState<string>(() => {
     if (initialData?.examSession) {
-      // "2024-01" 형식에서 회차 추출 (앞의 0 제거하여 저장)
+      // "2024-01" 형식인 경우 회차 추출
       const parts = initialData.examSession.split('-')
-      const sessionNum = parts[1] || ''
-      // "01" -> "1", "03" -> "3" 등으로 변환하여 저장 (입력 편의를 위해)
-      return sessionNum.replace(/^0+/, '') || ''
+      if (parts.length === 2 && /^\d{4}$/.test(parts[0])) {
+        // "2024-01" 형식: 회차 추출
+        const sessionNum = parts[1] || ''
+        return sessionNum.replace(/^0+/, '') || ''
+      } else {
+        // "47" 같은 형식: 그대로 회차로 사용
+        return initialData.examSession.replace(/^0+/, '') || ''
+      }
+    }
+    return ''
+  })
+  
+  // 기출번호 입력용 로컬 상태 (표시용)
+  const [examNumberInput, setExamNumberInput] = useState<string>(() => {
+    if (initialData?.examNumber !== undefined) {
+      return String(initialData.examNumber).padStart(2, '0')
     }
     return ''
   })
 
-  // initialData.examSession이 변경될 때 examYear와 examSessionNumber 업데이트
+  // initialData가 변경될 때 examYear, examSessionNumber 업데이트
   useEffect(() => {
-    if (initialData?.examSession) {
+    // examYear가 직접 있으면 우선 사용
+    if (initialData?.examYear) {
+      setExamYear(String(initialData.examYear))
+    } else if (initialData?.examSession) {
       const parts = initialData.examSession.split('-')
-      const year = parts[0] || ''
-      const sessionNum = parts[1] || ''
-      const normalizedSessionNum = sessionNum.replace(/^0+/, '') || ''
-      
-      setExamYear(year)
-      setExamSessionNumber(normalizedSessionNum)
+      // "2024-01" 형식인 경우에만 파싱
+      if (parts.length === 2 && /^\d{4}$/.test(parts[0])) {
+        setExamYear(parts[0])
+        const sessionNum = parts[1] || ''
+        setExamSessionNumber(sessionNum.replace(/^0+/, '') || '')
+      } else {
+        // "47" 같은 형식: 년도는 비우고 회차만 설정
+        setExamYear('')
+        setExamSessionNumber(initialData.examSession.replace(/^0+/, '') || '')
+      }
     } else {
       setExamYear('')
       setExamSessionNumber('')
     }
-  }, [initialData?.examSession])
-
-  // examYear와 examSessionNumber가 변경될 때 examSession 업데이트
+  }, [initialData?.examYear, initialData?.examSession])
+  
+  // initialData.examNumber가 변경될 때 formData와 examNumberInput 업데이트
   useEffect(() => {
-    let sessionValue: string | undefined = undefined
-    if (examYear && examSessionNumber) {
-      // 두 값이 모두 있으면 YYYY-MM 형식으로 조합
-      sessionValue = `${examYear}-${examSessionNumber.padStart(2, '0')}`
-    } else if (examYear) {
-      // 년도만 있으면 년도만 저장 (일반적으로는 발생하지 않음)
-      sessionValue = examYear
-    } else if (examSessionNumber) {
-      // 회차만 있으면 회차만 저장 (일반적으로는 발생하지 않음)
-      sessionValue = examSessionNumber.padStart(2, '0')
+    if (initialData?.examNumber !== undefined) {
+      setFormData((prev) => ({
+        ...prev,
+        examNumber: initialData.examNumber,
+      }))
+      setExamNumberInput(String(initialData.examNumber).padStart(2, '0'))
+    } else {
+      setExamNumberInput('')
     }
-    
-    setFormData((prev) => ({
-      ...prev,
-      examSession: sessionValue,
-    }))
-  }, [examYear, examSessionNumber])
+  }, [initialData?.examNumber])
+
+  // examYear와 examSessionNumber는 각각 별도로 관리 (더 이상 examSession으로 합치지 않음)
+  // DB에 각각 저장하므로 이 useEffect는 제거
 
   // 카테고리 분류 입력값 (initialData에서 초기화)
   // 내부 키는 유지하되, UI 레이블만 변경
@@ -427,6 +479,10 @@ export default function QuestionInputForm({
         return
       }
 
+      // 기출년도와 기출회차를 분리하여 전달
+      const examYearNum = examYear ? parseInt(examYear, 10) : undefined
+      const examSession = examSessionNumber ? examSessionNumber.padStart(2, '0') : undefined
+
       await onSubmit({
         content: formData.content!,
         subContent: formData.subContent,
@@ -439,7 +495,8 @@ export default function QuestionInputForm({
         difficulty: formData.difficulty || '중',
         tags: formData.tags || [],
         frequency: formData.frequency,
-        examSession: formData.examSession,
+        examYear: examYearNum && !isNaN(examYearNum) ? examYearNum : undefined,
+        examSession: examSession,
         examNumber: formData.examNumber,
       })
 
@@ -506,54 +563,71 @@ export default function QuestionInputForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* 자격증 선택 */}
-      <CertificationSelector
-        value={formData.certificationType as CertificationOption | null}
-        onChange={(value) => {
-          // 자격증 선택 시 에러 제거
-          if (errors.certificationType) {
-            const newErrors = { ...errors }
-            delete newErrors.certificationType
-            setErrors(newErrors)
-          }
-          
-          // 자격증 선택 시 대분류 자동 입력
-          let 대분류번호 = ''
-          if (value && certificationToCategoryMap[value]) {
-            대분류번호 = certificationToCategoryMap[value]
-          }
-          
-          // 카테고리 레벨 업데이트
-          const newLevels = { ...categoryLevels }
-          if (대분류번호) {
-            newLevels.대분류 = 대분류번호
-            setCategoryLevels(newLevels)
-          }
-          
-          // 카테고리 문자열 생성
-          const categoryParts = Object.entries(newLevels)
-            .filter(([_, val]) => val.trim() !== '')
-            .map(([_, val]) => val.trim())
-          
-          const categoryString = categoryParts.join('-')
-          
-          // formData 업데이트 (certificationType, category, tags를 함께)
-          const currentTags = formData.tags || []
-          const filteredTags = currentTags.filter(tag => {
-            return !tag.startsWith('카테고리:') && tag !== categoryString && !/^\d+(-\d+)*$/.test(tag)
-          })
-          
-          const newTags = categoryString ? [categoryString, ...filteredTags] : filteredTags
-          
-          // 함수형 업데이트로 이전 상태 보장
-          setFormData((prev) => ({
-            ...prev,
-            certificationType: value, // 자격증 타입 명시적으로 업데이트
-            category: categoryString,
-            tags: newTags,
-          }))
-        }}
-        error={errors.certificationType}
-      />
+      <div className="space-y-2">
+        <Label htmlFor="certification" className="block text-left">자격증 선택 *</Label>
+        <Select
+          value={formData.certificationType || undefined}
+          onValueChange={(value) => {
+            const certValue = value as CertificationOption
+            // 자격증 선택 시 에러 제거
+            if (errors.certificationType) {
+              const newErrors = { ...errors }
+              delete newErrors.certificationType
+              setErrors(newErrors)
+            }
+            
+            // 자격증 선택 시 대분류 자동 입력
+            let 대분류번호 = ''
+            if (certValue && certificationToCategoryMap[certValue]) {
+              대분류번호 = certificationToCategoryMap[certValue]
+            }
+            
+            // 카테고리 레벨 업데이트
+            const newLevels = { ...categoryLevels }
+            if (대분류번호) {
+              newLevels.대분류 = 대분류번호
+              setCategoryLevels(newLevels)
+            }
+            
+            // 카테고리 문자열 생성
+            const categoryParts = Object.entries(newLevels)
+              .filter(([_, val]) => val.trim() !== '')
+              .map(([_, val]) => val.trim())
+            
+            const categoryString = categoryParts.join('-')
+            
+            // formData 업데이트 (certificationType, category, tags를 함께)
+            const currentTags = formData.tags || []
+            const filteredTags = currentTags.filter(tag => {
+              return !tag.startsWith('카테고리:') && tag !== categoryString && !/^\d+(-\d+)*$/.test(tag)
+            })
+            
+            const newTags = categoryString ? [categoryString, ...filteredTags] : filteredTags
+            
+            // 함수형 업데이트로 이전 상태 보장
+            setFormData((prev) => ({
+              ...prev,
+              certificationType: certValue, // 자격증 타입 명시적으로 업데이트
+              category: categoryString,
+              tags: newTags,
+            }))
+          }}
+        >
+          <SelectTrigger id="certification">
+            <SelectValue placeholder="자격증을 선택하세요" />
+          </SelectTrigger>
+          <SelectContent>
+            {CERTIFICATIONS.map((cert) => (
+              <SelectItem key={cert} value={cert}>
+                {cert}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {errors.certificationType && (
+          <p className="text-sm text-destructive">{errors.certificationType}</p>
+        )}
+      </div>
 
       {/* 카테고리 분류 입력 */}
       <div className="space-y-2">
@@ -913,29 +987,23 @@ USING (
         <div className="space-y-2">
           <label className="text-sm font-medium text-left block">
             기출회차 (선택)
-            <span className="text-xs text-muted-foreground ml-1 block">2자리 숫자 (예: 01, 02)</span>
+            <span className="text-xs text-muted-foreground ml-1 block">2자리 숫자 (예: 03, 37)</span>
           </label>
           <Input
             type="text"
-            placeholder="01"
-            value={examSessionNumber ? examSessionNumber.padStart(2, '0') : ''}
+            placeholder="예: 03, 37"
+            value={examSessionNumber}
             onChange={(e) => {
               const value = e.target.value
               // 숫자만 허용하고 2자리로 제한
               const formatted = value.replace(/[^\d]/g, '').slice(0, 2)
-              // 앞의 0을 제거하여 저장 (예: "01" -> "1", "03" -> "3")
-              const normalizedValue = formatted.replace(/^0+/, '') || ''
-              setExamSessionNumber(normalizedValue)
-              // examSession은 useEffect에서 자동 업데이트됨
+              setExamSessionNumber(formatted)
             }}
-            onBlur={(e) => {
-              // 포커스를 잃을 때 두 자리 형식으로 확정
-              const value = e.target.value.replace(/[^\d]/g, '')
-              if (value) {
-                // 숫자가 있으면 앞의 0을 제거하여 저장 (useEffect에서 자동으로 두 자리 형식으로 조합됨)
-                const normalizedValue = value.replace(/^0+/, '') || ''
-                setExamSessionNumber(normalizedValue)
-                // examSession은 useEffect에서 자동 업데이트됨
+            onBlur={() => {
+              // 포커스를 잃을 때 2자리로 포맷팅
+              if (examSessionNumber && examSessionNumber.length === 1) {
+                const formatted = examSessionNumber.padStart(2, '0')
+                setExamSessionNumber(formatted)
               }
             }}
             maxLength={2}
@@ -943,29 +1011,35 @@ USING (
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-left block">기출번호 (선택)</label>
+          <label className="text-sm font-medium text-left block">
+            기출번호 (선택)
+            <span className="text-xs text-muted-foreground ml-1 block">2자리 숫자 (예: 03, 57)</span>
+          </label>
           <Input
             type="text"
-            value={formData.examNumber ? String(formData.examNumber).padStart(2, '0') : ''}
+            value={examNumberInput}
             onChange={(e) => {
               let value = e.target.value
-              // 숫자만 허용
-              value = value.replace(/[^0-9]/g, '')
-              // 최대 2자리
-              if (value.length > 2) {
-                value = value.slice(0, 2)
-              }
-              // 빈 값이면 undefined, 아니면 숫자로 변환
+              // 숫자만 허용하고 최대 2자리
+              value = value.replace(/[^0-9]/g, '').slice(0, 2)
+              setExamNumberInput(value)
+              // formData에는 숫자로 저장
               const numValue = value === '' ? undefined : parseInt(value, 10)
               setFormData({
                 ...formData,
                 examNumber: numValue,
               })
             }}
-            placeholder="예: 01"
+            onBlur={() => {
+              // 포커스를 잃을 때 2자리로 포맷팅
+              if (examNumberInput && examNumberInput.length === 1) {
+                const formatted = examNumberInput.padStart(2, '0')
+                setExamNumberInput(formatted)
+              }
+            }}
+            placeholder="예: 03, 57"
             maxLength={2}
           />
-          <p className="text-xs text-muted-foreground">2자리 숫자 (예: 01, 15)</p>
         </div>
       </div>
 

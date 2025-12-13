@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { FileText, List, LayoutDashboard } from 'lucide-react'
+import { FileText, List, LayoutDashboard, ClipboardCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface AdminLayoutProps {
@@ -24,6 +24,11 @@ export default function AdminLayout({ children, title, description }: AdminLayou
       label: '문제 목록',
       path: '/admin/questions',
       icon: List,
+    },
+    {
+      label: '테스트 10문제',
+      path: '/admin/diagnostic-settings',
+      icon: ClipboardCheck,
     },
   ]
 
