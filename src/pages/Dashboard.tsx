@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import TopBar from '@/components/dashboard/TopBar'
 import DailyQuestionCard from '@/components/dashboard/DailyQuestionCard'
 import ExamQuestionCard from '@/components/dashboard/ExamQuestionCard'
-import WeaknessAnalysis from '@/components/dashboard/WeaknessAnalysis'
 import WeakAreaAnalysis from '@/components/statistics/WeakAreaAnalysis'
 import LearningStreakCalendar from '@/components/statistics/LearningStreakCalendar'
 // import AchievementCards from '@/components/statistics/AchievementCards' // 나중에 추가 예정 (임시 제거)
@@ -129,11 +128,6 @@ export default function Dashboard() {
         {/* <div className="relative">
           <AchievementCards />
         </div> */}
-
-        {/* 취약 영역 분석 (기본) - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
-          <WeaknessAnalysis />
-        </div>
 
         {/* 상세 약점 분석 - 에러 발생 시에도 렌더링 */}
         <div className="relative">
