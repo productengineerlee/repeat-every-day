@@ -278,24 +278,25 @@ export default function PerformanceCharts() {
               <BarChart 
                 data={categoryChartData} 
                 layout="vertical"
-                margin={{ top: 5, right: 30, left: 150, bottom: 5 }}
+                margin={{ top: 10, right: 40, left: 200, bottom: 10 }}
+                barSize={30}
               >
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis
                 type="number"
                 domain={[0, 100]}
-                className="text-xs"
-                tick={{ fill: 'currentColor' }}
+                className="text-sm"
+                tick={{ fill: 'currentColor', fontSize: 12 }}
                 stroke="currentColor"
-                label={{ value: '정답률 (%)', position: 'insideBottom', offset: -5 }}
+                axisLine={{ strokeWidth: 2 }}
               />
               <YAxis
                 type="category"
                 dataKey="category"
-                className="text-xs"
-                tick={{ fill: 'currentColor' }}
+                className="text-sm"
+                tick={{ fill: 'currentColor', fontSize: 11 }}
                 stroke="currentColor"
-                width={140}
+                width={190}
+                axisLine={{ strokeWidth: 2 }}
               />
               <Tooltip
                 contentStyle={{
@@ -303,20 +304,13 @@ export default function PerformanceCharts() {
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '0.5rem',
                 }}
-                formatter={(value: number, name: string) => {
-                  if (name === 'accuracy') {
-                    return [`${value}%`, '정답률']
-                  }
-                  return [value, name]
-                }}
+                formatter={(value: number) => [`${value}%`, '정답률']}
                 labelFormatter={(label) => label}
               />
-              <Legend />
               <Bar
                 dataKey="accuracy"
-                name="정답률"
-                radius={[0, 8, 8, 0]}
-                animationDuration={1000}
+                radius={[0, 6, 6, 0]}
+                animationDuration={800}
               >
                 {categoryChartData.map((entry, index) => {
                   // 정답률에 따라 색상 결정
