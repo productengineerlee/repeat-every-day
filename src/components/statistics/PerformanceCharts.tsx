@@ -18,6 +18,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  Cell,
 } from 'recharts'
 import { format, parseISO } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -108,7 +109,7 @@ export default function PerformanceCharts() {
     const topicKey = `${parts[0]}-${parts[1]}-${parts[2]}`
     const topicName = TOPIC_MAP[topicKey] || `항목${parts[2]}`
     
-    return `${subjectName} - ${topicName}`
+    return `${subjectName} > ${topicName}`
   }
 
   // 카테고리 성능 차트 데이터 포맷팅
@@ -313,11 +314,23 @@ export default function PerformanceCharts() {
               <Legend />
               <Bar
                 dataKey="accuracy"
-                fill="hsl(var(--primary))"
                 name="정답률"
                 radius={[0, 8, 8, 0]}
                 animationDuration={1000}
-              />
+              >
+                {categoryChartData.map((entry, index) => {
+                  // 정답률에 따라 색상 결정
+                  let color = '#10b981' // 기본 녹색 (80%+)
+                  if (entry.accuracy < 50) {
+                    color = '#ef4444' // 빨강 (50% 미만)
+                  } else if (entry.accuracy < 70) {
+                    color = '#f59e0b' // 주황 (50-70%)
+                  } else if (entry.accuracy < 80) {
+                    color = '#3b82f6' // 파랑 (70-80%)
+                  }
+                  return <Cell key={`cell-${index}`} fill={color} />
+                })}
+              </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
