@@ -13,7 +13,7 @@ import LearningStreakCalendar from '@/components/statistics/LearningStreakCalend
 // import AchievementCards from '@/components/statistics/AchievementCards' // 나중에 추가 예정 (임시 제거)
 import PerformanceCharts from '@/components/statistics/PerformanceCharts'
 import ExportStatistics from '@/components/statistics/ExportStatistics'
-import { RotateCcw } from 'lucide-react'
+import { RotateCcw, Bell } from 'lucide-react'
 
 // 자격증명 매핑 (나중에 필요할 수 있음)
 // const CERTIFICATION_LABELS: Record<string, string> = {
@@ -45,6 +45,10 @@ export default function Dashboard() {
     
     reset() // 온보딩 상태 초기화
     navigate('/onboarding')
+  }
+
+  const handleNotificationSettings = () => {
+    navigate('/profile/settings')
   }
 
   useEffect(() => {
@@ -90,6 +94,10 @@ export default function Dashboard() {
             <Button variant="outline">오답 노트 보기</Button>
             <Button variant="outline" onClick={handleStartDiagnostic}>
               학습 설정 하기
+            </Button>
+            <Button variant="outline" onClick={handleNotificationSettings} className="gap-2">
+              <Bell className="h-4 w-4" />
+              알림 설정 하기
             </Button>
             <Button variant="outline" onClick={handleRetakeDiagnostic} className="gap-2">
               <RotateCcw className="h-4 w-4" />
