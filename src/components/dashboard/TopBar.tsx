@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/context'
-import { getUserStreak } from '@/lib/api/dashboard'
+import { getStreakData } from '@/lib/api/statistics'
 import { Flame, Bell, User, Settings, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -23,8 +23,9 @@ export default function TopBar() {
       }
 
       try {
-        const streak = await getUserStreak(user.id)
-        setStreakCount(streak.streakCount)
+        // 학습 캘린더와 같은 함수 사용 (실제 학습 기록 기반)
+        const streak = await getStreakData(user.id)
+        setStreakCount(streak.currentStreak)
       } catch (error) {
         console.error('Error fetching streak:', error)
       } finally {
@@ -33,6 +34,16 @@ export default function TopBar() {
     }
 
     fetchStreak()
+    
+    // 페이지 포커스 시 스트릭 새로고침
+    const handleFocus = () => {
+      if (user) {
+        fetchStreak()
+      }
+    }
+    
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
   }, [user])
 
   return (
