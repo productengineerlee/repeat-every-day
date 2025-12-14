@@ -44,7 +44,17 @@ export default function LearningStreakCalendar() {
     }
 
     fetchData()
-  }, [user, currentMonth]) // currentMonth를 의존성에 추가하여 월 변경 시 데이터 새로고침
+
+    // 페이지 포커스 시 데이터 새로고침
+    const handleFocus = () => {
+      if (user) {
+        fetchData()
+      }
+    }
+
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [user, currentMonth])
 
   // 활동 맵 생성
   const activityMap = useMemo(() => {

@@ -47,10 +47,13 @@ export async function getDailyActivity(
     // 날짜별로 집계 (한국 시간대 기준)
     const activityMap: Record<string, { count: number; correctCount: number }> = {}
 
+    // 날짜별로 집계 (한국 시간대 기준)
+    const kstOffset = 9 * 60 * 60 * 1000 // 9시간을 밀리초로
+
     records?.forEach((record) => {
       // UTC 시간을 한국 시간(UTC+9)으로 변환
       const utcDate = new Date(record.created_at)
-      const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000)
+      const kstDate = new Date(utcDate.getTime() + kstOffset)
       const date = kstDate.toISOString().split('T')[0]
       
       if (!activityMap[date]) {
@@ -62,15 +65,17 @@ export async function getDailyActivity(
       }
     })
 
-    // 모든 날짜를 포함하는 배열 생성 (빈 날짜도 포함)
+    // 모든 날짜를 포함하는 배열 생성 (빈 날짜도 포함) - KST 기준
     const result: DailyActivity[] = []
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
+    const kstOffset = 9 * 60 * 60 * 1000 // 9시간을 밀리초로
+    const todayKST = new Date(new Date().getTime() + kstOffset)
+    const todayKSTStr = todayKST.toISOString().split('T')[0]
+    
+    // KST 기준으로 날짜 배열 생성
     for (let i = 0; i < days; i++) {
-      const date = new Date(today)
-      date.setDate(date.getDate() - (days - 1 - i))
-      const dateStr = date.toISOString().split('T')[0]
+      const dateKST = new Date(todayKST)
+      dateKST.setDate(dateKST.getDate() - (days - 1 - i))
+      const dateStr = dateKST.toISOString().split('T')[0]
 
       const activity = activityMap[dateStr]
       result.push({
@@ -234,15 +239,15 @@ export async function getAccuracyTrend(
       }
     })
 
-    // 결과 배열 생성
+    // 결과 배열 생성 - KST 기준
     const result: AccuracyTrend[] = []
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const kstOffset = 9 * 60 * 60 * 1000 // 9시간을 밀리초로
+    const todayKST = new Date(new Date().getTime() + kstOffset)
 
     for (let i = 0; i < days; i++) {
-      const date = new Date(today)
-      date.setDate(date.getDate() - (days - 1 - i))
-      const dateStr = date.toISOString().split('T')[0]
+      const dateKST = new Date(todayKST)
+      dateKST.setDate(dateKST.getDate() - (days - 1 - i))
+      const dateStr = dateKST.toISOString().split('T')[0]
 
       const data = trendMap[dateStr]
       const count = data?.count || 0
