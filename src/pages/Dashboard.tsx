@@ -10,7 +10,7 @@ import ExamQuestionCard from '@/components/dashboard/ExamQuestionCard'
 import WeaknessAnalysis from '@/components/dashboard/WeaknessAnalysis'
 import WeakAreaAnalysis from '@/components/statistics/WeakAreaAnalysis'
 import LearningStreakCalendar from '@/components/statistics/LearningStreakCalendar'
-import AchievementCards from '@/components/statistics/AchievementCards'
+// import AchievementCards from '@/components/statistics/AchievementCards' // 나중에 추가 예정 (임시 제거)
 import PerformanceCharts from '@/components/statistics/PerformanceCharts'
 import ExportStatistics from '@/components/statistics/ExportStatistics'
 import { BookOpen, TrendingUp, Award, RotateCcw } from 'lucide-react'
@@ -152,10 +152,10 @@ export default function Dashboard() {
           <PerformanceCharts />
         </div>
 
-        {/* 성취도 카드 - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
+        {/* 성취도 카드 - 나중에 추가 예정 (임시 제거) */}
+        {/* <div className="relative">
           <AchievementCards />
-        </div>
+        </div> */}
 
         {/* 취약 영역 분석 (기본) - 에러 발생 시에도 렌더링 */}
         <div className="relative">
