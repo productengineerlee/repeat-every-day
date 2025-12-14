@@ -391,149 +391,227 @@ export default function ExamQuestionCard() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/20 rounded-xl p-6 md:p-8 space-y-6"
+      className="relative bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950/30 dark:via-purple-950/30 dark:to-pink-950/30 border-2 border-indigo-200/50 dark:border-indigo-800/50 rounded-2xl p-6 md:p-8 space-y-6 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
     >
-      {/* 헤더 */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-2 flex-1">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold">기출문제</h2>
-          </div>
-          <p className="text-muted-foreground">
-            {selectedCertification && examSession ? (
-              examSubject ? `${examSubject} 문제를 불러오세요` : '기출과목을 선택해주세요'
-            ) : (
-              '자격증과 기출회차를 선택해주세요'
-            )}
-          </p>
-        </div>
-      </div>
-
-      {/* 자격증 선택 및 기출년도/회차/과목 입력 */}
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-          {/* 자격증 선택 */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-left block">자격증 선택</label>
-            <Select
-              value={selectedCertification || undefined}
-              onValueChange={(value) => handleCertificationChange(value as CertificationType)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="자격증을 선택하세요" />
-              </SelectTrigger>
-              <SelectContent>
-                {CERTIFICATIONS.map((cert) => (
-                  <SelectItem key={cert} value={cert}>
-                    {cert}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* 기출년도 선택 */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-left block">
-              기출년도 (선택)
-            </label>
-            <Select
-              value={examYear || undefined}
-              onValueChange={(value) => setExamYear(value)}
-              disabled={!selectedCertification || availableYears.length === 0}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="연도를 선택하세요" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableYears.map((year) => (
-                  <SelectItem key={year} value={year}>
-                    {year}년
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* 기출회차 선택 */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-left block">
-              기출회차 (선택)
-            </label>
-            <Select
-              value={examSessionNumber || undefined}
-              onValueChange={(value) => setExamSessionNumber(value)}
-              disabled={!selectedCertification || !examYear || availableSessions.length === 0}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="회차를 선택하세요" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableSessions.map((session) => (
-                  <SelectItem key={session} value={session}>
-                    {session}회차
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* 기출과목 선택 */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-left block">기출과목 선택</label>
-            <Select
-              value={examSubject || undefined}
-              onValueChange={(value) => setExamSubject(value as ExamSubject)}
-              disabled={!selectedCertification || !examSession || availableSubjects.length === 0}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="과목을 선택하세요" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableSubjects.length > 0 ? (
-                  availableSubjects.map((subject) => (
-                    <SelectItem key={subject} value={subject}>
-                      {subject}
-                    </SelectItem>
-                  ))
+      {/* 배경 장식 */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-pink-200/20 to-purple-200/20 rounded-full blur-3xl -z-0" />
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-indigo-200/20 to-blue-200/20 rounded-full blur-3xl -z-0" />
+      
+      {/* 콘텐츠 */}
+      <div className="relative z-10">
+        {/* 헤더 */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-3 flex-1">
+            <div className="flex items-center gap-3">
+              <motion.img 
+                src="/mascot.png" 
+                alt="Certiq Mascot" 
+                className="w-12 h-12 object-contain drop-shadow-md"
+                initial={{ rotate: -10 }}
+                animate={{ rotate: 0 }}
+                transition={{ type: "spring", stiffness: 200 }}
+              />
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+                기출문제
+              </h2>
+            </div>
+            <p className="text-base text-gray-700 dark:text-gray-300 font-medium">
+              {selectedCertification && examSession ? (
+                examSubject ? (
+                  <>
+                    <span className="text-indigo-600 dark:text-indigo-400 font-bold">{examSubject}</span> 문제를 불러오세요! 📚
+                  </>
                 ) : (
-                  EXAM_SUBJECTS.map((subject) => (
-                    <SelectItem key={subject} value={subject}>
-                      {subject}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+                  '기출과목을 선택해주세요 ✨'
+                )
+              ) : (
+                '자격증과 기출회차를 선택해주세요 🎯'
+              )}
+            </p>
           </div>
         </div>
       </div>
 
-      {/* 시작 버튼 */}
-      <Button
-        onClick={handleStartLearning}
-        disabled={!selectedCertification || !examSession || !examSubject || questionIds.length === 0 || loading}
-        size="lg"
-        className="w-full"
-      >
-        {loading ? (
-          '문제 불러오는 중...'
-        ) : !selectedCertification ? (
-          '자격증을 선택해주세요'
-        ) : !examSession ? (
-          '기출회차를 입력해주세요'
-        ) : !examSubject ? (
-          '기출과목을 선택해주세요'
-        ) : questionIds.length === 0 ? (
-          '문제가 없습니다'
-        ) : (
-          <>
-            <Play className="mr-2 h-5 w-5" />
-            기출문제 풀기
-          </>
+        {/* 구분선 */}
+        <div className="h-px bg-gradient-to-r from-transparent via-indigo-300 to-transparent my-6" />
+
+        {/* 자격증 선택 및 기출년도/회차/과목 입력 */}
+        <div className="space-y-4 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* 자격증 선택 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="space-y-2"
+            >
+              <label className="text-sm font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-1">
+                🎓 자격증 선택
+              </label>
+              <Select
+                value={selectedCertification || undefined}
+                onValueChange={(value) => handleCertificationChange(value as CertificationType)}
+              >
+                <SelectTrigger className="w-full h-11 border-2 border-indigo-200 dark:border-indigo-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:border-indigo-400 dark:hover:border-indigo-600 transition-colors">
+                  <SelectValue placeholder="자격증을 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CERTIFICATIONS.map((cert) => (
+                    <SelectItem key={cert} value={cert}>
+                      {cert}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </motion.div>
+
+            {/* 기출년도 선택 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="space-y-2"
+            >
+              <label className="text-sm font-bold text-purple-700 dark:text-purple-400 flex items-center gap-1">
+                📅 기출년도
+              </label>
+              <Select
+                value={examYear || undefined}
+                onValueChange={(value) => setExamYear(value)}
+                disabled={!selectedCertification || availableYears.length === 0}
+              >
+                <SelectTrigger className="w-full h-11 border-2 border-purple-200 dark:border-purple-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:border-purple-400 dark:hover:border-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  <SelectValue placeholder="연도를 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableYears.map((year) => (
+                    <SelectItem key={year} value={year}>
+                      {year}년
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </motion.div>
+
+            {/* 기출회차 선택 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="space-y-2"
+            >
+              <label className="text-sm font-bold text-pink-700 dark:text-pink-400 flex items-center gap-1">
+                🔢 기출회차
+              </label>
+              <Select
+                value={examSessionNumber || undefined}
+                onValueChange={(value) => setExamSessionNumber(value)}
+                disabled={!selectedCertification || !examYear || availableSessions.length === 0}
+              >
+                <SelectTrigger className="w-full h-11 border-2 border-pink-200 dark:border-pink-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:border-pink-400 dark:hover:border-pink-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  <SelectValue placeholder="회차를 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableSessions.map((session) => (
+                    <SelectItem key={session} value={session}>
+                      {session}회차
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </motion.div>
+
+            {/* 기출과목 선택 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="space-y-2"
+            >
+              <label className="text-sm font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-1">
+                📚 기출과목
+              </label>
+              <Select
+                value={examSubject || undefined}
+                onValueChange={(value) => setExamSubject(value as ExamSubject)}
+                disabled={!selectedCertification || !examSession || availableSubjects.length === 0}
+              >
+                <SelectTrigger className="w-full h-11 border-2 border-indigo-200 dark:border-indigo-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:border-indigo-400 dark:hover:border-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                  <SelectValue placeholder="과목을 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableSubjects.length > 0 ? (
+                    availableSubjects.map((subject) => (
+                      <SelectItem key={subject} value={subject}>
+                        {subject}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    EXAM_SUBJECTS.map((subject) => (
+                      <SelectItem key={subject} value={subject}>
+                        {subject}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* 문제 개수 표시 */}
+        {questionIds.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative z-10 flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-xl border border-emerald-200/50 dark:border-emerald-800/50"
+          >
+            <div className="p-2 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg">
+              <BookOpen className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">불러온 문제 수</p>
+              <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                총 <span className="text-lg">{questionIds.length}</span>문제
+              </p>
+            </div>
+          </motion.div>
         )}
-      </Button>
+
+        {/* 시작 버튼 */}
+        <motion.div
+          whileHover={{ scale: questionIds.length > 0 ? 1.02 : 1 }}
+          whileTap={{ scale: questionIds.length > 0 ? 0.98 : 1 }}
+          className="relative z-10"
+        >
+          <Button
+            onClick={handleStartLearning}
+            disabled={!selectedCertification || !examSession || !examSubject || questionIds.length === 0 || loading}
+            size="lg"
+            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <>
+                <Clock className="mr-2 h-6 w-6 animate-spin" />
+                문제 불러오는 중...
+              </>
+            ) : !selectedCertification ? (
+              '🎓 자격증을 선택해주세요'
+            ) : !examSession ? (
+              '📅 기출회차를 입력해주세요'
+            ) : !examSubject ? (
+              '📚 기출과목을 선택해주세요'
+            ) : questionIds.length === 0 ? (
+              '❌ 문제가 없습니다'
+            ) : (
+              <>
+                <Play className="mr-2 h-6 w-6" />
+                기출문제 풀기 🚀
+              </>
+            )}
+          </Button>
+        </motion.div>
+      </div>
     </motion.div>
   )
 }
