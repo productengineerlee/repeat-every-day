@@ -16,6 +16,8 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  Area,
+  AreaChart,
 } from 'recharts'
 import { format, parseISO } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -32,7 +34,7 @@ const PERIOD_LABELS: Record<Period, string> = {
 
 export default function PerformanceCharts() {
   const { user } = useAuth()
-  const [period, setPeriod] = useState<Period>('month')
+  const [period, setPeriod] = useState<Period>('week')
   const [accuracyTrend, setAccuracyTrend] = useState<AccuracyTrend[]>([])
   const [categoryPerformance, setCategoryPerformance] = useState<CategoryPerformance[]>([])
   const [loading, setLoading] = useState(true)
@@ -212,26 +214,35 @@ export default function PerformanceCharts() {
         {accuracyChartData.length > 0 ? (
           <div className="w-full h-[300px]" style={{ minWidth: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={accuracyChartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <AreaChart data={accuracyChartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorAccuracyGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" strokeOpacity={0.5} />
               <XAxis
                 dataKey="date"
                 className="text-xs"
-                tick={{ fill: 'currentColor' }}
+                tick={{ fill: 'currentColor', fontSize: 12 }}
                 stroke="currentColor"
+                axisLine={{ strokeWidth: 2 }}
               />
               <YAxis
                 domain={[0, 100]}
                 className="text-xs"
-                tick={{ fill: 'currentColor' }}
+                tick={{ fill: 'currentColor', fontSize: 12 }}
                 stroke="currentColor"
-                label={{ value: '정답률 (%)', angle: -90, position: 'insideLeft' }}
+                axisLine={{ strokeWidth: 2 }}
+                label={{ value: '정답률 (%)', angle: -90, position: 'insideLeft', style: { fontSize: 12 } }}
               />
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'hsl(var(--popover))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '0.5rem',
+                  padding: '8px 12px',
                 }}
                 labelFormatter={(label, payload) => {
                   if (payload && payload[0]) {
@@ -242,18 +253,17 @@ export default function PerformanceCharts() {
                 }}
                 formatter={(value: number) => [`${value}%`, '정답률']}
               />
-              <Legend />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="accuracy"
-                stroke="hsl(var(--primary))"
-                strokeWidth={2}
-                dot={{ fill: 'hsl(var(--primary))', r: 4 }}
-                activeDot={{ r: 6 }}
-                name="정답률"
+                stroke="#3b82f6"
+                strokeWidth={3}
+                fill="url(#colorAccuracyGradient)"
+                dot={{ fill: '#3b82f6', strokeWidth: 2, r: 5, stroke: '#fff' }}
+                activeDot={{ r: 7, strokeWidth: 2 }}
                 animationDuration={1000}
               />
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         ) : (
