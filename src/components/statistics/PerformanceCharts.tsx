@@ -10,15 +10,12 @@ import {
 import {
   LineChart,
   Line,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   Legend,
-  Cell,
 } from 'recharts'
 import { format, parseISO } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -273,60 +270,50 @@ export default function PerformanceCharts() {
           <h3 className="text-lg font-semibold">카테고리별 성능</h3>
         </div>
         {categoryChartData.length > 0 ? (
-          <div className="w-full h-[400px]" style={{ minWidth: 0 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart 
-                data={categoryChartData} 
-                layout="vertical"
-                margin={{ top: 10, right: 40, left: 200, bottom: 10 }}
-                barSize={30}
-              >
-              <XAxis
-                type="number"
-                domain={[0, 100]}
-                className="text-sm"
-                tick={{ fill: 'currentColor', fontSize: 12 }}
-                stroke="currentColor"
-                axisLine={{ strokeWidth: 2 }}
-              />
-              <YAxis
-                type="category"
-                dataKey="category"
-                className="text-sm"
-                tick={{ fill: 'currentColor', fontSize: 11 }}
-                stroke="currentColor"
-                width={190}
-                axisLine={{ strokeWidth: 2 }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--popover))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '0.5rem',
-                }}
-                formatter={(value: number) => [`${value}%`, '정답률']}
-                labelFormatter={(label) => label}
-              />
-              <Bar
-                dataKey="accuracy"
-                radius={[0, 6, 6, 0]}
-                animationDuration={800}
-              >
-                {categoryChartData.map((entry, index) => {
-                  // 정답률에 따라 색상 결정
-                  let color = '#10b981' // 기본 녹색 (80%+)
-                  if (entry.accuracy < 50) {
-                    color = '#ef4444' // 빨강 (50% 미만)
-                  } else if (entry.accuracy < 70) {
-                    color = '#f59e0b' // 주황 (50-70%)
-                  } else if (entry.accuracy < 80) {
-                    color = '#3b82f6' // 파랑 (70-80%)
-                  }
-                  return <Cell key={`cell-${index}`} fill={color} />
-                })}
-              </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="w-full space-y-3">
+            {categoryChartData.map((item, index) => {
+              // 정답률에 따라 색상 결정
+              let color = '#10b981' // 기본 녹색 (80%+)
+              let colorClass = 'bg-green-500'
+              if (item.accuracy < 50) {
+                color = '#ef4444' // 빨강 (50% 미만)
+                colorClass = 'bg-red-500'
+              } else if (item.accuracy < 70) {
+                color = '#f59e0b' // 주황 (50-70%)
+                colorClass = 'bg-orange-500'
+              } else if (item.accuracy < 80) {
+                color = '#3b82f6' // 파랑 (70-80%)
+                colorClass = 'bg-blue-500'
+              }
+              
+              return (
+                <div key={index} className="flex items-center gap-3">
+                  {/* 카테고리 이름 */}
+                  <div className="w-[300px] text-sm text-left flex-shrink-0">
+                    {item.category}
+                  </div>
+                  
+                  {/* 막대 그래프 */}
+                  <div className="flex-1 flex items-center gap-2">
+                    <div className="flex-1 bg-muted rounded-full h-6 overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500`}
+                        style={{ 
+                          width: `${item.accuracy}%`,
+                          backgroundColor: color
+                        }}
+                      />
+                    </div>
+                    
+                    {/* 퍼센티지와 색상 점 */}
+                    <div className="flex items-center gap-2 w-[60px]">
+                      <span className="text-sm font-semibold">{item.accuracy}%</span>
+                      <div className={`w-3 h-3 rounded-full ${colorClass}`} />
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         ) : (
           <div className="h-64 flex items-center justify-center border rounded-lg bg-muted/50">
