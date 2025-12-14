@@ -96,14 +96,17 @@ export default function LearningStreakCalendar() {
     })
   }, [currentMonth, activityMap])
 
-  // 색상 강도 계산 (더 연한 색상으로 가독성 향상)
-  const getIntensityColor = (count: number): string => {
-    if (count === 0) return 'bg-muted'
-    if (count >= 10) return 'bg-green-200 dark:bg-green-800/40'
-    if (count >= 5) return 'bg-green-100 dark:bg-green-800/30'
-    if (count >= 3) return 'bg-green-50 dark:bg-green-800/20'
-    if (count >= 1) return 'bg-green-50/50 dark:bg-green-800/10'
-    return 'bg-muted'
+  // 정답률 기반 색상 계산 (심플하고 직관적)
+  const getActivityColor = (activity: DailyActivity | null): string => {
+    if (!activity || activity.count === 0) {
+      return 'bg-gray-50/50 dark:bg-gray-800/10'
+    }
+    
+    const accuracy = activity.accuracy
+    if (accuracy >= 80) return 'bg-emerald-500 dark:bg-emerald-600'
+    if (accuracy >= 60) return 'bg-green-500 dark:bg-green-600'
+    if (accuracy >= 40) return 'bg-amber-500 dark:bg-amber-600'
+    return 'bg-rose-500 dark:bg-rose-600'
   }
 
   // 스트릭 날짜 확인 (현재 스트릭의 날짜들)
@@ -236,12 +239,11 @@ export default function LearningStreakCalendar() {
         </div>
 
         {/* 날짜 그리드 */}
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-2">
           {calendarDays.map((day, index) => {
             const dateStr = format(day.date, 'yyyy-MM-dd')
             const isStreakDay = streakDates.has(dateStr)
-            const intensity = day.activity?.count || 0
-            const hasActivity = intensity > 0
+            const hasActivity = day.activity && day.activity.count > 0
 
             return (
               <motion.div
@@ -249,41 +251,58 @@ export default function LearningStreakCalendar() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: index * 0.01 }}
-                className={`relative h-20 rounded-md transition-all flex flex-col items-center justify-center p-1 ${
-                  !day.isInCurrentMonth
-                    ? 'opacity-30'
+                className={`
+                  relative h-24 rounded-lg transition-all duration-300
+                  flex flex-col items-center justify-center p-2
+                  ${!day.isInCurrentMonth ? 'opacity-30' : ''}
+                  ${getActivityColor(day.activity)}
+                  ${hasActivity 
+                    ? 'shadow-md hover:shadow-lg transform hover:-translate-y-0.5' 
+                    : 'border border-gray-200/50 dark:border-gray-700/50'
+                  }
+                  ${day.isToday 
+                    ? 'ring-4 ring-primary/50 ring-offset-2' 
                     : ''
-                } ${getIntensityColor(intensity)} ${
-                  day.isToday ? 'ring-2 ring-primary' : ''
-                } ${isStreakDay ? 'ring-2 ring-orange-500 dark:ring-orange-400' : ''}`}
+                  }
+                  ${isStreakDay && !day.isToday
+                    ? 'ring-2 ring-orange-400/60' 
+                    : ''
+                  }
+                  cursor-pointer
+                `}
               >
-                {/* 날짜 (숫자만, bold) */}
-                <div className={`text-sm font-bold mb-1 ${
-                  hasActivity ? 'text-foreground' : 'text-muted-foreground'
+                {/* 날짜 숫자 */}
+                <div className={`text-base font-bold mb-1.5 ${
+                  hasActivity 
+                    ? 'text-white' 
+                    : 'text-gray-600 dark:text-gray-400'
                 }`}>
                   {format(day.date, 'd')}
                 </div>
                 
-                {/* 학습 여부 아이콘 */}
-                <div className="text-lg mb-0.5">
+                {/* 학습 상태 아이콘 */}
+                <div className="text-2xl mb-1">
                   {hasActivity ? (
-                    <span className="text-green-600 dark:text-green-400">○</span>
+                    <span className="text-white drop-shadow-sm">✓</span>
                   ) : (
-                    <span className="text-muted-foreground/40">✕</span>
+                    <span className="text-gray-300 dark:text-gray-600">—</span>
                   )}
                 </div>
                 
-                {/* 학습 정보 (간결한 형식) */}
-                {day.activity && day.activity.count > 0 && (
-                  <div className="text-xs font-medium text-foreground">
-                    {day.activity.correctCount}/{day.activity.count}({day.activity.accuracy}%)
+                {/* 학습 정보 */}
+                {hasActivity && day.activity && (
+                  <div className="text-xs font-semibold text-white/95">
+                    {day.activity.correctCount}/{day.activity.count}
+                    <span className="text-[10px] ml-0.5">
+                      ({day.activity.accuracy}%)
+                    </span>
                   </div>
                 )}
                 
-                {/* 스트릭 아이콘 */}
+                {/* 스트릭 불꽃 아이콘 */}
                 {isStreakDay && (
-                  <div className="absolute top-0.5 right-0.5">
-                    <Flame className="h-3 w-3 text-orange-500" />
+                  <div className="absolute top-1 right-1">
+                    <Flame className="h-3.5 w-3.5 text-orange-400 drop-shadow-sm" />
                   </div>
                 )}
               </motion.div>
@@ -292,28 +311,28 @@ export default function LearningStreakCalendar() {
         </div>
       </div>
 
-      {/* 범례 */}
-      <div className="flex items-center justify-center gap-4 pt-4 border-t text-xs">
-        <span className="text-muted-foreground">활동량:</span>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-muted" />
-          <span>없음</span>
+      {/* 범례 - 정답률 기준 */}
+      <div className="flex items-center justify-center gap-6 pt-4 border-t text-xs">
+        <span className="text-muted-foreground font-medium">정답률:</span>
+        <div className="flex items-center gap-1.5">
+          <div className="w-4 h-4 rounded shadow-sm bg-gray-50 dark:bg-gray-800/10 border border-gray-200 dark:border-gray-700" />
+          <span className="text-muted-foreground">학습 없음</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-green-50/50 dark:bg-green-800/10" />
-          <span>1-2문제</span>
+        <div className="flex items-center gap-1.5">
+          <div className="w-4 h-4 rounded shadow-sm bg-rose-500 dark:bg-rose-600" />
+          <span>~40%</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-green-50 dark:bg-green-800/20" />
-          <span>3-4문제</span>
+        <div className="flex items-center gap-1.5">
+          <div className="w-4 h-4 rounded shadow-sm bg-amber-500 dark:bg-amber-600" />
+          <span>40-60%</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-green-100 dark:bg-green-800/30" />
-          <span>5-9문제</span>
+        <div className="flex items-center gap-1.5">
+          <div className="w-4 h-4 rounded shadow-sm bg-green-500 dark:bg-green-600" />
+          <span>60-80%</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-green-200 dark:bg-green-800/40" />
-          <span>10문제+</span>
+        <div className="flex items-center gap-1.5">
+          <div className="w-4 h-4 rounded shadow-sm bg-emerald-500 dark:bg-emerald-600" />
+          <span>80%+</span>
         </div>
       </div>
     </motion.div>
