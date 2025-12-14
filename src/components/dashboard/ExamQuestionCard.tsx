@@ -430,7 +430,6 @@ export default function ExamQuestionCard() {
             </p>
           </div>
         </div>
-      </div>
 
         {/* 구분선 */}
         <div className="h-px bg-gradient-to-r from-transparent via-indigo-300 to-transparent my-6" />
