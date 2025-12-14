@@ -37,6 +37,7 @@ export default function DailyQuestionCard() {
   const [dailyQuestionCounts, setDailyQuestionCounts] = useState<Record<string, number | null>>({})
   const [showCompletionDialog, setShowCompletionDialog] = useState(false)
   const [completedQuestionIds, setCompletedQuestionIds] = useState<string[]>([])
+  const [userName, setUserName] = useState<string>('')
 
   // 자격증별 문제 수 가져오기 (null이면 0 반환하여 문제를 불러오지 않음)
   const getQuestionCountForCertification = useCallback((certificationType: CertificationType): number => {
@@ -250,12 +251,17 @@ export default function DailyQuestionCard() {
       try {
         setLoading(true)
         
-        // 사용자의 일일 문제 수 설정 가져오기
+        // 사용자의 일일 문제 수 설정 및 이름 가져오기
         const { data: userData } = await supabase
           .from('users')
-          .select('daily_question_count')
+          .select('daily_question_count, name')
           .eq('id', user.id)
           .maybeSingle()
+        
+        // 사용자 이름 설정
+        if (userData?.name) {
+          setUserName(userData.name)
+        }
         
         // 일일 문제 수 설정 (JSONB 형식 또는 INTEGER 형식 지원)
         const counts = userData?.daily_question_count
@@ -458,6 +464,11 @@ export default function DailyQuestionCard() {
   const estimatedTime = dailySet ? Math.ceil(dailySet.questionIds.length * 2) : 10 // 문제당 약 2분
 
   if (loading || creating) {
+    // 선택된 자격증 정보 생성
+    const selectedCerts = Object.entries(dailyQuestionCounts)
+      .filter(([_, count]) => count !== null && count !== undefined && count > 0)
+      .map(([name, count]) => ({ name, count: count as number }))
+    
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -473,7 +484,21 @@ export default function DailyQuestionCard() {
             <div className="h-12 w-12 bg-slate-200/50 dark:bg-slate-700/50 animate-pulse rounded-xl" />
             <div className="h-8 bg-slate-200/50 dark:bg-slate-700/50 animate-pulse rounded-lg w-1/3" />
           </div>
-          <div className="h-6 bg-slate-200/50 dark:bg-slate-700/50 animate-pulse rounded-lg w-2/3" />
+          {selectedCerts.length > 0 ? (
+            <p className="text-sm text-slate-600 dark:text-slate-300">
+              {userName || user?.email || '회원'}님{' '}
+              {selectedCerts.map((cert, index) => (
+                <span key={cert.name}>
+                  <span className="text-blue-600 dark:text-blue-400 font-semibold">{cert.name}</span> 과정 매일{' '}
+                  <span className="text-blue-600 dark:text-blue-400 font-semibold">{cert.count}문제</span>
+                  {index < selectedCerts.length - 1 ? ', ' : ' '}
+                </span>
+              ))}
+              배달 선택하셨어요~
+            </p>
+          ) : (
+            <div className="h-6 bg-slate-200/50 dark:bg-slate-700/50 animate-pulse rounded-lg w-2/3" />
+          )}
           <div className="h-14 bg-blue-200/50 dark:bg-blue-800/50 animate-pulse rounded-xl" />
         </div>
       </motion.div>

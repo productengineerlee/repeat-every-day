@@ -15,31 +15,24 @@ import PerformanceCharts from '@/components/statistics/PerformanceCharts'
 import ExportStatistics from '@/components/statistics/ExportStatistics'
 import { BookOpen, TrendingUp, Award, RotateCcw } from 'lucide-react'
 
-// 자격증명 매핑 (모든 지원 자격증)
-const CERTIFICATION_LABELS: Record<string, string> = {
-  '정보처리기사': '정보처리기사',
-  '컴퓨터활용능력': '컴퓨터활용능력',
-  '빅데이터분석기사': '빅데이터분석기사',
-  '경영정보시각화능력': '경영정보시각화능력',
-  'ADsP': 'ADsP',
-  'SQLD': 'SQLD',
-  '사회조사분석사': '사회조사분석사',
-  'TESAT': 'TESAT',
-  '공인중개사': '공인중개사',
-}
-
-interface SelectedCertification {
-  name: string
-  count: number
-}
+// 자격증명 매핑 (나중에 필요할 수 있음)
+// const CERTIFICATION_LABELS: Record<string, string> = {
+//   '정보처리기사': '정보처리기사',
+//   '컴퓨터활용능력': '컴퓨터활용능력',
+//   '빅데이터분석기사': '빅데이터분석기사',
+//   '경영정보시각화능력': '경영정보시각화능력',
+//   'ADsP': 'ADsP',
+//   'SQLD': 'SQLD',
+//   '사회조사분석사': '사회조사분석사',
+//   'TESAT': 'TESAT',
+//   '공인중개사': '공인중개사',
+// }
 
 export default function Dashboard() {
   const { user } = useAuth()
   const { reset } = useOnboarding()
   const navigate = useNavigate()
-  const [selectedCertifications, setSelectedCertifications] = useState<SelectedCertification[]>([])
   const [userName, setUserName] = useState<string>('')
-  const [loading, setLoading] = useState(true)
 
   const handleStartDiagnostic = () => {
     navigate('/onboarding')
@@ -55,58 +48,27 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    const loadSelectedCertifications = async () => {
-      if (!user) {
-        setLoading(false)
-        return
-      }
+    const loadUserName = async () => {
+      if (!user) return
 
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('users')
-          .select('daily_question_count, name')
+          .select('name')
           .eq('id', user.id)
-          .maybeSingle<{
-            daily_question_count: Record<string, number | null> | null
-            name: string | null
-          }>()
+          .maybeSingle<{ name: string | null }>()
 
-        if (error) {
-          console.error('Error loading certifications:', error)
-          setSelectedCertifications([])
-        } else if (data) {
+        if (data) {
           // 사용자 이름 설정 (users 테이블의 name 또는 user_metadata의 name)
           const name = data.name || user.user_metadata?.name || user.email?.split('@')[0] || ''
           setUserName(name)
-
-          const counts = data.daily_question_count
-          if (typeof counts === 'object' && counts !== null) {
-            // null이 아닌 값들을 찾아서 자격증명과 문제 수 추출
-            const selected: SelectedCertification[] = []
-            Object.keys(counts).forEach((key) => {
-              const count = counts[key]
-              if (count !== null && count !== undefined && typeof count === 'number' && count > 0) {
-                // CERTIFICATION_LABELS에 있으면 사용, 없으면 키 그대로 사용
-                selected.push({
-                  name: CERTIFICATION_LABELS[key] || key,
-                  count: count
-                })
-              }
-            })
-            setSelectedCertifications(selected)
-          } else {
-            setSelectedCertifications([])
-          }
         }
       } catch (err) {
-        console.error('Error loading certifications:', err)
-        setSelectedCertifications([])
-      } finally {
-        setLoading(false)
+        console.error('Error loading user name:', err)
       }
     }
 
-    loadSelectedCertifications()
+    loadUserName()
   }, [user])
 
   return (
@@ -116,23 +78,7 @@ export default function Dashboard() {
         <div>
           <h1 className="text-4xl font-bold">대시보드</h1>
           <p className="text-muted-foreground mt-2">
-            {loading ? (
-              '로딩 중...'
-            ) : selectedCertifications.length > 0 ? (
-              <>
-                {userName || user?.email || '회원'}님{' '}
-                {selectedCertifications.map((cert, index) => (
-                  <span key={cert.name}>
-                    <span className="text-primary font-semibold">{cert.name}</span> 과정 매일{' '}
-                    <span className="text-primary font-semibold">{cert.count}문제</span>
-                    {index < selectedCertifications.length - 1 ? ', ' : ' '}
-                  </span>
-                ))}
-                배달 선택하셨어요~
-              </>
-            ) : (
-              `${userName || user?.email || '회원'}님, 환영합니다!`
-            )}
+            {userName || user?.email || '회원'}님, 환영합니다!
           </p>
         </div>
 
