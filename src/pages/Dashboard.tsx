@@ -136,42 +136,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* 일일 문제 카드 */}
-        <DailyQuestionCard />
-
-        {/* 기출문제 카드 */}
-        <ExamQuestionCard />
-
-        {/* 학습 캘린더 - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
-          <LearningStreakCalendar />
-        </div>
-
-        {/* 성능 차트 - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
-          <PerformanceCharts />
-        </div>
-
-        {/* 성취도 카드 - 나중에 추가 예정 (임시 제거) */}
-        {/* <div className="relative">
-          <AchievementCards />
-        </div> */}
-
-        {/* 취약 영역 분석 (기본) - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
-          <WeaknessAnalysis />
-        </div>
-
-        {/* 상세 약점 분석 - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
-          <WeakAreaAnalysis />
-        </div>
-
-        {/* 통계 내보내기 - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
-          <ExportStatistics />
-        </div>
-
+        {/* 통계 요약 카드 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* 학습 통계 카드 */}
           <div className="p-6 border rounded-lg space-y-4">
@@ -210,6 +175,7 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* 빠른 시작 */}
         <div className="p-6 border rounded-lg">
           <h2 className="text-xl font-semibold mb-4">빠른 시작</h2>
           <div className="flex flex-wrap gap-4">
@@ -223,6 +189,42 @@ export default function Dashboard() {
               진단 다시 보기
             </Button>
           </div>
+        </div>
+
+        {/* 일일 문제 카드 */}
+        <DailyQuestionCard />
+
+        {/* 기출문제 카드 */}
+        <ExamQuestionCard />
+
+        {/* 학습 캘린더 - 에러 발생 시에도 렌더링 */}
+        <div className="relative">
+          <LearningStreakCalendar />
+        </div>
+
+        {/* 성능 차트 - 에러 발생 시에도 렌더링 */}
+        <div className="relative">
+          <PerformanceCharts />
+        </div>
+
+        {/* 성취도 카드 - 나중에 추가 예정 (임시 제거) */}
+        {/* <div className="relative">
+          <AchievementCards />
+        </div> */}
+
+        {/* 취약 영역 분석 (기본) - 에러 발생 시에도 렌더링 */}
+        <div className="relative">
+          <WeaknessAnalysis />
+        </div>
+
+        {/* 상세 약점 분석 - 에러 발생 시에도 렌더링 */}
+        <div className="relative">
+          <WeakAreaAnalysis />
+        </div>
+
+        {/* 통계 내보내기 - 에러 발생 시에도 렌더링 */}
+        <div className="relative">
+          <ExportStatistics />
         </div>
       </div>
     </div>
