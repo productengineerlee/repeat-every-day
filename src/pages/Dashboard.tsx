@@ -89,7 +89,7 @@ export default function Dashboard() {
             <Button>오늘의 문제 풀기</Button>
             <Button variant="outline">오답 노트 보기</Button>
             <Button variant="outline" onClick={handleStartDiagnostic}>
-              진단 테스트 시작
+              학습 설정 하기
             </Button>
             <Button variant="outline" onClick={handleRetakeDiagnostic} className="gap-2">
               <RotateCcw className="h-4 w-4" />
