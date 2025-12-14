@@ -67,7 +67,6 @@ export async function getDailyActivity(
 
     // 모든 날짜를 포함하는 배열 생성 (빈 날짜도 포함) - KST 기준
     const result: DailyActivity[] = []
-    const kstOffset = 9 * 60 * 60 * 1000 // 9시간을 밀리초로
     const todayKST = new Date(new Date().getTime() + kstOffset)
     const todayKSTStr = todayKST.toISOString().split('T')[0]
     
@@ -223,11 +222,12 @@ export async function getAccuracyTrend(
 
     // 날짜별로 집계 (한국 시간대 기준)
     const trendMap: Record<string, { count: number; correctCount: number }> = {}
+    const kstOffset = 9 * 60 * 60 * 1000 // 9시간을 밀리초로
 
     records?.forEach((record) => {
       // UTC 시간을 한국 시간(UTC+9)으로 변환
       const utcDate = new Date(record.created_at)
-      const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000)
+      const kstDate = new Date(utcDate.getTime() + kstOffset)
       const date = kstDate.toISOString().split('T')[0]
       
       if (!trendMap[date]) {
@@ -241,7 +241,6 @@ export async function getAccuracyTrend(
 
     // 결과 배열 생성 - KST 기준
     const result: AccuracyTrend[] = []
-    const kstOffset = 9 * 60 * 60 * 1000 // 9시간을 밀리초로
     const todayKST = new Date(new Date().getTime() + kstOffset)
 
     for (let i = 0; i < days; i++) {
