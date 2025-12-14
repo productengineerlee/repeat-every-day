@@ -391,11 +391,11 @@ export default function ExamQuestionCard() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="relative bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950/30 dark:via-purple-950/30 dark:to-pink-950/30 border-2 border-indigo-200/50 dark:border-indigo-800/50 rounded-2xl p-6 md:p-8 space-y-6 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+      className="relative bg-gradient-to-br from-slate-50 via-blue-50/50 to-slate-50 dark:from-slate-900/30 dark:via-blue-950/20 dark:to-slate-900/30 border border-slate-200/80 dark:border-slate-700/50 rounded-xl p-5 md:p-6 space-y-4 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
     >
       {/* 배경 장식 */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-pink-200/20 to-purple-200/20 rounded-full blur-3xl -z-0" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-indigo-200/20 to-blue-200/20 rounded-full blur-3xl -z-0" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-100/10 to-slate-100/10 rounded-full blur-3xl -z-0" />
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-slate-100/10 to-blue-100/10 rounded-full blur-3xl -z-0" />
       
       {/* 콘텐츠 */}
       <div className="relative z-10">
@@ -411,28 +411,28 @@ export default function ExamQuestionCard() {
                 animate={{ rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200 }}
               />
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">
                 기출문제
               </h2>
             </div>
-            <p className="text-base text-gray-700 dark:text-gray-300 font-medium">
+            <p className="text-sm md:text-base text-slate-600 dark:text-slate-300">
               {selectedCertification && examSession ? (
                 examSubject ? (
                   <>
-                    <span className="text-indigo-600 dark:text-indigo-400 font-bold">{examSubject}</span> 문제를 불러오세요! 📚
+                    <span className="text-blue-600 dark:text-blue-400 font-semibold">{examSubject}</span> 문제를 불러오세요 📚
                   </>
                 ) : (
-                  '기출과목을 선택해주세요 ✨'
+                  '기출과목을 선택해주세요'
                 )
               ) : (
-                '자격증과 기출회차를 선택해주세요 🎯'
+                '자격증과 기출회차를 선택해주세요'
               )}
             </p>
           </div>
         </div>
 
         {/* 구분선 */}
-        <div className="h-px bg-gradient-to-r from-transparent via-indigo-300 to-transparent my-6" />
+        <div className="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent my-4" />
 
         {/* 자격증 선택 및 기출년도/회차/과목 입력 */}
         <div className="space-y-4 relative z-10">
@@ -444,14 +444,14 @@ export default function ExamQuestionCard() {
               transition={{ delay: 0.1 }}
               className="space-y-2"
             >
-              <label className="text-sm font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-1">
-                🎓 자격증 선택
+              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                자격증 선택
               </label>
               <Select
                 value={selectedCertification || undefined}
                 onValueChange={(value) => handleCertificationChange(value as CertificationType)}
               >
-                <SelectTrigger className="w-full h-11 border-2 border-indigo-200 dark:border-indigo-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:border-indigo-400 dark:hover:border-indigo-600 transition-colors">
+                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                   <SelectValue placeholder="자격증을 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
@@ -471,15 +471,15 @@ export default function ExamQuestionCard() {
               transition={{ delay: 0.2 }}
               className="space-y-2"
             >
-              <label className="text-sm font-bold text-purple-700 dark:text-purple-400 flex items-center gap-1">
-                📅 기출년도
+              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                기출년도
               </label>
               <Select
                 value={examYear || undefined}
                 onValueChange={(value) => setExamYear(value)}
                 disabled={!selectedCertification || availableYears.length === 0}
               >
-                <SelectTrigger className="w-full h-11 border-2 border-purple-200 dark:border-purple-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:border-purple-400 dark:hover:border-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
                   <SelectValue placeholder="연도를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
@@ -499,15 +499,15 @@ export default function ExamQuestionCard() {
               transition={{ delay: 0.3 }}
               className="space-y-2"
             >
-              <label className="text-sm font-bold text-pink-700 dark:text-pink-400 flex items-center gap-1">
-                🔢 기출회차
+              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                기출회차
               </label>
               <Select
                 value={examSessionNumber || undefined}
                 onValueChange={(value) => setExamSessionNumber(value)}
                 disabled={!selectedCertification || !examYear || availableSessions.length === 0}
               >
-                <SelectTrigger className="w-full h-11 border-2 border-pink-200 dark:border-pink-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:border-pink-400 dark:hover:border-pink-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
                   <SelectValue placeholder="회차를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
@@ -527,15 +527,15 @@ export default function ExamQuestionCard() {
               transition={{ delay: 0.4 }}
               className="space-y-2"
             >
-              <label className="text-sm font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-1">
-                📚 기출과목
+              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                기출과목
               </label>
               <Select
                 value={examSubject || undefined}
                 onValueChange={(value) => setExamSubject(value as ExamSubject)}
                 disabled={!selectedCertification || !examSession || availableSubjects.length === 0}
               >
-                <SelectTrigger className="w-full h-11 border-2 border-indigo-200 dark:border-indigo-800 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:border-indigo-400 dark:hover:border-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
                   <SelectValue placeholder="과목을 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
@@ -563,15 +563,15 @@ export default function ExamQuestionCard() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative z-10 flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-xl border border-emerald-200/50 dark:border-emerald-800/50"
+            className="relative z-10 flex items-center gap-3 px-4 py-2.5 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800"
           >
-            <div className="p-2 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg">
-              <BookOpen className="h-5 w-5 text-white" />
+            <div className="p-2 bg-blue-500 dark:bg-blue-600 rounded-lg">
+              <BookOpen className="h-4 w-4 text-white" />
             </div>
             <div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">불러온 문제 수</p>
-              <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
-                총 <span className="text-lg">{questionIds.length}</span>문제
+              <p className="text-xs text-slate-600 dark:text-slate-400">불러온 문제 수</p>
+              <p className="text-sm font-semibold text-blue-700 dark:text-blue-400">
+                총 <span className="text-base">{questionIds.length}</span>문제
               </p>
             </div>
           </motion.div>
@@ -579,33 +579,33 @@ export default function ExamQuestionCard() {
 
         {/* 시작 버튼 */}
         <motion.div
-          whileHover={{ scale: questionIds.length > 0 ? 1.02 : 1 }}
-          whileTap={{ scale: questionIds.length > 0 ? 0.98 : 1 }}
+          whileHover={{ scale: questionIds.length > 0 ? 1.01 : 1 }}
+          whileTap={{ scale: questionIds.length > 0 ? 0.99 : 1 }}
           className="relative z-10"
         >
           <Button
             onClick={handleStartLearning}
             disabled={!selectedCertification || !examSession || !examSubject || questionIds.length === 0 || loading}
             size="lg"
-            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
           >
             {loading ? (
               <>
-                <Clock className="mr-2 h-6 w-6 animate-spin" />
+                <Clock className="mr-2 h-5 w-5 animate-spin" />
                 문제 불러오는 중...
               </>
             ) : !selectedCertification ? (
-              '🎓 자격증을 선택해주세요'
+              '자격증을 선택해주세요'
             ) : !examSession ? (
-              '📅 기출회차를 입력해주세요'
+              '기출회차를 입력해주세요'
             ) : !examSubject ? (
-              '📚 기출과목을 선택해주세요'
+              '기출과목을 선택해주세요'
             ) : questionIds.length === 0 ? (
-              '❌ 문제가 없습니다'
+              '문제가 없습니다'
             ) : (
               <>
-                <Play className="mr-2 h-6 w-6" />
-                기출문제 풀기 🚀
+                <Play className="mr-2 h-5 w-5" />
+                기출문제 풀기
               </>
             )}
           </Button>
