@@ -11,7 +11,6 @@ import WeakAreaAnalysis from '@/components/statistics/WeakAreaAnalysis'
 import LearningStreakCalendar from '@/components/statistics/LearningStreakCalendar'
 // import AchievementCards from '@/components/statistics/AchievementCards' // 나중에 추가 예정 (임시 제거)
 import PerformanceCharts from '@/components/statistics/PerformanceCharts'
-import ExportStatistics from '@/components/statistics/ExportStatistics'
 import { RotateCcw, Bell } from 'lucide-react'
 
 // 자격증명 매핑 (나중에 필요할 수 있음)
@@ -132,11 +131,6 @@ export default function Dashboard() {
         {/* 상세 약점 분석 - 에러 발생 시에도 렌더링 */}
         <div className="relative">
           <WeakAreaAnalysis />
-        </div>
-
-        {/* 통계 내보내기 - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
-          <ExportStatistics />
         </div>
       </div>
     </div>
