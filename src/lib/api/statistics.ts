@@ -100,19 +100,6 @@ export async function getDailyActivity(
  */
 export async function getStreakData(userId: string): Promise<StreakData> {
   try {
-    // 사용자 스트릭 정보
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('streak_count, last_streak_date')
-      .eq('id', userId)
-      .single()
-
-    if (userError) {
-      throw userError
-    }
-
-    const currentStreak = userData?.streak_count || 0
-
     // 일일 활동 데이터 가져오기
     const dailyActivity = await getDailyActivity(userId, 365)
 
@@ -122,9 +109,31 @@ export async function getStreakData(userId: string): Promise<StreakData> {
       activityMap[activity.date] = activity
     })
 
+    // 현재 스트릭 계산 (오늘부터 역순으로 연속된 학습일 계산)
+    const kstOffset = 9 * 60 * 60 * 1000
+    const todayKST = new Date(new Date().getTime() + kstOffset)
+    todayKST.setHours(0, 0, 0, 0)
+    
+    let currentStreak = 0
+    for (let i = 0; i < 365; i++) {
+      const checkDate = new Date(todayKST)
+      checkDate.setDate(checkDate.getDate() - i)
+      const dateStr = checkDate.toISOString().split('T')[0]
+      
+      const activity = activityMap[dateStr]
+      if (activity && activity.count > 0) {
+        currentStreak++
+      } else {
+        // 첫 날(오늘)이 아니면 스트릭 중단
+        if (i > 0) {
+          break
+        }
+      }
+    }
+
     // 최장 스트릭 계산
     let longestStreak = 0
-    let currentStreakCount = 0
+    let tempStreak = 0
     const sortedDates = [...dailyActivity]
       .filter((a) => a.count > 0)
       .map((a) => a.date)
@@ -141,17 +150,17 @@ export async function getStreakData(userId: string): Promise<StreakData> {
             (date.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24)
           )
           if (diffDays === 1) {
-            currentStreakCount += 1
+            tempStreak += 1
           } else {
-            longestStreak = Math.max(longestStreak, currentStreakCount)
-            currentStreakCount = 1
+            longestStreak = Math.max(longestStreak, tempStreak)
+            tempStreak = 1
           }
         } else {
-          currentStreakCount = 1
+          tempStreak = 1
         }
         prevDate = date
       })
-      longestStreak = Math.max(longestStreak, currentStreakCount)
+      longestStreak = Math.max(longestStreak, tempStreak)
     }
 
     // 총 학습일 계산
