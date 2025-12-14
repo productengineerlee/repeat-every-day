@@ -615,7 +615,8 @@ async function createMockQuestionsInDatabase(
 export async function getDailyQuestionSet(
   userId: string,
   certificationType: string,
-  count: number = 5
+  count: number = 5,
+  excludeIds: string[] = []
 ): Promise<string[]> {
   try {
     console.log(`🔍 getDailyQuestionSet 호출: userId=${userId}, certificationType=${certificationType}, count=${count}`)
@@ -634,7 +635,14 @@ export async function getDailyQuestionSet(
       console.log(`⚠️ 개인화 함수 에러 (무시하고 계속):`, personalizedError.message)
     } else if (personalizedResult && Array.isArray(personalizedResult) && personalizedResult.length > 0) {
       console.log(`✅ 개인화 함수에서 ${personalizedResult.length}개의 문제 ID를 반환했습니다.`)
-      return personalizedResult
+      // excludeIds 필터링
+      const filtered = excludeIds.length > 0 
+        ? personalizedResult.filter((id: string) => !excludeIds.includes(id))
+        : personalizedResult
+      if (filtered.length >= count) {
+        return filtered.slice(0, count)
+      }
+      // 충분하지 않으면 다음 방법으로 fallback
     }
 
     // 개인화 함수가 실패한 경우 기존 함수 사용
@@ -651,7 +659,14 @@ export async function getDailyQuestionSet(
       console.log(`⚠️ 기본 함수 에러 (무시하고 계속):`, functionError.message)
     } else if (functionResult && Array.isArray(functionResult) && functionResult.length > 0) {
       console.log(`✅ 기본 함수에서 ${functionResult.length}개의 문제 ID를 반환했습니다.`)
-      return functionResult
+      // excludeIds 필터링
+      const filtered = excludeIds.length > 0 
+        ? functionResult.filter((id: string) => !excludeIds.includes(id))
+        : functionResult
+      if (filtered.length >= count) {
+        return filtered.slice(0, count)
+      }
+      // 충분하지 않으면 다음 방법으로 fallback
     }
 
     // 함수가 없거나 실패한 경우 직접 문제 가져오기 (fallback)
@@ -686,7 +701,13 @@ export async function getDailyQuestionSet(
       console.log(`⚠️ ${certificationType}에 대한 카테고리 매핑이 없습니다. 필터링 없이 조회합니다.`)
     }
     
-    const { data, error } = await query.limit(count)
+    // excludeIds 필터링
+    if (excludeIds.length > 0) {
+      query = query.not('id', 'in', `(${excludeIds.join(',')})`)
+      console.log(`🔍 ${excludeIds.length}개의 문제 ID 제외`)
+    }
+    
+    const { data, error } = await query.limit(count * 2) // 필터링 후 부족할 수 있으므로 더 많이 가져옴
 
     if (error) {
       console.error('❌ 데이터베이스에서 문제를 가져오는 중 에러 발생:', error)
@@ -748,7 +769,8 @@ export async function getDailyQuestionSet(
 export async function getExamQuestionSet(
   userId: string,
   certificationType: string,
-  count: number = 5
+  count: number = 5,
+  excludeIds: string[] = []
 ): Promise<string[]> {
   try {
     console.log(`🔍 getExamQuestionSet 호출: userId=${userId}, certificationType=${certificationType}, count=${count}`)
@@ -799,7 +821,13 @@ export async function getExamQuestionSet(
       query = query.order('created_at', { ascending: false })
     }
     
-    const { data, error } = await query.limit(count)
+    // excludeIds 필터링
+    if (excludeIds.length > 0) {
+      query = query.not('id', 'in', `(${excludeIds.join(',')})`)
+      console.log(`🔍 ${excludeIds.length}개의 기출문제 ID 제외`)
+    }
+    
+    const { data, error } = await query.limit(count * 2) // 필터링 후 부족할 수 있으므로 더 많이 가져옴
 
     if (error) {
       console.error('❌ 데이터베이스에서 기출문제를 가져오는 중 에러 발생:', error)
@@ -809,8 +837,8 @@ export async function getExamQuestionSet(
       // exam_session 또는 exam_number 컬럼이 없는 경우, 일반 문제를 가져오도록 fallback
       if (error.message?.includes('exam_session') || error.message?.includes('exam_number') || error.code === '42703') {
         console.log(`⚠️ exam_session 또는 exam_number 컬럼이 없어 일반 문제를 가져옵니다.`)
-        // 일반 문제 가져오기 함수 호출
-        return await getDailyQuestionSet(userId, certificationType, count)
+        // 일반 문제 가져오기 함수 호출 (excludeIds 전달)
+        return await getDailyQuestionSet(userId, certificationType, count, excludeIds)
       }
       
       // 에러 발생 시 빈 배열 반환

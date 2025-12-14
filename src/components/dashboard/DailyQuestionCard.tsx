@@ -3,10 +3,17 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/context'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { getTodayDailySet, createDailySet, type DailyQuestionSet } from '@/lib/api/dashboard'
 import { getDailyQuestionSet, getExamQuestionSet } from '@/lib/api/questions'
 import { supabase } from '@/lib/supabaseClient'
-import { BookOpen, Clock, Play, CheckCircle } from 'lucide-react'
+import { BookOpen, Clock, Play, CheckCircle, RefreshCw, PlusCircle } from 'lucide-react'
 
 // 모든 지원되는 자격증 타입
 type CertificationType = 
@@ -28,6 +35,8 @@ export default function DailyQuestionCard() {
   const [creating, setCreating] = useState(false)
   const [selectedCertification, setSelectedCertification] = useState<CertificationType | null>(null)
   const [dailyQuestionCounts, setDailyQuestionCounts] = useState<Record<string, number | null>>({})
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false)
+  const [completedQuestionIds, setCompletedQuestionIds] = useState<string[]>([])
 
   // 자격증별 문제 수 가져오기 (null이면 0 반환하여 문제를 불러오지 않음)
   const getQuestionCountForCertification = useCallback((certificationType: CertificationType): number => {
@@ -347,6 +356,13 @@ export default function DailyQuestionCard() {
 
   const handleStartLearning = () => {
     if (dailySet && dailySet.questionIds.length > 0) {
+      // 완료된 경우 옵션 Dialog 표시
+      if (dailySet.completed) {
+        setCompletedQuestionIds(dailySet.questionIds)
+        setShowCompletionDialog(true)
+        return
+      }
+      
       // 임시 문제 ID가 아닌 실제 문제 ID만 필터링
       const validQuestionIds = dailySet.questionIds.filter(
         (id) => !id.startsWith('temp-') && id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
@@ -361,6 +377,68 @@ export default function DailyQuestionCard() {
     } else {
       console.warn('⚠️ 문제 세트가 없거나 비어있습니다.')
       alert('문제를 불러올 수 없습니다. 관리자에게 문의해주세요.')
+    }
+  }
+
+  const handleReviewSameQuestions = () => {
+    setShowCompletionDialog(false)
+    if (completedQuestionIds.length > 0) {
+      navigate('/learning', { state: { questionIds: completedQuestionIds } })
+    }
+  }
+
+  const handleLoadNewQuestions = async () => {
+    setShowCompletionDialog(false)
+    
+    if (!user || !selectedCertification) return
+    
+    try {
+      setCreating(true)
+      const questionCount = getQuestionCountForCertification(selectedCertification)
+      
+      if (questionCount === 0) {
+        alert('문제 수가 설정되지 않았습니다.')
+        return
+      }
+      
+      // 기존 문제를 제외한 새로운 문제 가져오기
+      let newQuestionIds: string[] = []
+      
+      if (selectedCertification === '기출문제-빅데이터분석기사') {
+        newQuestionIds = await getExamQuestionSet(
+          user.id,
+          '빅데이터분석기사',
+          questionCount,
+          completedQuestionIds // 제외할 문제 ID
+        )
+      } else if (selectedCertification === '기출문제-ADsP') {
+        newQuestionIds = await getExamQuestionSet(
+          user.id,
+          'ADsP',
+          questionCount,
+          completedQuestionIds
+        )
+      } else {
+        newQuestionIds = await getDailyQuestionSet(
+          user.id,
+          selectedCertification,
+          questionCount,
+          completedQuestionIds
+        )
+      }
+      
+      if (newQuestionIds.length === 0) {
+        alert('더 이상 새로운 문제가 없습니다.')
+        return
+      }
+      
+      // 새로운 세트로 학습 시작
+      navigate('/learning', { state: { questionIds: newQuestionIds } })
+    } catch (error) {
+      console.error('❌ 새로운 문제를 가져오는 중 에러:', error)
+      alert('문제를 불러오는 중 오류가 발생했습니다.')
+    } finally {
+      setCreating(false)
     }
   }
 
@@ -471,11 +549,16 @@ export default function DailyQuestionCard() {
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-3 flex-1">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-md">
-                <BookOpen className="h-7 w-7 text-white" />
-              </div>
+              <motion.img 
+                src="/mascot.png" 
+                alt="Certiq Mascot" 
+                className="w-12 h-12 object-contain drop-shadow-md"
+                initial={{ rotate: -10 }}
+                animate={{ rotate: 0 }}
+                transition={{ type: "spring", stiffness: 200 }}
+              />
               <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                오늘의 문제 🎯
+                오늘의 문제
               </h2>
             </div>
             <p className="text-base text-gray-700 dark:text-gray-300 font-medium">
@@ -525,20 +608,6 @@ export default function DailyQuestionCard() {
             </p>
           </div>
           
-          {/* 마스코트 이미지 */}
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="flex-shrink-0"
-          >
-            <img 
-              src="/mascot.png" 
-              alt="Certiq Mascot" 
-              className="w-24 h-24 md:w-28 md:h-28 object-contain drop-shadow-lg"
-            />
-          </motion.div>
-          
           {dailySet.completed && (
             <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-green-500 text-white rounded-full shadow-md">
               <CheckCircle className="h-4 w-4" />
@@ -577,10 +646,9 @@ export default function DailyQuestionCard() {
           <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg">
             <Clock className="h-5 w-5 text-white" />
           </div>
-          <div>
-            <p className="text-xs text-gray-600 dark:text-gray-400">예상 소요 시간</p>
-            <p className="text-sm font-bold text-amber-700 dark:text-amber-400">약 {estimatedTime}분</p>
-          </div>
+          <p className="text-base font-bold text-amber-700 dark:text-amber-400">
+            예상 소요 시간: <span className="text-xl">약 {estimatedTime}분</span>
+          </p>
         </div>
 
         {/* 시작 버튼 */}
@@ -590,14 +658,13 @@ export default function DailyQuestionCard() {
         >
           <Button
             onClick={handleStartLearning}
-            disabled={dailySet.completed}
             size="lg"
-            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all"
           >
             {dailySet.completed ? (
               <>
                 <CheckCircle className="mr-2 h-6 w-6" />
-                오늘의 학습 완료! 🎉
+                계속 학습하기 💪
               </>
             ) : dailySet.progress > 0 ? (
               <>
@@ -614,6 +681,57 @@ export default function DailyQuestionCard() {
         </motion.div>
       </div>
     </motion.div>
+
+      {/* 완료 후 옵션 Dialog */}
+      <Dialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+              🎉 완료하셨네요!
+            </DialogTitle>
+            <DialogDescription className="text-base pt-2">
+              다음 중 어떻게 하시겠어요?
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-3 pt-4">
+            {/* 옵션 1: 같은 문제 다시 풀기 */}
+            <Button
+              onClick={handleReviewSameQuestions}
+              size="lg"
+              variant="outline"
+              className="w-full h-auto py-4 flex items-start gap-3 hover:bg-sky-50 dark:hover:bg-sky-950/30 hover:border-sky-300 dark:hover:border-sky-700 transition-all"
+            >
+              <div className="p-2 bg-gradient-to-br from-sky-400 to-blue-500 rounded-lg flex-shrink-0">
+                <RefreshCw className="h-5 w-5 text-white" />
+              </div>
+              <div className="text-left flex-1">
+                <p className="font-bold text-base text-foreground">같은 문제 다시 풀어보기</p>
+                <p className="text-sm text-muted-foreground mt-1">복습으로 완벽하게 이해해보세요</p>
+              </div>
+            </Button>
+            
+            {/* 옵션 2: 새로운 문제 풀기 */}
+            <Button
+              onClick={handleLoadNewQuestions}
+              disabled={creating}
+              size="lg"
+              className="w-full h-auto py-4 flex items-start gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+            >
+              <div className="p-2 bg-white/20 rounded-lg flex-shrink-0">
+                <PlusCircle className="h-5 w-5 text-white" />
+              </div>
+              <div className="text-left flex-1">
+                <p className="font-bold text-base">추가로 새로운 문제 풀기</p>
+                <p className="text-sm text-white/80 mt-1">
+                  {creating ? '문제를 불러오는 중...' : '다른 문제로 실력을 더 키워보세요'}
+                </p>
+              </div>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
