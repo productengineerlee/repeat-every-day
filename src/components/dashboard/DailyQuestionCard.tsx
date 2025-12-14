@@ -351,13 +351,25 @@ export default function DailyQuestionCard() {
     }
 
     fetchDailySet()
+    
+    // 페이지 포커스 시 데이터 새로고침 (학습 완료 후 돌아올 때)
+    const handleFocus = () => {
+      if (user) {
+        console.log('👀 페이지 포커스 - 데이터 새로고침')
+        fetchDailySet()
+      }
+    }
+    
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]) // createTodaySet 제거 (useCallback으로 메모이제이션되어 있어도 의존성에서 제거)
 
   const handleStartLearning = () => {
     if (dailySet && dailySet.questionIds.length > 0) {
-      // 완료된 경우 옵션 Dialog 표시
-      if (dailySet.completed) {
+      // 완료된 경우 또는 진행률이 100%인 경우 옵션 Dialog 표시
+      if (dailySet.completed || dailySet.progress === 100) {
+        console.log('🎉 학습 완료! 옵션 Dialog 표시')
         setCompletedQuestionIds(dailySet.questionIds)
         setShowCompletionDialog(true)
         return
@@ -369,6 +381,7 @@ export default function DailyQuestionCard() {
       )
       
       if (validQuestionIds.length > 0) {
+        console.log('📝 학습 시작/계속하기')
         navigate('/learning', { state: { questionIds: validQuestionIds } })
       } else {
         console.warn('⚠️ 유효한 문제 ID가 없어 학습을 시작할 수 없습니다.')
