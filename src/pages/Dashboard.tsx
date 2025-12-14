@@ -139,10 +139,10 @@ export default function Dashboard() {
         {/* 통계 요약 카드 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* 학습 통계 카드 */}
-          <div className="p-6 border rounded-lg space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">오늘의 학습</h2>
+          <div className="p-6 border rounded-lg space-y-4 text-center">
+            <div className="flex items-center justify-center gap-2">
               <BookOpen className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold">오늘의 학습</h2>
             </div>
             <div className="space-y-2">
               <p className="text-3xl font-bold">0</p>
@@ -151,10 +151,10 @@ export default function Dashboard() {
           </div>
 
           {/* 연속 학습일 카드 */}
-          <div className="p-6 border rounded-lg space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">연속 학습일</h2>
+          <div className="p-6 border rounded-lg space-y-4 text-center">
+            <div className="flex items-center justify-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold">연속 학습일</h2>
             </div>
             <div className="space-y-2">
               <p className="text-3xl font-bold">0</p>
@@ -163,10 +163,10 @@ export default function Dashboard() {
           </div>
 
           {/* 성취도 카드 */}
-          <div className="p-6 border rounded-lg space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">정답률</h2>
+          <div className="p-6 border rounded-lg space-y-4 text-center">
+            <div className="flex items-center justify-center gap-2">
               <Award className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold">정답률</h2>
             </div>
             <div className="space-y-2">
               <p className="text-3xl font-bold">-</p>
@@ -177,8 +177,8 @@ export default function Dashboard() {
 
         {/* 빠른 시작 */}
         <div className="p-6 border rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">빠른 시작</h2>
-          <div className="flex flex-wrap gap-4">
+          <h2 className="text-xl font-semibold mb-4 text-center">빠른 시작</h2>
+          <div className="flex flex-wrap gap-4 justify-center">
             <Button>오늘의 문제 풀기</Button>
             <Button variant="outline">오답 노트 보기</Button>
             <Button variant="outline" onClick={handleStartDiagnostic}>
