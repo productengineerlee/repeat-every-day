@@ -157,8 +157,14 @@ export default function LearningStreakCalendar() {
 
   if (loading) {
     return (
-      <div className="bg-card border rounded-lg p-6">
-        <div className="h-6 bg-muted animate-pulse rounded w-1/3 mb-4" />
+      <div className="bg-card border rounded-lg p-6 space-y-4">
+        <div className="flex items-start gap-3">
+          <div className="w-12 h-12 bg-muted animate-pulse rounded-lg" />
+          <div className="flex-1">
+            <div className="h-6 bg-muted animate-pulse rounded w-1/3 mb-2" />
+            <div className="h-4 bg-muted animate-pulse rounded w-1/2" />
+          </div>
+        </div>
         <div className="grid grid-cols-7 gap-1">
           {Array.from({ length: 35 }).map((_, i) => (
             <div key={i} className="h-8 bg-muted animate-pulse rounded" />
@@ -178,12 +184,22 @@ export default function LearningStreakCalendar() {
       className="bg-card border rounded-lg p-6 space-y-4"
     >
       {/* 헤더 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold mb-2">학습 캘린더</h2>
-          <p className="text-muted-foreground text-sm">
-            매일의 학습 활동을 확인하세요
-          </p>
+      <div className="flex items-start justify-between">
+        <div className="flex items-start gap-3">
+          <motion.img 
+            src="/mascot.png" 
+            alt="Certiq Mascot" 
+            className="w-12 h-12 object-contain drop-shadow-md"
+            initial={{ rotate: -10 }}
+            animate={{ rotate: 0 }}
+            transition={{ type: "spring", stiffness: 200 }}
+          />
+          <div>
+            <h2 className="text-2xl font-bold mb-2">학습 캘린더</h2>
+            <p className="text-muted-foreground text-sm">
+              매일의 학습 활동을 확인하세요
+            </p>
+          </div>
         </div>
         {streakData && streakData.currentStreak > 0 && (
           <div className="flex items-center gap-2 px-4 py-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
