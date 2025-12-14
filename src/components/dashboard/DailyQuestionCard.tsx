@@ -498,16 +498,14 @@ export default function DailyQuestionCard() {
             <div className="h-8 bg-slate-200/50 dark:bg-slate-700/50 animate-pulse rounded-lg w-1/3" />
           </div>
           {selectedCerts.length > 0 ? (
-            <p className="text-sm text-slate-600 dark:text-slate-300">
-              {userName || user?.email || '회원'}님{' '}
+            <p className="text-base text-gray-700 dark:text-gray-300 font-medium">
               {selectedCerts.map((cert, index) => (
                 <span key={cert.name}>
-                  <span className="text-blue-600 dark:text-blue-400 font-semibold">{cert.name}</span> 과정 매일{' '}
-                  <span className="text-blue-600 dark:text-blue-400 font-semibold">{cert.count}문제</span>
-                  {index < selectedCerts.length - 1 ? ', ' : ' '}
+                  주문하신 <span className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">{cert.name}</span> 과정의{' '}
+                  <span className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">{cert.count}문제</span>가 신선하게 배달되었어요
+                  {index < selectedCerts.length - 1 && ', '}
                 </span>
               ))}
-              배달 선택하셨어요~
             </p>
           ) : (
             <div className="h-6 bg-slate-200/50 dark:bg-slate-700/50 animate-pulse rounded-lg w-2/3" />
@@ -613,10 +611,10 @@ export default function DailyQuestionCard() {
                 오늘의 문제
               </h2>
             </div>
-            {/* 사용자 선택 정보 */}
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            {/* 배달 메시지 */}
+            <p className="text-base text-gray-700 dark:text-gray-300 font-medium">
               {(() => {
-                // 선택한 자격증 정보 표시
+                // 선택한 자격증 정보
                 const cert = selectedCertification || 
                   (Object.keys(dailyQuestionCounts).find(
                     key => dailyQuestionCounts[key] !== null && dailyQuestionCounts[key] !== undefined && dailyQuestionCounts[key]! > 0
@@ -625,41 +623,12 @@ export default function DailyQuestionCard() {
                 if (cert) {
                   const count = getQuestionCountForCertification(cert)
                   const certLabel = CERTIFICATION_LABELS[cert] || cert
-                  return `${userName || '회원'}님 ${certLabel} 과정 매일 ${count}문제 배달 선택하셨어요~`
-                }
-                
-                return '자격증을 선택해주세요'
-              })()}
-            </p>
-            
-            {/* 배달 메시지 */}
-            <p className="text-base text-gray-700 dark:text-gray-300 font-medium">
-              {(() => {
-                // 선택한 자격증이 있으면 해당 자격증의 설정된 문제 수 표시
-                if (selectedCertification) {
-                  const count = getQuestionCountForCertification(selectedCertification)
+                  
                   if (count > 0) {
                     return (
                       <>
-                        주문하신 <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{count}문제</span>가 
-                        <span className="inline-block ml-1">신선하게 배달되었어요! 🚀</span>
-                      </>
-                    )
-                  }
-                }
-                
-                // 선택한 자격증이 없을 때, 설정된 자격증 중 첫 번째의 문제 수 표시
-                const firstSelectedCert = Object.keys(dailyQuestionCounts).find(
-                  key => dailyQuestionCounts[key] !== null && dailyQuestionCounts[key] !== undefined
-                ) as CertificationType | undefined
-                
-                if (firstSelectedCert) {
-                  const count = getQuestionCountForCertification(firstSelectedCert)
-                  if (count > 0) {
-                    return (
-                      <>
-                        주문하신 <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{count}문제</span>가 
-                        <span className="inline-block ml-1">신선하게 배달되었어요! 🚀</span>
+                        주문하신 <span className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">{certLabel}</span> 과정의{' '}
+                        <span className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">{count}문제</span>가 신선하게 배달되었어요
                       </>
                     )
                   }
@@ -669,13 +638,12 @@ export default function DailyQuestionCard() {
                 if (dailySet && dailySet.questionIds.length > 0) {
                   return (
                     <>
-                      주문하신 <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{dailySet.questionIds.length}문제</span>가 
-                      <span className="inline-block ml-1">신선하게 배달되었어요! 🚀</span>
+                      주문하신 <span className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">{dailySet.questionIds.length}문제</span>가 신선하게 배달되었어요
                     </>
                   )
                 }
                 
-                return ''
+                return '자격증을 선택해주세요'
               })()}
             </p>
           </div>
