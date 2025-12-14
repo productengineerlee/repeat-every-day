@@ -37,7 +37,7 @@ export default function QuestionCard({
 
       {/* 문제 내용 */}
       <div className="mb-6">
-        <p className="text-lg leading-relaxed whitespace-pre-wrap">
+        <p className="text-lg leading-relaxed whitespace-pre-wrap text-left">
           {question.content}
         </p>
       </div>
