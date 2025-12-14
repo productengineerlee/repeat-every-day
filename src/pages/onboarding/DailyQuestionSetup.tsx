@@ -101,7 +101,7 @@ export default function DailyQuestionSetup() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-card border rounded-lg p-8 space-y-6"
+          className="bg-card border rounded-lg p-8 space-y-8"
         >
           {/* 선택된 자격증 표시 */}
           <div className="text-center">
@@ -112,7 +112,7 @@ export default function DailyQuestionSetup() {
           </div>
 
           {/* 문제 수 선택 */}
-          <div className="space-y-4">
+          <div className="space-y-5">
             <h3 className="text-lg font-semibold text-center">
               매일 배달받을 문제 수
             </h3>
@@ -122,7 +122,7 @@ export default function DailyQuestionSetup() {
                   key={count}
                   onClick={() => setQuestionCount(count)}
                   className={`
-                    p-6 rounded-lg border-2 transition-all hover:scale-105
+                    p-7 rounded-lg border-2 transition-all hover:scale-105
                     ${
                       questionCount === count
                         ? 'border-primary bg-primary/10 shadow-lg'
@@ -140,21 +140,21 @@ export default function DailyQuestionSetup() {
           </div>
 
           {/* 안내 메시지 */}
-          <div className="space-y-3">
-            <div className="bg-muted/50 rounded-lg p-4">
-              <p className="text-sm text-muted-foreground text-center">
+          <div className="space-y-4">
+            <div className="bg-muted/50 rounded-lg p-5">
+              <p className="text-base text-muted-foreground text-center leading-relaxed">
                 💡 매일 <span className="font-bold text-primary">{questionCount}문제</span>씩 꾸준히 풀면서
                 <br />
                 취약한 부분을 집중적으로 학습할 수 있습니다.
               </p>
             </div>
             
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-              <div className="flex items-start gap-2">
-                <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                  <p className="font-semibold mb-1">안내</p>
-                  <p>
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-5">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-6 w-6 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
+                <div className="text-base text-yellow-800 dark:text-yellow-200">
+                  <p className="font-bold mb-2 text-lg">안내</p>
+                  <p className="leading-relaxed">
                     현재 일부 자격증은 문제 데이터가 준비 중입니다.
                     <br />
                     나중에 프로필 &gt; 학습설정에서 언제든 변경할 수 있습니다.

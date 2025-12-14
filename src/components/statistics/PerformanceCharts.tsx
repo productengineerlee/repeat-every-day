@@ -158,12 +158,12 @@ export default function PerformanceCharts() {
       className="bg-card border rounded-lg p-6 space-y-6"
     >
       {/* 헤더 */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-3">
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-3 mb-4">
           <motion.img 
             src="/mascot.png" 
             alt="Certiq Mascot" 
-            className="w-12 h-12 object-contain drop-shadow-md"
+            className="w-16 h-16 object-contain drop-shadow-md"
             initial={{ rotate: -10 }}
             animate={{ rotate: 0 }}
             transition={{ type: "spring", stiffness: 200 }}
@@ -172,12 +172,12 @@ export default function PerformanceCharts() {
             <h2 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">
               학습 성과 분석
             </h2>
-            <p className="text-sm md:text-base text-slate-600 dark:text-slate-300">
-              학습 성과를 시각적으로 확인하세요
-            </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 mb-4">
+          학습 성과를 시각적으로 확인하세요
+        </p>
+        <div className="flex items-center justify-center gap-2 mb-4">
           <Calendar className="h-5 w-5 text-muted-foreground" />
           <div className="flex gap-1 bg-muted rounded-lg p-1">
             {(['week', 'month', 'all'] as Period[]).map((p) => (

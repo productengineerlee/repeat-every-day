@@ -67,18 +67,18 @@ export default function CertificationSelection() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl space-y-8">
+    <div className="min-h-screen flex items-center justify-center p-4 py-8">
+      <div className="w-full max-w-6xl space-y-4">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">자격증 선택</h1>
+          <h1 className="text-3xl font-bold mb-2">자격증 선택</h1>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {certifications.map((cert) => (
             <label
               key={cert.value}
               htmlFor={cert.value}
-              className={`relative flex items-center justify-center p-6 border-2 rounded-xl cursor-pointer transition-all hover:border-primary/50 hover:shadow-md ${
+              className={`relative flex items-center justify-center p-4 border-2 rounded-xl cursor-pointer transition-all hover:border-primary/50 hover:shadow-md ${
                 state.certificationType === cert.value
                   ? 'border-primary bg-primary/10 shadow-lg scale-105'
                   : 'border-border bg-card hover:bg-accent/50'
@@ -111,7 +111,7 @@ export default function CertificationSelection() {
           ))}
         </div>
 
-        <div className="flex justify-end pt-4">
+        <div className="flex justify-end pt-2">
           <Button
             onClick={handleNext}
             disabled={!state.certificationType}

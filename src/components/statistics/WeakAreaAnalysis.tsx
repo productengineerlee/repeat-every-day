@@ -160,25 +160,29 @@ export default function WeakAreaAnalysis() {
       className="bg-card border rounded-lg p-6 space-y-6"
     >
       {/* 헤더 */}
-      <div className="flex items-start gap-3">
-        <motion.img 
-          src="/mascot.png" 
-          alt="Certiq Mascot" 
-          className="w-12 h-12 object-contain drop-shadow-md"
-          initial={{ rotate: -10 }}
-          animate={{ rotate: 0 }}
-          transition={{ type: "spring", stiffness: 200 }}
-        />
-        <div>
-          <h2 className="text-2xl font-bold mb-2">상세 약점 분석</h2>
-          <p className="text-muted-foreground text-sm">
-            영역별 상세 성능 분석과 개인화된 학습 추천을 확인하세요
-          </p>
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <motion.img 
+            src="/mascot.png" 
+            alt="Certiq Mascot" 
+            className="w-16 h-16 object-contain drop-shadow-md"
+            initial={{ rotate: -10 }}
+            animate={{ rotate: 0 }}
+            transition={{ type: "spring", stiffness: 200 }}
+          />
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">
+              상세 약점 분석
+            </h2>
+          </div>
         </div>
+        <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 mb-4">
+          영역별 상세 성능 분석과 개인화된 학습 추천을 확인하세요
+        </p>
       </div>
 
       {/* 필터 */}
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex items-center justify-center gap-2 flex-wrap">
         <Filter className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm font-medium">우선순위:</span>
         {(['all', 'high', 'medium', 'low'] as const).map((priority) => (

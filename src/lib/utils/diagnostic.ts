@@ -82,7 +82,7 @@ function getSubjectInfo(category: string): { subjectCode: string; subjectName: s
  * 카테고리 코드를 읽기 쉬운 이름으로 변환
  * 주요항목만 표시
  */
-function getCategoryName(category: string): string {
+export function getCategoryName(category: string): string {
   // 3단계로 정규화 (4단계 이상인 경우 3단계까지만 사용)
   const parts = category.split('-')
   const normalizedCategory = parts.length >= 3 ? `${parts[0]}-${parts[1]}-${parts[2]}` : category

@@ -31,30 +31,12 @@ export default function OnboardingFlow() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Progress Indicator */}
-      <div className="border-b bg-card">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-medium text-muted-foreground">
-              온보딩 진행 중
-            </h2>
-            <span className="text-sm font-medium">
-              {state.step} / {stepLabels.length}
-            </span>
-          </div>
-          <div className="flex gap-2">
-            {stepLabels.map((label, index) => (
-              <div
-                key={index}
-                className={`flex-1 h-2 rounded-full transition-colors ${
-                  index + 1 <= state.step
-                    ? 'bg-primary'
-                    : 'bg-muted'
-                }`}
-                title={label}
-              />
-            ))}
-          </div>
+      {/* Simple Step Indicator */}
+      <div className="container mx-auto px-4 pt-4">
+        <div className="text-center mb-2">
+          <span className="text-xs font-medium text-muted-foreground">
+            {stepLabels[state.step - 1]} ({state.step}/{stepLabels.length})
+          </span>
         </div>
       </div>
 

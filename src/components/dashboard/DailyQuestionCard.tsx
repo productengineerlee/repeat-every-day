@@ -597,22 +597,24 @@ export default function DailyQuestionCard() {
       <div className="relative z-10">
         {/* 헤더 - 마스코트와 함께 */}
         <div className="flex items-start justify-between gap-4">
-          <div className="space-y-3 flex-1">
-            <div className="flex items-center gap-3">
+          <div className="flex-1 text-center">
+            <div className="flex items-center justify-center gap-3 mb-4">
               <motion.img 
                 src="/mascot.png" 
                 alt="Certiq Mascot" 
-                className="w-12 h-12 object-contain drop-shadow-md"
+                className="w-16 h-16 object-contain drop-shadow-md"
                 initial={{ rotate: -10 }}
                 animate={{ rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200 }}
               />
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">
-                오늘의 문제
-              </h2>
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">
+                  오늘의 문제
+                </h2>
+              </div>
             </div>
             {/* 배달 메시지 */}
-            <p className="text-base text-gray-700 dark:text-gray-300 font-medium">
+            <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 mb-4">
               {(() => {
                 // 선택한 자격증 정보
                 const cert = selectedCertification || 

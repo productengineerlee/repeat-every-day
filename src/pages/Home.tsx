@@ -16,7 +16,6 @@ import {
   BarChart3,
   Trophy,
   Sparkles,
-  TrendingUp,
   CheckCircle2,
   ArrowRight,
   FileX,
@@ -719,33 +718,6 @@ export default function Home() {
           </div>
         </motion.div>
       </section>
-
-      {/* Final CTA Section */}
-      {!user && (
-        <section className="container mx-auto px-4 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-2xl mx-auto bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl p-12 border border-primary/20"
-          >
-            <TrendingUp className="h-12 w-12 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              지금 시작하세요
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              무료로 가입하고 개인화된 학습 경험을 시작해보세요
-            </p>
-            <Link to="/signup">
-              <Button size="lg" className="text-lg px-8 h-12 group">
-                무료로 시작하기
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-          </motion.div>
-        </section>
-      )}
     </div>
   )
 }

@@ -97,12 +97,41 @@ export async function saveUserCertification(
 }
 
 /**
+ * 진단 테스트 결과 조회
+ */
+export async function getDiagnosticResults(userId: string) {
+  try {
+    const { data, error } = await supabase
+      .from('diagnosis_results')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (error) {
+      console.error('Error fetching diagnostic results:', error)
+      return null
+    }
+
+    return data
+  } catch (error) {
+    console.error('Error in getDiagnosticResults:', error)
+    return null
+  }
+}
+
+/**
  * 진단 테스트 결과 저장 (upsert 사용 - 중복 방지)
  */
 export async function saveDiagnosticResults(
   userId: string,
   scores: Record<string, number>,
-  weakAreas: string[]
+  weakAreas: string[],
+  subjectGroups?: Record<string, any>,
+  categoryDetails?: Record<string, any>,
+  totalScore?: number,
+  totalQuestions?: number
 ): Promise<{ success: boolean; error?: string; diagnosisResultId?: string }> {
   try {
     // 먼저 기존 진단 결과가 있는지 확인
@@ -114,12 +143,19 @@ export async function saveDiagnosticResults(
 
     if (existingResult) {
       // 기존 결과가 있으면 업데이트
+      const updateData: any = {
+        scores,
+        weak_areas: weakAreas,
+      }
+      
+      if (subjectGroups) updateData.subject_groups = subjectGroups
+      if (categoryDetails) updateData.category_details = categoryDetails
+      if (totalScore !== undefined) updateData.total_score = totalScore
+      if (totalQuestions !== undefined) updateData.total_questions = totalQuestions
+      
       const { data, error } = await supabase
         .from('diagnosis_results')
-        .update({
-          scores,
-          weak_areas: weakAreas,
-        })
+        .update(updateData)
         .eq('id', existingResult.id)
         .select('id')
         .single()
@@ -134,13 +170,20 @@ export async function saveDiagnosticResults(
       }
     } else {
       // 기존 결과가 없으면 생성
+      const insertData: any = {
+        user_id: userId,
+        scores,
+        weak_areas: weakAreas,
+      }
+      
+      if (subjectGroups) insertData.subject_groups = subjectGroups
+      if (categoryDetails) insertData.category_details = categoryDetails
+      if (totalScore !== undefined) insertData.total_score = totalScore
+      if (totalQuestions !== undefined) insertData.total_questions = totalQuestions
+      
       const { data, error } = await supabase
         .from('diagnosis_results')
-        .insert({
-          user_id: userId,
-          scores,
-          weak_areas: weakAreas,
-        })
+        .insert(insertData)
         .select('id')
         .single()
 
@@ -199,11 +242,15 @@ export async function submitOnboardingData(
       // 3. 진단 결과 계산
       const results = calculateDiagnosticResults(questions, data.diagnosticAnswers)
 
-      // 4. 진단 결과 저장
+      // 4. 진단 결과 저장 (상세 정보 포함)
       const diagnosisResult = await saveDiagnosticResults(
         userId,
         results.scores,
-        results.weakAreas
+        results.weakAreas,
+        results.subjectGroups,
+        results.categoryDetails,
+        results.totalScore,
+        results.totalQuestions
       )
 
       if (!diagnosisResult.success) {

@@ -184,12 +184,12 @@ export default function LearningStreakCalendar() {
       className="bg-card border rounded-lg p-6 space-y-4"
     >
       {/* 헤더 */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-3">
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-3 mb-4">
           <motion.img 
             src="/mascot.png" 
             alt="Certiq Mascot" 
-            className="w-12 h-12 object-contain drop-shadow-md"
+            className="w-16 h-16 object-contain drop-shadow-md"
             initial={{ rotate: -10 }}
             animate={{ rotate: 0 }}
             transition={{ type: "spring", stiffness: 200 }}
@@ -198,13 +198,13 @@ export default function LearningStreakCalendar() {
             <h2 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">
               학습 캘린더
             </h2>
-            <p className="text-sm md:text-base text-slate-600 dark:text-slate-300">
-              매일의 학습 활동을 확인하세요
-            </p>
           </div>
         </div>
+        <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 mb-4">
+          매일의 학습 활동을 확인하세요
+        </p>
         {streakData && streakData.currentStreak > 0 && (
-          <div className="flex items-center gap-2 px-4 py-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg mb-4">
             <Flame className="h-5 w-5 text-orange-600 dark:text-orange-400" />
             <span className="font-bold text-orange-600 dark:text-orange-400">
               {streakData.currentStreak}일 연속

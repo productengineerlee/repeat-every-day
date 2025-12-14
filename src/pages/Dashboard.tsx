@@ -1,8 +1,5 @@
-import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/context'
 import { useOnboarding } from '@/context'
-import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
 import TopBar from '@/components/dashboard/TopBar'
 import DailyQuestionCard from '@/components/dashboard/DailyQuestionCard'
@@ -11,6 +8,7 @@ import ExamQuestionCard from '@/components/dashboard/ExamQuestionCard'
 import LearningStreakCalendar from '@/components/statistics/LearningStreakCalendar'
 // import AchievementCards from '@/components/statistics/AchievementCards' // 나중에 추가 예정 (임시 제거)
 import PerformanceCharts from '@/components/statistics/PerformanceCharts'
+import InitialDiagnosticResults from '@/components/dashboard/InitialDiagnosticResults'
 import { RotateCcw, Bell } from 'lucide-react'
 
 // 자격증명 매핑 (나중에 필요할 수 있음)
@@ -27,10 +25,8 @@ import { RotateCcw, Bell } from 'lucide-react'
 // }
 
 export default function Dashboard() {
-  const { user } = useAuth()
   const { reset } = useOnboarding()
   const navigate = useNavigate()
-  const [userName, setUserName] = useState<string>('')
 
   const handleLearningSettings = () => {
     navigate('/profile?tab=daily-settings')
@@ -53,39 +49,12 @@ export default function Dashboard() {
     navigate('/profile?tab=notifications')
   }
 
-  useEffect(() => {
-    const loadUserName = async () => {
-      if (!user) return
-
-      try {
-        const { data } = await supabase
-          .from('users')
-          .select('name')
-          .eq('id', user.id)
-          .maybeSingle<{ name: string | null }>()
-
-        if (data) {
-          // 사용자 이름 설정 (users 테이블의 name 또는 user_metadata의 name)
-          const name = data.name || user.user_metadata?.name || user.email?.split('@')[0] || ''
-          setUserName(name)
-        }
-      } catch (err) {
-        console.error('Error loading user name:', err)
-      }
-    }
-
-    loadUserName()
-  }, [user])
-
   return (
     <div className="min-h-screen pb-24">
       <TopBar />
       <div className="container mx-auto p-4 md:p-8 space-y-8">
         <div>
           <h1 className="text-4xl font-bold">대시보드</h1>
-          <p className="text-muted-foreground mt-2">
-            {userName || user?.email || '회원'}님, 환영합니다!
-          </p>
         </div>
 
         {/* 빠른 시작 */}
@@ -136,6 +105,13 @@ export default function Dashboard() {
         {/* <div className="relative">
           <WeakAreaAnalysis />
         </div> */}
+
+        {/* 최초 진단 결과 */}
+        <div className="relative flex justify-center">
+          <div className="w-full max-w-5xl">
+            <InitialDiagnosticResults />
+          </div>
+        </div>
       </div>
     </div>
   )

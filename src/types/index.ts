@@ -68,6 +68,22 @@ export interface DiagnosisResult {
   userId: string
   scores: Record<string, number>
   weakAreas: string[]
+  subjectGroups?: Record<string, {
+    subjectName: string
+    subjectNumber: number
+    topics: Array<{
+      topicName: string
+      categoryCode: string
+      correct: number
+      total: number
+      percentage: number
+    }>
+    totalCorrect: number
+    totalQuestions: number
+  }>
+  categoryDetails?: Record<string, { correct: number; total: number; name: string }>
+  totalScore?: number
+  totalQuestions?: number
   createdAt: Date
 }
 

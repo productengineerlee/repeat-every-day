@@ -161,11 +161,11 @@ export default function DiagnosticTest() {
   })
 
   return (
-    <div className="min-h-screen flex flex-col p-4">
-      <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col">
+    <div className="min-h-screen flex flex-col p-2 md:p-4">
+      <div className="max-w-4xl mx-auto w-full flex flex-col">
         {/* 진행률 표시 */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-2">
+        <div className="mb-2">
+          <div className="flex justify-between items-center mb-1">
             <span className="text-sm font-medium text-muted-foreground">
               문제 {currentIndex + 1} / {questions.length}
             </span>
@@ -184,7 +184,7 @@ export default function DiagnosticTest() {
         </div>
 
         {/* 문제 카드 */}
-        <div className="flex-1 flex items-center justify-center relative">
+        <div className="mt-2">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
@@ -198,9 +198,9 @@ export default function DiagnosticTest() {
               onDragEnd={handleSwipe}
               className="w-full max-w-2xl"
             >
-              <div className="bg-card border rounded-lg p-6 md:p-8 shadow-lg">
+              <div className="bg-card border rounded-lg p-3 md:p-5 shadow-lg">
                 {/* 문제 번호 및 카테고리 */}
-                <div className="flex justify-between items-start mb-6">
+                <div className="flex justify-between items-start mb-3">
                   <div>
                     <span className="text-sm text-muted-foreground">
                       {currentQuestion.category}
@@ -218,12 +218,12 @@ export default function DiagnosticTest() {
                 </div>
 
                 {/* 문제 내용 */}
-                <div className="mb-8">
+                <div className="mb-3">
                   <p className="text-lg leading-relaxed text-left">{currentQuestion.content}</p>
                 </div>
 
                 {/* 선택지 */}
-                <div className="space-y-3">
+                <div className="space-y-1.5">
                   {Object.entries(options).map(([key, value]) => {
                     const isSelected = selectedAnswer === key
                     const cleanedValue = cleanOptionText(value as string)
@@ -234,7 +234,7 @@ export default function DiagnosticTest() {
                         type="button"
                         onClick={() => handleAnswerSelect(key)}
                         className={`
-                          w-full p-4 text-left border-2 rounded-lg transition-all
+                          w-full p-2.5 text-left border-2 rounded-lg transition-all
                           ${
                             isSelected
                               ? 'border-primary bg-primary/5'
@@ -245,7 +245,7 @@ export default function DiagnosticTest() {
                         <div className="flex items-center gap-3">
                           <div
                             className={`
-                              w-6 h-6 rounded-full border-2 flex items-center justify-center
+                              w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0
                               ${
                                 isSelected
                                   ? 'border-primary bg-primary text-primary-foreground'
@@ -257,7 +257,7 @@ export default function DiagnosticTest() {
                               <div className="w-2 h-2 rounded-full bg-current" />
                             )}
                           </div>
-                          <span className="flex-1 text-left">{cleanedValue}</span>
+                          <span className="flex-1 text-left text-sm md:text-base">{cleanedValue}</span>
                         </div>
                       </button>
                     )
@@ -269,7 +269,7 @@ export default function DiagnosticTest() {
         </div>
 
         {/* 네비게이션 버튼 */}
-        <div className="flex justify-between items-center mt-6">
+        <div className="flex justify-between items-center mt-2">
           <Button
             variant="outline"
             onClick={handlePrevious}
@@ -313,8 +313,8 @@ export default function DiagnosticTest() {
         </div>
 
         {/* 스와이프 안내 */}
-        <div className="text-center mt-4">
-          <p className="text-sm text-muted-foreground">
+        <div className="text-center mt-1">
+          <p className="text-xs text-muted-foreground">
             좌우로 스와이프하여 문제를 이동할 수 있습니다
           </p>
         </div>
