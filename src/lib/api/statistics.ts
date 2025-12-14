@@ -111,16 +111,27 @@ export async function getStreakData(userId: string): Promise<StreakData> {
 
     // 현재 스트릭 계산 (오늘부터 역순으로 연속된 학습일 계산)
     const kstOffset = 9 * 60 * 60 * 1000
-    const todayKST = new Date(new Date().getTime() + kstOffset)
-    todayKST.setHours(0, 0, 0, 0)
+    const nowKST = new Date(new Date().getTime() + kstOffset)
+    const todayDateStr = nowKST.toISOString().split('T')[0]
+    
+    console.log('🔥 스트릭 계산 시작')
+    console.log('📅 오늘 날짜 (KST):', todayDateStr)
+    console.log('📊 활동 맵 키들:', Object.keys(activityMap).sort().reverse().slice(0, 10))
+    console.log('📊 오늘 활동 데이터:', activityMap[todayDateStr])
     
     let currentStreak = 0
     for (let i = 0; i < 365; i++) {
-      const checkDate = new Date(todayKST)
-      checkDate.setDate(checkDate.getDate() - i)
-      const dateStr = checkDate.toISOString().split('T')[0]
+      // KST 기준으로 i일 전 날짜 계산
+      const checkDateKST = new Date(nowKST.getTime())
+      checkDateKST.setDate(checkDateKST.getDate() - i)
+      const dateStr = checkDateKST.toISOString().split('T')[0]
       
       const activity = activityMap[dateStr]
+      
+      if (i < 5) {
+        console.log(`  Day -${i} (${dateStr}):`, activity ? `${activity.count}문제` : '학습 없음')
+      }
+      
       if (activity && activity.count > 0) {
         currentStreak++
       } else {
@@ -130,6 +141,8 @@ export async function getStreakData(userId: string): Promise<StreakData> {
         }
       }
     }
+    
+    console.log('🔥 최종 스트릭:', currentStreak)
 
     // 최장 스트릭 계산
     let longestStreak = 0

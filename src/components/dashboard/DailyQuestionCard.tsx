@@ -371,12 +371,19 @@ export default function DailyQuestionCard() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/20 rounded-xl p-6 md:p-8"
+        className="relative bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50 dark:from-sky-950/30 dark:via-blue-950/30 dark:to-indigo-950/30 border-2 border-sky-200/50 dark:border-sky-800/50 rounded-2xl p-6 md:p-8 shadow-lg overflow-hidden"
       >
-        <div className="space-y-4">
-          <div className="h-6 bg-muted animate-pulse rounded w-1/3" />
-          <div className="h-4 bg-muted animate-pulse rounded w-1/2" />
-          <div className="h-12 bg-muted animate-pulse rounded" />
+        {/* 배경 장식 */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-200/20 to-pink-200/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-200/20 to-cyan-200/20 rounded-full blur-3xl" />
+        
+        <div className="relative z-10 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 bg-blue-200/50 dark:bg-blue-800/50 animate-pulse rounded-xl" />
+            <div className="h-8 bg-blue-200/50 dark:bg-blue-800/50 animate-pulse rounded-lg w-1/3" />
+          </div>
+          <div className="h-6 bg-sky-200/50 dark:bg-sky-800/50 animate-pulse rounded-lg w-2/3" />
+          <div className="h-14 bg-indigo-200/50 dark:bg-indigo-800/50 animate-pulse rounded-xl" />
         </div>
       </motion.div>
     )
@@ -400,22 +407,47 @@ export default function DailyQuestionCard() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card border rounded-xl p-6 md:p-8 text-center space-y-4"
+        className="relative bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-rose-950/30 border-2 border-amber-200/50 dark:border-amber-800/50 rounded-2xl p-6 md:p-8 text-center space-y-4 shadow-lg overflow-hidden"
       >
-        <p className="text-muted-foreground">오늘의 문제 세트를 불러올 수 없습니다.</p>
-        <div className="text-sm text-muted-foreground space-y-2">
-          <p>가능한 원인:</p>
-          <ul className="list-disc list-inside space-y-1 text-left max-w-md mx-auto">
-            <li>데이터베이스에 해당 자격증 문제가 없습니다</li>
-            <li>빅데이터분석기사의 경우 카테고리가 "3-"로 시작하는 문제만 표시됩니다</li>
-            <li>관리자 화면에서 문제를 등록해주세요</li>
-          </ul>
+        {/* 배경 장식 */}
+        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-orange-200/20 to-red-200/20 rounded-full blur-3xl" />
+        
+        <div className="relative z-10">
+          <div className="mb-4">
+            <div className="inline-block p-4 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl mb-3">
+              <BookOpen className="h-10 w-10 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+              문제를 불러올 수 없습니다 😅
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">걱정하지 마세요! 다시 시도해볼까요?</p>
+          </div>
+          
+          <div className="text-sm text-gray-600 dark:text-gray-400 space-y-3 mb-6">
+            <p className="font-semibold text-gray-700 dark:text-gray-300">가능한 원인:</p>
+            <ul className="list-none space-y-2 text-left max-w-md mx-auto">
+              <li className="flex items-start gap-2">
+                <span className="text-amber-500">•</span>
+                <span>데이터베이스에 해당 자격증 문제가 없습니다</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-500">•</span>
+                <span>빅데이터분석기사의 경우 카테고리가 "3-"로 시작하는 문제만 표시됩니다</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-500">•</span>
+                <span>관리자 화면에서 문제를 등록해주세요</span>
+              </li>
+            </ul>
+          </div>
+          
           <Button
             onClick={createTodaySet}
-            variant="outline"
-            className="mt-4"
+            size="lg"
+            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold shadow-md"
           >
-            다시 시도
+            <Play className="mr-2 h-5 w-5" />
+            다시 시도하기
           </Button>
         </div>
       </motion.div>
@@ -427,115 +459,160 @@ export default function DailyQuestionCard() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/20 rounded-xl p-6 md:p-8 space-y-6"
+      className="relative bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50 dark:from-sky-950/30 dark:via-blue-950/30 dark:to-indigo-950/30 border-2 border-sky-200/50 dark:border-sky-800/50 rounded-2xl p-6 md:p-8 space-y-6 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
     >
-      {/* 헤더 */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-2 flex-1">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold">오늘의 문제</h2>
-          </div>
-          <p className="text-muted-foreground">
-            {(() => {
-              // 선택한 자격증이 있으면 해당 자격증의 설정된 문제 수 표시
-              if (selectedCertification) {
-                const count = getQuestionCountForCertification(selectedCertification)
-                if (count > 0) {
+      {/* 배경 장식 */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-200/20 to-pink-200/20 rounded-full blur-3xl -z-0" />
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-200/20 to-cyan-200/20 rounded-full blur-3xl -z-0" />
+      
+      {/* 콘텐츠 */}
+      <div className="relative z-10">
+        {/* 헤더 - 마스코트와 함께 */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-3 flex-1">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-md">
+                <BookOpen className="h-7 w-7 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                오늘의 문제 🎯
+              </h2>
+            </div>
+            <p className="text-base text-gray-700 dark:text-gray-300 font-medium">
+              {(() => {
+                // 선택한 자격증이 있으면 해당 자격증의 설정된 문제 수 표시
+                if (selectedCertification) {
+                  const count = getQuestionCountForCertification(selectedCertification)
+                  if (count > 0) {
+                    return (
+                      <>
+                        주문하신 <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{count}문제</span>가 
+                        <span className="inline-block ml-1">신선하게 배달되었어요! 🚀</span>
+                      </>
+                    )
+                  }
+                }
+                
+                // 선택한 자격증이 없을 때, 설정된 자격증 중 첫 번째의 문제 수 표시
+                const firstSelectedCert = Object.keys(dailyQuestionCounts).find(
+                  key => dailyQuestionCounts[key] !== null && dailyQuestionCounts[key] !== undefined
+                ) as CertificationType | undefined
+                
+                if (firstSelectedCert) {
+                  const count = getQuestionCountForCertification(firstSelectedCert)
+                  if (count > 0) {
+                    return (
+                      <>
+                        주문하신 <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{count}문제</span>가 
+                        <span className="inline-block ml-1">신선하게 배달되었어요! 🚀</span>
+                      </>
+                    )
+                  }
+                }
+                
+                // 문제가 로드된 경우에만 실제 문제 수 표시
+                if (dailySet && dailySet.questionIds.length > 0) {
                   return (
                     <>
-                      주문하신 <span className="text-primary font-semibold">{count}문제</span>가 배달되었어요~
+                      주문하신 <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">{dailySet.questionIds.length}문제</span>가 
+                      <span className="inline-block ml-1">신선하게 배달되었어요! 🚀</span>
                     </>
                   )
                 }
-              }
-              
-              // 선택한 자격증이 없을 때, 설정된 자격증 중 첫 번째의 문제 수 표시
-              const firstSelectedCert = Object.keys(dailyQuestionCounts).find(
-                key => dailyQuestionCounts[key] !== null && dailyQuestionCounts[key] !== undefined
-              ) as CertificationType | undefined
-              
-              if (firstSelectedCert) {
-                const count = getQuestionCountForCertification(firstSelectedCert)
-                if (count > 0) {
-                  return (
-                    <>
-                      주문하신 <span className="text-primary font-semibold">{count}문제</span>가 배달되었어요~
-                    </>
-                  )
-                }
-              }
-              
-              // 문제가 로드된 경우에만 실제 문제 수 표시
-              if (dailySet && dailySet.questionIds.length > 0) {
-                return (
-                  <>
-                    주문하신 <span className="text-primary font-semibold">{dailySet.questionIds.length}문제</span>가 배달되었어요~
-                  </>
-                )
-              }
-              
-              return '자격증을 선택해주세요'
-            })()}
-          </p>
-        </div>
-        {dailySet.completed && (
-          <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
-            <CheckCircle className="h-5 w-5" />
-            <span className="text-sm font-medium">완료</span>
+                
+                return '자격증을 선택해주세요'
+              })()}
+            </p>
           </div>
-        )}
-      </div>
-
-
-      {/* 진행률 바 */}
-      {dailySet.progress > 0 && !dailySet.completed && (
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">진행률</span>
-            <span className="font-medium">{dailySet.progress}%</span>
-          </div>
-          <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-primary"
-              initial={{ width: 0 }}
-              animate={{ width: `${dailySet.progress}%` }}
-              transition={{ duration: 0.5 }}
+          
+          {/* 마스코트 이미지 */}
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="flex-shrink-0"
+          >
+            <img 
+              src="/mascot.png" 
+              alt="Certiq Mascot" 
+              className="w-24 h-24 md:w-28 md:h-28 object-contain drop-shadow-lg"
             />
+          </motion.div>
+          
+          {dailySet.completed && (
+            <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-green-500 text-white rounded-full shadow-md">
+              <CheckCircle className="h-4 w-4" />
+              <span className="text-sm font-bold">완료!</span>
+            </div>
+          )}
+        </div>
+
+        {/* 구분선 */}
+        <div className="h-px bg-gradient-to-r from-transparent via-sky-300 to-transparent my-6" />
+
+        {/* 진행률 바 */}
+        {dailySet.progress > 0 && !dailySet.completed && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-3 p-4 bg-white/60 dark:bg-gray-800/60 rounded-xl backdrop-blur-sm"
+          >
+            <div className="flex justify-between text-sm font-medium">
+              <span className="text-gray-700 dark:text-gray-300">🎯 학습 진행률</span>
+              <span className="text-blue-600 dark:text-blue-400 font-bold">{dailySet.progress}%</span>
+            </div>
+            <div className="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
+              <motion.div
+                className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${dailySet.progress}%` }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
+            </div>
+          </motion.div>
+        )}
+
+        {/* 예상 시간 */}
+        <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border border-amber-200/50 dark:border-amber-800/50">
+          <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg">
+            <Clock className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-600 dark:text-gray-400">예상 소요 시간</p>
+            <p className="text-sm font-bold text-amber-700 dark:text-amber-400">약 {estimatedTime}분</p>
           </div>
         </div>
-      )}
 
-      {/* 예상 시간 */}
-      <div className="flex items-center gap-2 text-muted-foreground">
-        <Clock className="h-4 w-4" />
-        <span className="text-sm">예상 소요 시간: 약 {estimatedTime}분</span>
+        {/* 시작 버튼 */}
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <Button
+            onClick={handleStartLearning}
+            disabled={dailySet.completed}
+            size="lg"
+            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {dailySet.completed ? (
+              <>
+                <CheckCircle className="mr-2 h-6 w-6" />
+                오늘의 학습 완료! 🎉
+              </>
+            ) : dailySet.progress > 0 ? (
+              <>
+                <Play className="mr-2 h-6 w-6" />
+                계속 학습하기 💪
+              </>
+            ) : (
+              <>
+                <Play className="mr-2 h-6 w-6" />
+                학습 시작하기! 🚀
+              </>
+            )}
+          </Button>
+        </motion.div>
       </div>
-
-      {/* 시작 버튼 */}
-      <Button
-        onClick={handleStartLearning}
-        disabled={dailySet.completed}
-        size="lg"
-        className="w-full"
-      >
-        {dailySet.completed ? (
-          <>
-            <CheckCircle className="mr-2 h-5 w-5" />
-            오늘의 학습 완료
-          </>
-        ) : dailySet.progress > 0 ? (
-          <>
-            <Play className="mr-2 h-5 w-5" />
-            계속 학습하기
-          </>
-        ) : (
-          <>
-            <Play className="mr-2 h-5 w-5" />
-            학습 시작하기
-          </>
-        )}
-      </Button>
     </motion.div>
   )
 }
