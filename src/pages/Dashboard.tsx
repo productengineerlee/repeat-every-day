@@ -39,7 +39,7 @@ export default function Dashboard() {
   }
 
   const handleReviewMode = () => {
-    navigate('/review')
+    navigate('/wrong-answers')
   }
 
   const handleRetakeDiagnostic = () => {
