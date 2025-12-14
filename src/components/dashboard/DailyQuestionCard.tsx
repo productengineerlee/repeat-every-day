@@ -462,19 +462,19 @@ export default function DailyQuestionCard() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50 dark:from-sky-950/30 dark:via-blue-950/30 dark:to-indigo-950/30 border-2 border-sky-200/50 dark:border-sky-800/50 rounded-2xl p-6 md:p-8 shadow-lg overflow-hidden"
+        className="relative bg-gradient-to-br from-slate-50 via-blue-50/50 to-slate-50 dark:from-slate-900/30 dark:via-blue-950/20 dark:to-slate-900/30 border border-slate-200/80 dark:border-slate-700/50 rounded-xl p-5 md:p-6 shadow-sm overflow-hidden"
       >
         {/* 배경 장식 */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-200/20 to-pink-200/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-200/20 to-cyan-200/20 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-100/10 to-slate-100/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-slate-100/10 to-blue-100/10 rounded-full blur-3xl" />
         
         <div className="relative z-10 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 bg-blue-200/50 dark:bg-blue-800/50 animate-pulse rounded-xl" />
-            <div className="h-8 bg-blue-200/50 dark:bg-blue-800/50 animate-pulse rounded-lg w-1/3" />
+            <div className="h-12 w-12 bg-slate-200/50 dark:bg-slate-700/50 animate-pulse rounded-xl" />
+            <div className="h-8 bg-slate-200/50 dark:bg-slate-700/50 animate-pulse rounded-lg w-1/3" />
           </div>
-          <div className="h-6 bg-sky-200/50 dark:bg-sky-800/50 animate-pulse rounded-lg w-2/3" />
-          <div className="h-14 bg-indigo-200/50 dark:bg-indigo-800/50 animate-pulse rounded-xl" />
+          <div className="h-6 bg-slate-200/50 dark:bg-slate-700/50 animate-pulse rounded-lg w-2/3" />
+          <div className="h-14 bg-blue-200/50 dark:bg-blue-800/50 animate-pulse rounded-xl" />
         </div>
       </motion.div>
     )
@@ -498,14 +498,14 @@ export default function DailyQuestionCard() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-rose-950/30 border-2 border-amber-200/50 dark:border-amber-800/50 rounded-2xl p-6 md:p-8 text-center space-y-4 shadow-lg overflow-hidden"
+        className="relative bg-gradient-to-br from-slate-50 via-amber-50/30 to-slate-50 dark:from-slate-900/30 dark:via-amber-950/20 dark:to-slate-900/30 border border-slate-200/80 dark:border-slate-700/50 rounded-xl p-5 md:p-6 text-center space-y-4 shadow-sm overflow-hidden"
       >
         {/* 배경 장식 */}
-        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-orange-200/20 to-red-200/20 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-amber-100/10 to-slate-100/10 rounded-full blur-3xl" />
         
         <div className="relative z-10">
           <div className="mb-4">
-            <div className="inline-block p-4 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl mb-3">
+            <div className="inline-block p-4 bg-amber-500 dark:bg-amber-600 rounded-2xl mb-3">
               <BookOpen className="h-10 w-10 text-white" />
             </div>
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">
@@ -535,7 +535,7 @@ export default function DailyQuestionCard() {
           <Button
             onClick={createTodaySet}
             size="lg"
-            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold shadow-md"
+            className="bg-amber-500 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-700 text-white font-semibold shadow-sm"
           >
             <Play className="mr-2 h-5 w-5" />
             다시 시도하기
@@ -551,11 +551,11 @@ export default function DailyQuestionCard() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="relative bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50 dark:from-sky-950/30 dark:via-blue-950/30 dark:to-indigo-950/30 border-2 border-sky-200/50 dark:border-sky-800/50 rounded-2xl p-6 md:p-8 space-y-6 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+      className="relative bg-gradient-to-br from-slate-50 via-blue-50/50 to-slate-50 dark:from-slate-900/30 dark:via-blue-950/20 dark:to-slate-900/30 border border-slate-200/80 dark:border-slate-700/50 rounded-xl p-5 md:p-6 space-y-4 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
     >
       {/* 배경 장식 */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-200/20 to-pink-200/20 rounded-full blur-3xl -z-0" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-200/20 to-cyan-200/20 rounded-full blur-3xl -z-0" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-100/10 to-slate-100/10 rounded-full blur-3xl -z-0" />
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-slate-100/10 to-blue-100/10 rounded-full blur-3xl -z-0" />
       
       {/* 콘텐츠 */}
       <div className="relative z-10">
@@ -571,7 +571,7 @@ export default function DailyQuestionCard() {
                 animate={{ rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200 }}
               />
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">
                 오늘의 문제
               </h2>
             </div>
@@ -631,7 +631,7 @@ export default function DailyQuestionCard() {
         </div>
 
         {/* 구분선 */}
-        <div className="h-px bg-gradient-to-r from-transparent via-sky-300 to-transparent my-6" />
+        <div className="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent my-4" />
 
         {/* 진행률 바 */}
         {dailySet.progress > 0 && !dailySet.completed && (
@@ -656,24 +656,24 @@ export default function DailyQuestionCard() {
         )}
 
         {/* 예상 시간 */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border border-amber-200/50 dark:border-amber-800/50">
-          <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg">
-            <Clock className="h-5 w-5 text-white" />
+        <div className="flex items-center gap-3 px-4 py-2.5 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <div className="p-2 bg-blue-500 dark:bg-blue-600 rounded-lg">
+            <Clock className="h-4 w-4 text-white" />
           </div>
-          <p className="text-base font-bold text-amber-700 dark:text-amber-400">
-            예상 소요 시간: <span className="text-xl">약 {estimatedTime}분</span>
+          <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            예상 소요 시간: <span className="text-base">약 {estimatedTime}분</span>
           </p>
         </div>
 
         {/* 시작 버튼 */}
         <motion.div
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
         >
           <Button
             onClick={handleStartLearning}
             size="lg"
-            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all"
+            className="w-full h-12 text-base font-semibold bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white shadow-sm hover:shadow-md transition-all"
           >
             {dailySet.completed ? (
               <>
@@ -700,7 +700,7 @@ export default function DailyQuestionCard() {
       <Dialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+            <DialogTitle className="text-2xl font-bold text-slate-700 dark:text-slate-200">
               🎉 완료하셨네요!
             </DialogTitle>
             <DialogDescription className="text-base pt-2">
@@ -714,9 +714,9 @@ export default function DailyQuestionCard() {
               onClick={handleReviewSameQuestions}
               size="lg"
               variant="outline"
-              className="w-full h-auto py-4 flex items-start gap-3 hover:bg-sky-50 dark:hover:bg-sky-950/30 hover:border-sky-300 dark:hover:border-sky-700 transition-all"
+              className="w-full h-auto py-4 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/30 hover:border-blue-300 dark:hover:border-blue-700 transition-all"
             >
-              <div className="p-2 bg-gradient-to-br from-sky-400 to-blue-500 rounded-lg flex-shrink-0">
+              <div className="p-2 bg-blue-500 dark:bg-blue-600 rounded-lg flex-shrink-0">
                 <RefreshCw className="h-5 w-5 text-white" />
               </div>
               <div className="text-left flex-1">
@@ -730,7 +730,7 @@ export default function DailyQuestionCard() {
               onClick={handleLoadNewQuestions}
               disabled={creating}
               size="lg"
-              className="w-full h-auto py-4 flex items-start gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+              className="w-full h-auto py-4 flex items-start gap-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
             >
               <div className="p-2 bg-white/20 rounded-lg flex-shrink-0">
                 <PlusCircle className="h-5 w-5 text-white" />
