@@ -295,12 +295,12 @@ export default function PerformanceCharts() {
 
       {/* 카테고리별 성능 차트 */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-center">
           <BarChart3 className="h-5 w-5 text-primary" />
           <h3 className="text-lg font-semibold">카테고리별 성능</h3>
         </div>
         {categoryChartData.length > 0 ? (
-          <div className="w-full space-y-3">
+          <div className="w-full max-w-3xl mx-auto space-y-3">
             {categoryChartData.map((item, index) => {
               // 정답률에 따라 색상 결정
               let color = '#10b981' // 기본 녹색 (80%+)

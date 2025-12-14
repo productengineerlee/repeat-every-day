@@ -114,13 +114,17 @@ export default function Dashboard() {
         <ExamQuestionCard />
 
         {/* 학습 캘린더 - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
-          <LearningStreakCalendar />
+        <div className="relative flex justify-center">
+          <div className="w-full max-w-5xl">
+            <LearningStreakCalendar />
+          </div>
         </div>
 
         {/* 성능 차트 - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
-          <PerformanceCharts />
+        <div className="relative flex justify-center">
+          <div className="w-full max-w-5xl">
+            <PerformanceCharts />
+          </div>
         </div>
 
         {/* 성취도 카드 - 나중에 추가 예정 (임시 제거) */}
