@@ -38,6 +38,10 @@ export default function Dashboard() {
     navigate('/profile?tab=daily-settings')
   }
 
+  const handleReviewMode = () => {
+    navigate('/review')
+  }
+
   const handleRetakeDiagnostic = () => {
     // localStorage 플래그 초기화 (재진단 허용)
     localStorage.removeItem('diagnostic_completed')
@@ -91,7 +95,7 @@ export default function Dashboard() {
           <h2 className="text-xl font-semibold mb-4 text-center">빠른 시작</h2>
           <div className="flex flex-wrap gap-4 justify-center">
             <Button>오늘의 문제 풀기</Button>
-            <Button variant="outline">오답 노트 보기</Button>
+            <Button variant="outline" onClick={handleReviewMode}>오답 노트 보기</Button>
             <Button variant="outline" onClick={handleLearningSettings}>
               학습 설정 하기
             </Button>
