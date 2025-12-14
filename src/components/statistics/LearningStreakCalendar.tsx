@@ -195,8 +195,10 @@ export default function LearningStreakCalendar() {
             transition={{ type: "spring", stiffness: 200 }}
           />
           <div>
-            <h2 className="text-2xl font-bold mb-2">학습 캘린더</h2>
-            <p className="text-muted-foreground text-sm">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">
+              학습 캘린더
+            </h2>
+            <p className="text-sm md:text-base text-slate-600 dark:text-slate-300">
               매일의 학습 활동을 확인하세요
             </p>
           </div>

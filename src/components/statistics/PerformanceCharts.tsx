@@ -169,8 +169,10 @@ export default function PerformanceCharts() {
             transition={{ type: "spring", stiffness: 200 }}
           />
           <div>
-            <h2 className="text-2xl font-bold mb-2">학습 성과 분석</h2>
-            <p className="text-muted-foreground text-sm">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-200">
+              학습 성과 분석
+            </h2>
+            <p className="text-sm md:text-base text-slate-600 dark:text-slate-300">
               학습 성과를 시각적으로 확인하세요
             </p>
           </div>
