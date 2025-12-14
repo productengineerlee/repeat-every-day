@@ -34,8 +34,8 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const [userName, setUserName] = useState<string>('')
 
-  const handleStartDiagnostic = () => {
-    navigate('/onboarding')
+  const handleLearningSettings = () => {
+    navigate('/profile?tab=daily-settings')
   }
 
   const handleRetakeDiagnostic = () => {
@@ -48,7 +48,7 @@ export default function Dashboard() {
   }
 
   const handleNotificationSettings = () => {
-    navigate('/profile/settings')
+    navigate('/profile?tab=notifications')
   }
 
   useEffect(() => {
@@ -92,7 +92,7 @@ export default function Dashboard() {
           <div className="flex flex-wrap gap-4 justify-center">
             <Button>오늘의 문제 풀기</Button>
             <Button variant="outline">오답 노트 보기</Button>
-            <Button variant="outline" onClick={handleStartDiagnostic}>
+            <Button variant="outline" onClick={handleLearningSettings}>
               학습 설정 하기
             </Button>
             <Button variant="outline" onClick={handleNotificationSettings} className="gap-2">

@@ -1,8 +1,8 @@
 import { useAuth } from '@/context'
 import { Button } from '@/components/ui/button'
 import { User as UserIcon, Bell, BookOpen } from 'lucide-react'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import NotificationSettings from '@/components/settings/NotificationSettings'
 import DailyQuestionSettings from '@/components/settings/DailyQuestionSettings'
 import UserInfoSettings from '@/components/settings/UserInfoSettings'
@@ -13,7 +13,16 @@ type ProfileTab = 'user-info' | 'daily-settings' | 'notifications'
 export default function Profile() {
   const { user, loading } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState<ProfileTab>('user-info')
+
+  // URL 파라미터에서 탭 정보 읽기
+  useEffect(() => {
+    const tab = searchParams.get('tab') as ProfileTab
+    if (tab && ['user-info', 'daily-settings', 'notifications'].includes(tab)) {
+      setActiveTab(tab)
+    }
+  }, [searchParams])
 
   if (loading) {
     return (
