@@ -94,7 +94,6 @@ export default function Dashboard() {
         <div className="p-6 border rounded-lg">
           <h2 className="text-xl font-semibold mb-4 text-center">빠른 시작</h2>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Button>오늘의 문제 풀기</Button>
             <Button variant="outline" onClick={handleReviewMode}>오답 노트 보기</Button>
             <Button variant="outline" onClick={handleLearningSettings}>
               학습 설정 하기
