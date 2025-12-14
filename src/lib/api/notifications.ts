@@ -241,6 +241,13 @@ export async function logNotification(
       .single()
 
     if (error) {
+      // RLS 정책 에러는 조용히 처리 (개발 중 예상되는 에러)
+      if (error.message?.includes('row-level security') || error.message?.includes('policy')) {
+        return {
+          success: false,
+          error: 'RLS policy error (silent)',
+        }
+      }
       throw error
     }
 
@@ -249,7 +256,10 @@ export async function logNotification(
       logId: logData.id,
     }
   } catch (error) {
-    console.error('Error logging notification:', error)
+    // 에러 로깅을 최소화 (너무 많은 에러 메시지 방지)
+    if (error instanceof Error && !error.message?.includes('row-level security')) {
+      console.error('Error logging notification:', error)
+    }
     return {
       success: false,
       error: error instanceof Error ? error.message : '알림 로그 기록 실패',

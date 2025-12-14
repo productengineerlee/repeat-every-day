@@ -203,12 +203,22 @@ export async function distributeReward(
   sourceId?: string
 ): Promise<{ success: boolean; error?: string; rewardTypeId?: string }> {
   try {
+    // sourceId가 유효한 UUID인지 확인
+    let validSourceId: string | null = null
+    if (sourceId) {
+      // UUID 형식 검증 (간단한 체크)
+      const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      if (uuidPattern.test(sourceId)) {
+        validSourceId = sourceId
+      }
+    }
+
     const { data, error } = await supabase.rpc('distribute_reward', {
       p_user_id: userId,
       p_reward_code: rewardCode,
       p_quantity: quantity,
       p_source_type: sourceType,
-      p_source_id: sourceId || null,
+      p_source_id: validSourceId,
     })
 
     if (error) {

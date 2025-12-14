@@ -435,7 +435,7 @@ export default function ExamQuestionCard() {
         <div className="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent my-4" />
 
         {/* 자격증 선택 및 기출년도/회차/과목 입력 */}
-        <div className="space-y-4 relative z-10">
+        <div className="space-y-4 relative z-10 py-2">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* 자격증 선택 */}
             <motion.div 
