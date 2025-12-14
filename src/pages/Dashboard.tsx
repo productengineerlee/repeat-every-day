@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import TopBar from '@/components/dashboard/TopBar'
 import DailyQuestionCard from '@/components/dashboard/DailyQuestionCard'
 import ExamQuestionCard from '@/components/dashboard/ExamQuestionCard'
-import WeakAreaAnalysis from '@/components/statistics/WeakAreaAnalysis'
+// import WeakAreaAnalysis from '@/components/statistics/WeakAreaAnalysis' // 데이터 충분히 쌓이면 다시 추가 예정
 import LearningStreakCalendar from '@/components/statistics/LearningStreakCalendar'
 // import AchievementCards from '@/components/statistics/AchievementCards' // 나중에 추가 예정 (임시 제거)
 import PerformanceCharts from '@/components/statistics/PerformanceCharts'
@@ -128,10 +128,10 @@ export default function Dashboard() {
           <AchievementCards />
         </div> */}
 
-        {/* 상세 약점 분석 - 에러 발생 시에도 렌더링 */}
-        <div className="relative">
+        {/* 상세 약점 분석 - 데이터 충분히 쌓이면 다시 추가 예정 (임시 제거) */}
+        {/* <div className="relative">
           <WeakAreaAnalysis />
-        </div>
+        </div> */}
       </div>
     </div>
   )
