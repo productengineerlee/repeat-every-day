@@ -109,7 +109,7 @@ export default function LearningStreakCalendar() {
     return 'bg-rose-500 dark:bg-rose-600'
   }
 
-  // 스트릭 날짜 확인 (현재 스트릭의 날짜들)
+  // 스트릭 날짜 확인 (실제 학습 활동이 있는 연속 날짜들만)
   const streakDates = useMemo(() => {
     if (!streakData || streakData.currentStreak === 0) return new Set<string>()
 
@@ -117,14 +117,31 @@ export default function LearningStreakCalendar() {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-    for (let i = 0; i < streakData.currentStreak; i++) {
+    // 실제 학습 활동이 있는 날만 연속으로 찾기
+    let consecutiveDays = 0
+    for (let i = 0; i < 365; i++) {
       const date = new Date(today)
       date.setDate(date.getDate() - i)
-      dates.add(format(date, 'yyyy-MM-dd'))
+      const dateStr = format(date, 'yyyy-MM-dd')
+      const activity = activityMap[dateStr]
+
+      // 학습 활동이 있으면 스트릭에 추가
+      if (activity && activity.count > 0) {
+        dates.add(dateStr)
+        consecutiveDays++
+        
+        // 설정된 스트릭 개수만큼만 추가
+        if (consecutiveDays >= streakData.currentStreak) {
+          break
+        }
+      } else {
+        // 학습이 없으면 스트릭 중단
+        break
+      }
     }
 
     return dates
-  }, [streakData])
+  }, [streakData, activityMap])
 
   const handlePreviousMonth = () => {
     setCurrentMonth(subMonths(currentMonth, 1))
