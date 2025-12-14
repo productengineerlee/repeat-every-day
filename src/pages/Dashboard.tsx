@@ -13,7 +13,7 @@ import LearningStreakCalendar from '@/components/statistics/LearningStreakCalend
 // import AchievementCards from '@/components/statistics/AchievementCards' // 나중에 추가 예정 (임시 제거)
 import PerformanceCharts from '@/components/statistics/PerformanceCharts'
 import ExportStatistics from '@/components/statistics/ExportStatistics'
-import { BookOpen, TrendingUp, Award, RotateCcw } from 'lucide-react'
+import { RotateCcw } from 'lucide-react'
 
 // 자격증명 매핑 (나중에 필요할 수 있음)
 // const CERTIFICATION_LABELS: Record<string, string> = {
@@ -80,45 +80,6 @@ export default function Dashboard() {
           <p className="text-muted-foreground mt-2">
             {userName || user?.email || '회원'}님, 환영합니다!
           </p>
-        </div>
-
-        {/* 통계 요약 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* 학습 통계 카드 */}
-          <div className="p-6 border rounded-lg space-y-4 text-center">
-            <div className="flex items-center justify-center gap-2">
-              <BookOpen className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">오늘의 학습</h2>
-            </div>
-            <div className="space-y-2">
-              <p className="text-3xl font-bold">0</p>
-              <p className="text-sm text-muted-foreground">문제 풀이</p>
-            </div>
-          </div>
-
-          {/* 연속 학습일 카드 */}
-          <div className="p-6 border rounded-lg space-y-4 text-center">
-            <div className="flex items-center justify-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">연속 학습일</h2>
-            </div>
-            <div className="space-y-2">
-              <p className="text-3xl font-bold">0</p>
-              <p className="text-sm text-muted-foreground">일째</p>
-            </div>
-          </div>
-
-          {/* 성취도 카드 */}
-          <div className="p-6 border rounded-lg space-y-4 text-center">
-            <div className="flex items-center justify-center gap-2">
-              <Award className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">정답률</h2>
-            </div>
-            <div className="space-y-2">
-              <p className="text-3xl font-bold">-</p>
-              <p className="text-sm text-muted-foreground">아직 데이터 없음</p>
-            </div>
-          </div>
         </div>
 
         {/* 빠른 시작 */}
