@@ -27,6 +27,19 @@ type CertificationType =
   | 'TESAT' 
   | '공인중개사'
 
+// 자격증별 한글 라벨
+const CERTIFICATION_LABELS: Record<CertificationType, string> = {
+  '정보처리기사': '정보처리기사',
+  '컴퓨터활용능력': '컴퓨터활용능력',
+  '빅데이터분석기사': '빅데이터분석기사',
+  '경영정보시각화능력': '경영정보시각화능력',
+  'ADsP': 'ADsP',
+  'SQLD': 'SQLD',
+  '사회조사분석사': '사회조사분석사',
+  'TESAT': 'TESAT',
+  '공인중개사': '공인중개사',
+}
+
 export default function DailyQuestionCard() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -600,6 +613,26 @@ export default function DailyQuestionCard() {
                 오늘의 문제
               </h2>
             </div>
+            {/* 사용자 선택 정보 */}
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {(() => {
+                // 선택한 자격증 정보 표시
+                const cert = selectedCertification || 
+                  (Object.keys(dailyQuestionCounts).find(
+                    key => dailyQuestionCounts[key] !== null && dailyQuestionCounts[key] !== undefined && dailyQuestionCounts[key]! > 0
+                  ) as CertificationType | undefined)
+                
+                if (cert) {
+                  const count = getQuestionCountForCertification(cert)
+                  const certLabel = CERTIFICATION_LABELS[cert] || cert
+                  return `${userName || '회원'}님 ${certLabel} 과정 매일 ${count}문제 배달 선택하셨어요~`
+                }
+                
+                return '자격증을 선택해주세요'
+              })()}
+            </p>
+            
+            {/* 배달 메시지 */}
             <p className="text-base text-gray-700 dark:text-gray-300 font-medium">
               {(() => {
                 // 선택한 자격증이 있으면 해당 자격증의 설정된 문제 수 표시
@@ -642,7 +675,7 @@ export default function DailyQuestionCard() {
                   )
                 }
                 
-                return '자격증을 선택해주세요'
+                return ''
               })()}
             </p>
           </div>
