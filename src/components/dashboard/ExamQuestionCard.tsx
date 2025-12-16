@@ -549,6 +549,14 @@ export default function ExamQuestionCard() {
     setAvailableSubjects([])
   }
 
+  const handleCertificationChange = (value: string) => {
+    setSelectedCertification(value)
+    setExamYear('')
+    setExamSessionNumber('')
+    setExamSubject('')
+    setQuestionIds([])
+  }
+
   const handleYearChange = (value: string) => {
     setExamYear(value)
     setExamSessionNumber('')
