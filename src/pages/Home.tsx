@@ -546,14 +546,6 @@ export default function Home() {
     setAvailableSubjects([])
   }
 
-  const handleCertificationChange = (value: CertificationType) => {
-    setSelectedCertification(value)
-    setExamYear('')
-    setExamSessionNumber('')
-    setExamSubject('')
-    setQuestionIds([])
-  }
-
   const handleYearChange = (value: string) => {
     setExamYear(value)
     setExamSessionNumber('')
