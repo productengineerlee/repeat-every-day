@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import { useAuth } from '@/context'
-import TopBar from '@/components/dashboard/TopBar'
 import QuestionCard from '@/components/learning/QuestionCard'
 import AnswerOptions from '@/components/learning/AnswerOptions'
 import ProgressIndicator from '@/components/learning/ProgressIndicator'
@@ -250,8 +249,7 @@ export default function Learning() {
   // 결과 화면이 표시되면 문제 풀이 화면 숨기기
   if (showResults && session) {
     return (
-      <div className="min-h-screen pb-24">
-        <TopBar />
+      <div className="min-h-screen pb-24 pt-10">
         <ResultsScreen
           questions={questions}
           session={session}
@@ -264,8 +262,7 @@ export default function Learning() {
   if (loading) {
     return (
       <div className="min-h-screen">
-        <TopBar />
-        <div className="container mx-auto p-4 pb-24 flex items-center justify-center min-h-[60vh]">
+        <div className="container mx-auto p-4 pb-24 pt-10 flex items-center justify-center min-h-[60vh]">
           <div className="text-center space-y-4">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
             <p className="text-muted-foreground">문제를 불러오는 중...</p>
@@ -278,8 +275,7 @@ export default function Learning() {
   if (questions.length === 0) {
     return (
       <div className="min-h-screen">
-        <TopBar />
-        <div className="container mx-auto p-4 pb-24 flex items-center justify-center min-h-[60vh]">
+        <div className="container mx-auto p-4 pb-24 pt-10 flex items-center justify-center min-h-[60vh]">
           <div className="text-center space-y-4">
             <p className="text-muted-foreground">문제를 찾을 수 없습니다.</p>
             <Button onClick={() => navigate('/dashboard')}>대시보드로 돌아가기</Button>
@@ -306,8 +302,7 @@ export default function Learning() {
   })
 
   return (
-    <div className="min-h-screen pb-24">
-      <TopBar />
+    <div className="min-h-screen pb-24 pt-10">
       <div className="container mx-auto p-4 space-y-6">
         {/* 진행률 표시 */}
         <ProgressIndicator
@@ -317,7 +312,7 @@ export default function Learning() {
         />
 
         {/* 문제 카드 */}
-        <div className="flex items-center justify-center relative">
+        <div className="flex items-center justify-center relative mt-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}

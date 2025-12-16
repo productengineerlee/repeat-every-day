@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import { useAuth } from '@/context'
-import TopBar from '@/components/dashboard/TopBar'
 import QuestionCard from '@/components/learning/QuestionCard'
 import AnswerOptions from '@/components/learning/AnswerOptions'
 import ProgressIndicator from '@/components/learning/ProgressIndicator'
@@ -174,8 +173,7 @@ export default function ReviewMode() {
   if (questions.length === 0) {
     return (
       <div className="min-h-screen">
-        <TopBar />
-        <div className="container mx-auto p-4 text-center py-12">
+        <div className="container mx-auto p-4 pt-10 text-center py-12">
           <p className="text-lg text-muted-foreground mb-4">
             복습할 문제가 없습니다.
           </p>
@@ -188,8 +186,7 @@ export default function ReviewMode() {
   }
 
   return (
-    <div className="min-h-screen pb-24">
-      <TopBar />
+    <div className="min-h-screen pb-24 pt-10">
       <div className="container mx-auto p-4">
         {/* 통계 */}
         <ReviewStats

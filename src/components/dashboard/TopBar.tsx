@@ -1,15 +1,10 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/context'
-import { User, Settings, Home } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { User } from 'lucide-react'
 
 export default function TopBar() {
   const { user } = useAuth()
-
-  // 관리자 이메일 목록
-  const adminEmails = ['gtsu0707@gmail.com']
-  const isAdmin = user?.email && adminEmails.includes(user.email)
 
   return (
     <motion.div
@@ -20,28 +15,13 @@ export default function TopBar() {
     >
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          {/* 좌측: 홈 버튼 */}
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            aria-label="홈"
-          >
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Home className="h-5 w-5" />
-              <span className="hidden sm:inline">홈</span>
-            </Button>
+          {/* 좌측: certiQ 로고 */}
+          <Link to="/dashboard">
+            <h1 className="text-xl font-bold">certiQ</h1>
           </Link>
 
-          {/* 우측: 관리자 링크, 마이페이지 */}
+          {/* 우측: 마이페이지 */}
           <div className="flex items-center gap-2">
-            {isAdmin && (
-              <Link to="/admin/question-input">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Settings className="h-4 w-4" />
-                  Admin
-                </Button>
-              </Link>
-            )}
             <Link
               to="/profile"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"

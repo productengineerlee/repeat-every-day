@@ -60,3 +60,5 @@ FROM questions
 WHERE category LIKE '7%'
   AND certification_type = '정보처리기사';
 
+
+

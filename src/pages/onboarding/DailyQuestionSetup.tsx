@@ -80,8 +80,8 @@ export default function DailyQuestionSetup() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 pb-24">
-      <div className="w-full max-w-2xl space-y-8">
+    <div className="min-h-screen flex items-center justify-center p-4 pb-16">
+      <div className="w-full max-w-2xl space-y-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

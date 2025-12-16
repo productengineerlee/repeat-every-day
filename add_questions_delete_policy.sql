@@ -20,3 +20,5 @@ COMMENT ON POLICY "Allow admin delete questions" ON questions IS '관리자만 �
 
 
 
+
+

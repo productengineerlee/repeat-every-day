@@ -17,19 +17,28 @@ export default function Login() {
   // 로그인 전에 접근하려던 페이지 (ProtectedRoute에서 전달됨)
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/'
 
-  // 회원가입 성공 메시지 표시 (한 번만)
+  // 회원가입 성공 메시지 또는 에러 메시지 표시 (한 번만)
   useEffect(() => {
-    const state = location.state as { successMessage?: string, email?: string } | null
+    const state = location.state as { 
+      successMessage?: string, 
+      errorMessage?: string,
+      email?: string 
+    } | null
+    
     if (state?.successMessage) {
       setSuccessMessage(state.successMessage)
-      // 이메일이 있으면 자동으로 입력
       if (state.email) {
         setEmail(state.email)
       }
-      // state 초기화 (뒤로가기 시 다시 표시되지 않도록)
+      window.history.replaceState({}, document.title)
+    } else if (state?.errorMessage) {
+      setError(state.errorMessage)
+      if (state.email) {
+        setEmail(state.email)
+      }
       window.history.replaceState({}, document.title)
     }
-  }, [])
+  }, [location.state])
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()

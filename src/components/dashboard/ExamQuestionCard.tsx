@@ -35,7 +35,21 @@ const CERTIFICATIONS: CertificationType[] = [
   '공인중개사',
 ]
 
-type ExamSubject = '1과목' | '2과목' | '3과목' | '4과목' | '5과목' | '전체'
+type ExamSubject = '1과목' | '2과목' | '3과목' | '4과목' | '5과목' | '전체' | '1과목-데이터 이해' | '2과목-데이터분석 기획' | '3과목-데이터분석'
+
+// 자격증별 회차 매핑
+const CERT_SESSIONS_MAP: Record<string, Record<string, string[]>> = {
+  'ADsP': {
+    '2024': ['37', '38', '39', '40'],
+    '2023': ['33', '34', '35', '36'],
+    '2022': ['29', '30', '31', '32'],
+  },
+}
+
+// 자격증별 과목 매핑
+const CERT_SUBJECTS_MAP: Record<string, (ExamSubject | string)[]> = {
+  'ADsP': ['1과목-데이터 이해', '2과목-데이터분석 기획', '3과목-데이터분석', '전체'],
+}
 
 export default function ExamQuestionCard() {
   const { user } = useAuth()
@@ -43,12 +57,12 @@ export default function ExamQuestionCard() {
   const [selectedCertification, setSelectedCertification] = useState<CertificationType | ''>('')
   const [examYear, setExamYear] = useState<string>('')
   const [examSessionNumber, setExamSessionNumber] = useState<string>('')
-  const [examSubject, setExamSubject] = useState<ExamSubject | ''>('')
+  const [examSubject, setExamSubject] = useState<ExamSubject | string>('')
   const [questionIds, setQuestionIds] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [availableYears, setAvailableYears] = useState<string[]>([])
   const [availableSessions, setAvailableSessions] = useState<string[]>([]) // 사용 가능한 회차 목록 (예: ['1', '2', '3'])
-  const [availableSubjects, setAvailableSubjects] = useState<ExamSubject[]>([]) // 사용 가능한 과목 목록
+  const [availableSubjects, setAvailableSubjects] = useState<(ExamSubject | string)[]>([]) // 사용 가능한 과목 목록
 
   const EXAM_SUBJECTS: ExamSubject[] = ['1과목', '2과목', '3과목', '4과목', '5과목', '전체']
 
@@ -62,16 +76,16 @@ export default function ExamQuestionCard() {
 
   // 문제 불러오기
   const loadExamQuestions = useCallback(async () => {
-    // examSubject가 필수이므로 없으면 문제를 불러오지 않음
-    if (!user || !selectedCertification || !examSession || !examSubject || examSubject === '전체') {
-      console.log(`⏸️ 문제 불러오기 스킵: user=${!!user}, 자격증=${selectedCertification}, 회차=${examSession}, 과목=${examSubject}`)
+    // 자격증과 기출년도만 있으면 문제 불러오기 시도
+    if (!user || !selectedCertification || !examYear) {
+      console.log(`⏸️ 문제 불러오기 스킵: user=${!!user}, 자격증=${selectedCertification}, 년도=${examYear}`)
       setQuestionIds([])
       return
     }
 
     try {
       setLoading(true)
-      console.log(`🔄 ${selectedCertification} 기출문제 불러오기 시작: userId=${user.id}, session=${examSession}, subject=${examSubject || '전체'}`)
+      console.log(`🔄 ${selectedCertification} 기출문제 불러오기 시작: userId=${user.id}, 년도=${examYear}, 회차=${examSessionNumber || '전체'}, 과목=${examSubject || '전체'}`)
       
       // 자격증별 대분류 번호 매핑
       const certificationToCategoryMap: Record<string, string> = {
@@ -81,27 +95,46 @@ export default function ExamQuestionCard() {
         '경영정보시각화능력': '4',
         'ADsP': '5',
         'SQLD': '6',
+        '사회조사분석사': '7',
+        'TESAT': '8',
+        '공인중개사': '9',
       }
 
       const 대분류번호 = certificationToCategoryMap[selectedCertification]
+      
+      // 모든 문제를 가져온 후 클라이언트에서 필터링
       let query = supabase
         .from('questions')
         .select('id, exam_session, exam_number, category')
         .eq('certification_type', selectedCertification)
-        .eq('exam_session', examSession)
+        .limit(1000)
+      
+      console.log(`🔍 ${selectedCertification} 문제 조회 (연도: ${examYear}, 회차: ${examSessionNumber || '전체'})`)
 
       // examSubject가 필수이므로 항상 중분류 필터링 적용
       if (examSubject && examSubject !== '전체' && 대분류번호) {
-        // '1과목' -> '1', '2과목' -> '2', '3과목' -> '3' 등으로 변환
-        const 중분류번호 = examSubject.replace('과목', '')
+        // '1과목' -> '1', '1과목-데이터 이해' -> '1' 등으로 변환
+        let 중분류번호 = examSubject
+        if (examSubject.includes('-')) {
+          // "1과목-데이터 이해" 형식
+          중분류번호 = examSubject.split('-')[0].replace('과목', '')
+        } else {
+          // "1과목" 형식
+          중분류번호 = examSubject.replace('과목', '')
+        }
         // 중분류가 해당 번호인 문제만 필터링
         // 예: "3과목" 선택 시 category LIKE '3-3-%' (빅데이터분석기사의 경우)
         query = query.like('category', `${대분류번호}-${중분류번호}-%`)
         console.log(`🔍 기출과목 필터 적용: ${examSubject} (중분류=${중분류번호}) → category LIKE '${대분류번호}-${중분류번호}-%'`)
-      } else if (대분류번호) {
-        // 전체 선택 시 대분류만 필터링 (모든 과목 포함)
-        query = query.like('category', `${대분류번호}-%`)
-        console.log(`🔍 대분류 필터 적용: category LIKE '${대분류번호}-%' (모든 과목)`)
+      } else {
+        console.log(`ℹ️ 기출과목 미선택: 해당 년도의 모든 과목 문제 표시`)
+        // 대분류가 있으면 대분류 필터만 적용
+        if (대분류번호) {
+          query = query.like('category', `${대분류번호}-%`)
+          console.log(`🔍 대분류 필터 적용: category LIKE '${대분류번호}-%'`)
+        } else {
+          console.warn(`⚠️ ${selectedCertification}의 대분류 번호가 없습니다. category 필터 없이 검색합니다.`)
+        }
       }
 
       // exam_number로 정렬 (오름차순)
@@ -122,6 +155,7 @@ export default function ExamQuestionCard() {
 
       if (error) {
         console.error('❌ 기출문제 불러오기 에러:', error)
+        console.error('에러 상세:', { message: error.message, code: error.code, details: error.details })
         // exam_session 또는 exam_number 컬럼이 없는 경우 fallback
         if (error.message?.includes('exam_session') || error.message?.includes('exam_number') || error.code === '42703') {
           console.log('⚠️ exam_session 또는 exam_number 컬럼이 없어 일반 문제를 가져옵니다.')
@@ -133,13 +167,55 @@ export default function ExamQuestionCard() {
         return
       }
 
-      // 중분류 기준으로 추가 필터링 및 정렬 (클라이언트 측)
-      // 서버 측 필터링이 완벽하지 않을 수 있으므로 클라이언트 측에서도 검증
+      console.log(`📊 데이터베이스에서 ${data?.length || 0}개 문제 반환됨`)
+      if (data && data.length > 0) {
+        console.log('📋 첫 3개 문제 샘플:', data.slice(0, 3).map((q: any) => ({
+          id: q.id,
+          exam_session: q.exam_session,
+          exam_number: q.exam_number,
+          category: q.category
+        })))
+      } else {
+        console.warn(`⚠️ ${selectedCertification} ${examYear}년${examSessionNumber ? ` ${examSessionNumber}회차` : ''}${examSubject ? ` ${examSubject}` : ''} 문제가 데이터베이스에 없습니다.`)
+      }
+
+      // 클라이언트 측 필터링
       let filteredData = data || []
       
-      // examSubject가 필수이므로 항상 필터링 적용
+      // 1. exam_session 필터링 (연도와 회차)
+      if (examSessionNumber) {
+        // 회차가 선택된 경우에만 필터링
+        const beforeFilter = filteredData.length
+        const paddedSession = examSessionNumber.padStart(2, '0')
+        
+        filteredData = filteredData.filter((q: any) => {
+          const session = q.exam_session || ''
+          
+          // "2022-02", "02", "2" 형식 모두 매칭
+          const matchSession = session === `${examYear}-${paddedSession}` || 
+                              session === paddedSession || 
+                              session === examSessionNumber ||
+                              session.endsWith(`-${paddedSession}`) ||
+                              session.endsWith(`-${examSessionNumber}`)
+          
+          if (!matchSession) {
+            console.log(`❌ 회차 불일치: exam_session="${session}", 요청="${examSessionNumber}"`)
+          }
+          
+          return matchSession
+        })
+        console.log(`🔍 회차 필터링 결과: ${filteredData.length}개 (필터링 전: ${beforeFilter}개)`)
+      }
+      
+      // 2. examSubject 필터링
       if (examSubject && examSubject !== '전체') {
-        const 중분류번호 = examSubject.replace('과목', '')
+        // '1과목' -> '1', '1과목-데이터 이해' -> '1' 등으로 변환
+        let 중분류번호 = examSubject
+        if (examSubject.includes('-')) {
+          중분류번호 = examSubject.split('-')[0].replace('과목', '')
+        } else {
+          중분류번호 = examSubject.replace('과목', '')
+        }
         console.log(`🔍 클라이언트 측 필터링 시작: 요청 중분류=${중분류번호}, 서버 데이터=${data?.length || 0}개`)
         
         // 클라이언트 측에서 중분류 필터링 (이중 검증)
@@ -191,32 +267,27 @@ export default function ExamQuestionCard() {
     } finally {
       setLoading(false)
     }
-  }, [user, selectedCertification, examSession, examSubject])
+  }, [user, selectedCertification, examYear, examSessionNumber, examSubject])
 
-  // 자격증, 기출년도, 기출회차, 과목 변경 시 문제 다시 로드
-  // examSubject가 필수이므로 선택되어야만 문제를 불러옴
-  // examYear와 examSessionNumber가 모두 입력되어야 examSession이 생성되므로, 이들도 의존성에 포함
+  // 자격증, 기출년도 변경 시 문제 다시 로드 (기출회차와 과목은 선택사항)
   useEffect(() => {
-    // 기출년도와 기출회차가 모두 입력되어야 examSession이 생성됨
-    const hasValidSession = examYear && examSessionNumber && examSession
-    
-    if (selectedCertification && hasValidSession && examSubject) {
-      console.log(`🔄 문제 로드 트리거: 자격증=${selectedCertification}, 년도=${examYear}, 회차=${examSessionNumber}, 조합된 회차=${examSession}, 과목=${examSubject}`)
+    if (selectedCertification && examYear) {
+      console.log(`🔄 문제 로드 트리거: 자격증=${selectedCertification}, 년도=${examYear}, 회차=${examSessionNumber || '전체'}, 과목=${examSubject || '전체'}`)
       loadExamQuestions()
     } else {
-      console.log(`⏸️ 문제 로드 스킵: 자격증=${selectedCertification}, 년도=${examYear}, 회차=${examSessionNumber}, 조합된 회차=${examSession}, 과목=${examSubject}`)
+      console.log(`⏸️ 문제 로드 스킵: 자격증=${selectedCertification}, 년도=${examYear}`)
       setQuestionIds([])
     }
-  }, [selectedCertification, examYear, examSessionNumber, examSession, examSubject, loadExamQuestions])
+  }, [selectedCertification, examYear, examSessionNumber, examSubject, loadExamQuestions])
 
   const handleStartLearning = () => {
-    if (!selectedCertification || !examSession || questionIds.length === 0) return
+    if (!selectedCertification || questionIds.length === 0) return
 
     // 기출문제 세션을 위한 상태 저장
     const sessionData = {
       questionIds,
       certificationType: selectedCertification,
-      examSession: examSession,
+      examSession: examSession || undefined,
       examSubject: examSubject || undefined,
       isExamQuestion: true,
     }
@@ -288,6 +359,19 @@ export default function ExamQuestionCard() {
       return
     }
 
+    // 매핑된 회차가 있는지 확인
+    const mappedSessions = CERT_SESSIONS_MAP[selectedCertification]?.[examYear]
+    const mappedSubjects = CERT_SUBJECTS_MAP[selectedCertification]
+    
+    if (mappedSessions && mappedSubjects) {
+      // 매핑된 데이터 사용
+      console.log(`✅ ${selectedCertification} ${examYear}년 매핑 데이터 사용: 회차=${mappedSessions.join(',')}, 과목=${mappedSubjects.join(',')}`)
+      setAvailableSessions(mappedSessions)
+      setAvailableSubjects(mappedSubjects)
+      return
+    }
+
+    // 매핑이 없으면 DB에서 가져오기
     try {
       const { data, error } = await supabase
         .from('questions')
@@ -444,14 +528,14 @@ export default function ExamQuestionCard() {
               transition={{ delay: 0.1 }}
               className="space-y-2"
             >
-              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center justify-center gap-1">
                 자격증 선택
               </label>
               <Select
                 value={selectedCertification || undefined}
                 onValueChange={(value) => handleCertificationChange(value as CertificationType)}
               >
-                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-center">
                   <SelectValue placeholder="자격증을 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
@@ -471,23 +555,32 @@ export default function ExamQuestionCard() {
               transition={{ delay: 0.2 }}
               className="space-y-2"
             >
-              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center justify-center gap-1">
                 기출년도
               </label>
               <Select
                 value={examYear || undefined}
                 onValueChange={(value) => setExamYear(value)}
-                disabled={!selectedCertification || availableYears.length === 0}
+                disabled={!selectedCertification}
               >
-                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-center">
                   <SelectValue placeholder="연도를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableYears.map((year) => (
-                    <SelectItem key={year} value={year}>
-                      {year}년
-                    </SelectItem>
-                  ))}
+                  {availableYears.length > 0 ? (
+                    availableYears.map((year) => (
+                      <SelectItem key={year} value={year}>
+                        {year}년
+                      </SelectItem>
+                    ))
+                  ) : (
+                    // 기본 연도 옵션 제공 (최근 5년)
+                    Array.from({ length: 5 }, (_, i) => String(new Date().getFullYear() - i)).map((year) => (
+                      <SelectItem key={year} value={year}>
+                        {year}년
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </motion.div>
@@ -499,23 +592,32 @@ export default function ExamQuestionCard() {
               transition={{ delay: 0.3 }}
               className="space-y-2"
             >
-              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center justify-center gap-1">
                 기출회차
               </label>
               <Select
                 value={examSessionNumber || undefined}
                 onValueChange={(value) => setExamSessionNumber(value)}
-                disabled={!selectedCertification || !examYear || availableSessions.length === 0}
+                disabled={!selectedCertification || !examYear}
               >
-                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-center">
                   <SelectValue placeholder="회차를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableSessions.map((session) => (
-                    <SelectItem key={session} value={session}>
-                      {session}회차
-                    </SelectItem>
-                  ))}
+                  {availableSessions.length > 0 ? (
+                    availableSessions.map((session) => (
+                      <SelectItem key={session} value={session}>
+                        {session}회차
+                      </SelectItem>
+                    ))
+                  ) : (
+                    // 기본 회차 옵션 제공 (1~4회차)
+                    ['1', '2', '3', '4'].map((session) => (
+                      <SelectItem key={session} value={session}>
+                        {session}회차
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </motion.div>
@@ -527,15 +629,15 @@ export default function ExamQuestionCard() {
               transition={{ delay: 0.4 }}
               className="space-y-2"
             >
-              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+              <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center justify-center gap-1">
                 기출과목
               </label>
               <Select
                 value={examSubject || undefined}
                 onValueChange={(value) => setExamSubject(value as ExamSubject)}
-                disabled={!selectedCertification || !examSession || availableSubjects.length === 0}
+                disabled={!selectedCertification || !examYear}
               >
-                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-center">
                   <SelectValue placeholder="과목을 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>

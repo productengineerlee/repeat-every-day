@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useOnboarding } from '@/context'
 import { Button } from '@/components/ui/button'
-import TopBar from '@/components/dashboard/TopBar'
 import DailyQuestionCard from '@/components/dashboard/DailyQuestionCard'
 import ExamQuestionCard from '@/components/dashboard/ExamQuestionCard'
 // import WeakAreaAnalysis from '@/components/statistics/WeakAreaAnalysis' // 데이터 충분히 쌓이면 다시 추가 예정
@@ -50,8 +49,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen pb-24">
-      <TopBar />
+    <div className="min-h-screen pb-24 pt-4">
       <div className="container mx-auto p-4 md:p-8 space-y-8">
         <div>
           <h1 className="text-4xl font-bold">대시보드</h1>

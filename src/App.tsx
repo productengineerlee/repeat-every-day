@@ -23,7 +23,7 @@ import AdminDiagnosticSettings from './pages/admin/AdminDiagnosticSettings'
 import AdminProtectedRoute from './components/AdminProtectedRoute'
 import { Button } from '@/components/ui/button'
 import { useNotificationScheduler } from './hooks/useNotificationScheduler'
-import { Settings, LogOut } from 'lucide-react'
+import { Settings, LogOut, User } from 'lucide-react'
 import './App.css'
 
 function App() {
@@ -41,8 +41,17 @@ function App() {
   const isLandingPage = location.pathname === '/'
 
   const handleSignOut = async () => {
-    const { error } = await signOut()
-    if (!error) {
+    try {
+      await signOut()
+      // 에러 여부와 관계없이 로컬 스토리지 정리 및 홈으로 이동
+      localStorage.clear()
+      sessionStorage.clear()
+      window.location.href = '/'
+    } catch (err) {
+      console.error('로그아웃 중 오류:', err)
+      // 오류가 발생해도 강제로 홈으로 이동
+      localStorage.clear()
+      sessionStorage.clear()
       window.location.href = '/'
     }
   }
@@ -54,7 +63,7 @@ function App() {
         <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
-              <Link to="/">
+              <Link to="/" className="cursor-pointer hover:opacity-80 transition-opacity">
                 <h1 className="text-xl font-bold">certiQ</h1>
               </Link>
               <div className="flex items-center gap-2">
@@ -62,12 +71,6 @@ function App() {
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
                 ) : (
                   <>
-                    {/* 랜딩 페이지가 아닐 때만 대시보드 버튼 표시 */}
-                    {!isLandingPage && (
-                      <Link to="/dashboard">
-                        <Button variant="ghost" size="sm">대시보드</Button>
-                      </Link>
-                    )}
                     <Link to="/login">
                       <Button variant="ghost" size="sm">로그인</Button>
                     </Link>
@@ -87,10 +90,19 @@ function App() {
         <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
-              <Link to="/">
+              <Link to="/" className="cursor-pointer hover:opacity-80 transition-opacity">
                 <h1 className="text-xl font-bold">certiQ</h1>
               </Link>
               <div className="flex items-center gap-2">
+                <Link to="/dashboard">
+                  <Button variant="ghost" size="sm">대시보드</Button>
+                </Link>
+                <Link to="/profile">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <User className="h-4 w-4" />
+                    프로필
+                  </Button>
+                </Link>
                 {isAdmin && (
                   <Link to="/admin/question-input">
                     <Button variant="outline" size="sm" className="gap-2">
@@ -99,11 +111,6 @@ function App() {
                     </Button>
                   </Link>
                 )}
-                <Link to="/profile">
-                  <Button variant="ghost" size="sm">
-                    {user.email}
-                  </Button>
-                </Link>
                 <Button
                   variant="ghost"
                   size="sm"

@@ -161,15 +161,15 @@ export default function DiagnosticTest() {
   })
 
   return (
-    <div className="min-h-screen flex flex-col p-2 md:p-4">
+    <div className="min-h-screen flex flex-col p-4 md:p-6">
       <div className="max-w-4xl mx-auto w-full flex flex-col">
         {/* 진행률 표시 */}
-        <div className="mb-2">
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-sm font-medium text-muted-foreground">
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-base font-medium text-muted-foreground">
               문제 {currentIndex + 1} / {questions.length}
             </span>
-            <span className="text-sm font-medium text-muted-foreground">
+            <span className="text-base font-medium text-muted-foreground">
               {Math.round(progress)}%
             </span>
           </div>
@@ -184,7 +184,7 @@ export default function DiagnosticTest() {
         </div>
 
         {/* 문제 카드 */}
-        <div className="mt-2">
+        <div className="mt-6 mb-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
@@ -196,34 +196,34 @@ export default function DiagnosticTest() {
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.2}
               onDragEnd={handleSwipe}
-              className="w-full max-w-2xl"
+              className="w-full max-w-2xl mx-auto"
             >
-              <div className="bg-card border rounded-lg p-3 md:p-5 shadow-lg">
+              <div className="bg-card border rounded-lg p-5 md:p-6 shadow-lg">
                 {/* 문제 번호 및 카테고리 */}
-                <div className="flex justify-between items-start mb-3">
+                <div className="flex justify-between items-start mb-4">
                   <div>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-base text-muted-foreground">
                       {currentQuestion.category}
                     </span>
-                    <h2 className="text-xl font-semibold mt-1">
+                    <h2 className="text-2xl font-semibold mt-1">
                       문제 {currentIndex + 1}
                     </h2>
                   </div>
                   {hasAnswered && (
                     <div className="flex items-center gap-1 text-green-600">
                       <CheckCircle className="h-5 w-5" />
-                      <span className="text-sm font-medium">답변 완료</span>
+                      <span className="text-base font-medium">답변 완료</span>
                     </div>
                   )}
                 </div>
 
                 {/* 문제 내용 */}
-                <div className="mb-3">
-                  <p className="text-lg leading-relaxed text-left">{currentQuestion.content}</p>
+                <div className="mb-4">
+                  <p className="text-xl leading-relaxed text-left">{currentQuestion.content}</p>
                 </div>
 
                 {/* 선택지 */}
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {Object.entries(options).map(([key, value]) => {
                     const isSelected = selectedAnswer === key
                     const cleanedValue = cleanOptionText(value as string)
@@ -234,7 +234,7 @@ export default function DiagnosticTest() {
                         type="button"
                         onClick={() => handleAnswerSelect(key)}
                         className={`
-                          w-full p-2.5 text-left border-2 rounded-lg transition-all
+                          w-full p-3 text-left border-2 rounded-lg transition-all
                           ${
                             isSelected
                               ? 'border-primary bg-primary/5'
@@ -257,7 +257,7 @@ export default function DiagnosticTest() {
                               <div className="w-2 h-2 rounded-full bg-current" />
                             )}
                           </div>
-                          <span className="flex-1 text-left text-sm md:text-base">{cleanedValue}</span>
+                          <span className="flex-1 text-left text-base md:text-lg">{cleanedValue}</span>
                         </div>
                       </button>
                     )
@@ -269,16 +269,8 @@ export default function DiagnosticTest() {
         </div>
 
         {/* 네비게이션 버튼 */}
-        <div className="flex justify-between items-center mt-2">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={currentIndex === 0}
-          >
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            이전
-          </Button>
-
+        <div className="flex flex-col items-center gap-4 mt-6">
+          {/* 인디케이터 */}
           <div className="flex gap-2">
             {questions.map((_, index) => (
               <button
@@ -303,18 +295,31 @@ export default function DiagnosticTest() {
             ))}
           </div>
 
-          <Button
-            onClick={handleNext}
-            disabled={!hasAnswered}
-          >
-            {currentIndex === questions.length - 1 ? '완료' : '다음'}
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
+          {/* 이전/다음 버튼 */}
+          <div className="flex justify-center items-center gap-4 w-full max-w-md">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              className="flex-1"
+            >
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              이전
+            </Button>
+
+            <Button
+              onClick={handleNext}
+              disabled={!hasAnswered}
+              className="flex-1"
+            >
+              {currentIndex === questions.length - 1 ? '완료' : '다음'}
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* 스와이프 안내 */}
-        <div className="text-center mt-1">
-          <p className="text-xs text-muted-foreground">
+        <div className="text-center mt-3">
+          <p className="text-sm text-muted-foreground">
             좌우로 스와이프하여 문제를 이동할 수 있습니다
           </p>
         </div>

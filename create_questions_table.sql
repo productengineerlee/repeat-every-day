@@ -52,3 +52,5 @@ COMMENT ON COLUMN questions.frequency IS '출제빈도 (선택사항)';
 
 
 
+
+

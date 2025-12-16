@@ -37,3 +37,5 @@ FROM certification_subject_weights
 WHERE certification_type IN ('사회조사분석사', 'TESAT', '공인중개사')
 ORDER BY certification_type, subject_number;
 
+
+

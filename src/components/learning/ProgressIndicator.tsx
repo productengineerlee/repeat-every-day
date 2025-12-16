@@ -34,35 +34,11 @@ export default function ProgressIndicator({
           transition={{ duration: 0.3 }}
         />
       </div>
-
-      {/* 문제별 상태 표시 */}
-      <div className="flex gap-1 justify-center">
-        {Array.from({ length: total }).map((_, index) => {
-          const questionNumber = index + 1
-          const isAnswered = answered.includes(questionNumber)
-          const isCurrent = questionNumber === current
-
-          return (
-            <div
-              key={index}
-              className={`
-                w-2 h-2 rounded-full transition-all
-                ${
-                  isCurrent
-                    ? 'w-8 bg-primary'
-                    : isAnswered
-                    ? 'bg-green-500'
-                    : 'bg-muted'
-                }
-              `}
-              title={`문제 ${questionNumber}${isAnswered ? ' (완료)' : ''}`}
-            />
-          )
-        })}
-      </div>
     </div>
   )
 }
+
+
 
 
 
