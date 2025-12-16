@@ -750,7 +750,7 @@ export default function Home() {
                   <label className="text-sm font-medium text-center block">자격증 선택</label>
                   <Select
                     value={selectedCertification || undefined}
-                    onValueChange={(value) => handleCertificationChange(value as CertificationType)}
+                    onValueChange={handleCertificationChange}
                   >
                     <SelectTrigger className="w-full text-center">
                       <SelectValue placeholder="자격증을 선택하세요" />

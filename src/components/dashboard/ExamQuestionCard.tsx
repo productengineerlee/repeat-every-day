@@ -640,7 +640,7 @@ export default function ExamQuestionCard() {
               </label>
               <Select
                 value={selectedCertification || undefined}
-                onValueChange={(value) => handleCertificationChange(value as CertificationType)}
+                onValueChange={handleCertificationChange}
               >
                 <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-center">
                   <SelectValue placeholder="자격증을 선택하세요" />
