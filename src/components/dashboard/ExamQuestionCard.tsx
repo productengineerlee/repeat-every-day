@@ -540,13 +540,18 @@ export default function ExamQuestionCard() {
 
   // 자격증 선택 시 회차/과목 초기화 및 사용 가능한 연도 로드
   const handleCertificationChange = (value: CertificationType | '') => {
+    console.log(`🔄 자격증 변경: ${selectedCertification} → ${value}`)
     setSelectedCertification(value)
+    
+    // 모든 관련 상태 명시적으로 초기화
     setExamYear('')
     setExamSessionNumber('')
     setExamSubject('')
     setQuestionIds([])
     setAvailableSessions([])
     setAvailableSubjects([])
+    
+    console.log('✅ 기출년도, 회, 과목 초기화 완료')
   }
 
   const handleYearChange = (value: string) => {
@@ -666,6 +671,7 @@ export default function ExamQuestionCard() {
                 기출년도
               </label>
               <Select
+                key={`year-${selectedCertification}`}
                 value={examYear || undefined}
                 onValueChange={handleYearChange}
                 disabled={!selectedCertification}
@@ -703,6 +709,7 @@ export default function ExamQuestionCard() {
                 기출회
               </label>
               <Select
+                key={`session-${selectedCertification}-${examYear}`}
                 value={examSessionNumber || undefined}
                 onValueChange={(value) => setExamSessionNumber(value)}
                 disabled={!selectedCertification || !examYear}
@@ -740,6 +747,7 @@ export default function ExamQuestionCard() {
                 기출과목
               </label>
               <Select
+                key={`subject-${selectedCertification}-${examYear}`}
                 value={examSubject || undefined}
                 onValueChange={(value) => setExamSubject(value as ExamSubject)}
                 disabled={!selectedCertification || !examYear}
