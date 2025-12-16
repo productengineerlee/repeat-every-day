@@ -35,20 +35,51 @@ const CERTIFICATIONS: CertificationType[] = [
   '공인중개사',
 ]
 
-type ExamSubject = '1과목' | '2과목' | '3과목' | '4과목' | '5과목' | '전체' | '1과목-데이터 이해' | '2과목-데이터분석 기획' | '3과목-데이터분석'
+type ExamSubject = '1과목' | '2과목' | '3과목' | '4과목' | '5과목' | '전체' | '1과목-데이터 이해' | '2과목-데이터분석 기획' | '3과목-데이터분석' | '1과목-컴퓨터 일반' | '2과목-스프레드시트 일반' | '3과목-데이터베이스 일반' | '1과목-빅데이터 분석 기획' | '2과목-빅데이터 탐색' | '3과목-빅데이터 모델링' | '4과목-빅데이터 결과해석' | '1과목-부동산학개론' | '2과목-민법및민사특별법'
 
 // 자격증별 회차 매핑
 const CERT_SESSIONS_MAP: Record<string, Record<string, string[]>> = {
   'ADsP': {
+    '2025': ['44', '45', '46', '47'],
     '2024': ['37', '38', '39', '40'],
     '2023': ['33', '34', '35', '36'],
     '2022': ['29', '30', '31', '32'],
+  },
+  '빅데이터분석기사': {
+    '2025': ['10', '11'],
+    '2024': ['8', '9'],
+  },
+  'SQLD': {
+    '2025': ['56', '57', '58', '59'],
+    '2024': ['52', '53', '54', '55'],
+  },
+  '공인중개사': {
+    '2025': ['36'],
+    '2024': ['35'],
+    '2023': ['34'],
+  },
+  '사회조사분석사': {
+    '2025': ['1', '2', '3'],
+    '2024': ['1', '2', '3'],
+    '2023': ['1', '2', '3'],
+    '2022': ['1', '2', '3'],
+  },
+  '정보처리기사': {
+    '2025': ['1', '2', '3'],
+    '2024': ['1', '2', '3'],
+  },
+  '경영정보시각화능력': {
+    '2025': ['1', '2'],
+    '2024': ['1', '2'],
   },
 }
 
 // 자격증별 과목 매핑
 const CERT_SUBJECTS_MAP: Record<string, (ExamSubject | string)[]> = {
   'ADsP': ['1과목-데이터 이해', '2과목-데이터분석 기획', '3과목-데이터분석', '전체'],
+  '컴퓨터활용능력': ['1과목-컴퓨터 일반', '2과목-스프레드시트 일반', '3과목-데이터베이스 일반', '전체'],
+  '빅데이터분석기사': ['1과목-빅데이터 분석 기획', '2과목-빅데이터 탐색', '3과목-빅데이터 모델링', '4과목-빅데이터 결과해석', '전체'],
+  '공인중개사': ['1과목-부동산학개론', '2과목-민법및민사특별법', '전체'],
 }
 
 export default function ExamQuestionCard() {
@@ -102,16 +133,16 @@ export default function ExamQuestionCard() {
 
       const 대분류번호 = certificationToCategoryMap[selectedCertification]
       
-      // 모든 문제를 가져온 후 클라이언트에서 필터링
+      // DB 쿼리 단계에서 필터링 (연도는 클라이언트에서 처리)
       let query = supabase
         .from('questions')
         .select('id, exam_session, exam_number, category')
         .eq('certification_type', selectedCertification)
         .limit(1000)
       
-      console.log(`🔍 ${selectedCertification} 문제 조회 (연도: ${examYear}, 회차: ${examSessionNumber || '전체'})`)
+      console.log(`🔍 ${selectedCertification} 문제 조회 (연도: ${examYear}, 회차: ${examSessionNumber || '전체'}, 과목: ${examSubject || '전체'})`)
 
-      // examSubject가 필수이므로 항상 중분류 필터링 적용
+      // 과목 필터링 (DB에서)
       if (examSubject && examSubject !== '전체' && 대분류번호) {
         // '1과목' -> '1', '1과목-데이터 이해' -> '1' 등으로 변환
         let 중분류번호 = examSubject
@@ -182,30 +213,61 @@ export default function ExamQuestionCard() {
       // 클라이언트 측 필터링
       let filteredData = data || []
       
-      // 1. exam_session 필터링 (연도와 회차)
-      if (examSessionNumber) {
-        // 회차가 선택된 경우에만 필터링
-        const beforeFilter = filteredData.length
-        const paddedSession = examSessionNumber.padStart(2, '0')
+      // 1. 연도 + 회차 필터링 (클라이언트에서)
+      const beforeFilter = filteredData.length
+      
+      // 회차 매핑에서 해당 연도의 유효한 회차 목록 가져오기
+      const validSessions = CERT_SESSIONS_MAP[selectedCertification]?.[examYear] || []
+      console.log(`📋 ${selectedCertification} ${examYear}년 유효 회차: [${validSessions.join(', ')}]`)
+      
+      filteredData = filteredData.filter((q: any) => {
+        const session = q.exam_session || ''
         
-        filteredData = filteredData.filter((q: any) => {
-          const session = q.exam_session || ''
+        // exam_session에서 연도와 회차 추출
+        let sessionYear = ''
+        let sessionNumber = ''
+        
+        if (session.includes('-')) {
+          // "2023-34" 형식
+          const parts = session.split('-')
+          sessionYear = parts[0]
+          sessionNumber = parts[1]?.replace(/^0+/, '') || parts[1]
+        } else {
+          // "34" 형식 (연도 없음)
+          sessionNumber = session.replace(/^0+/, '') || session
+          // 회차 매핑에서 이 회차가 어느 연도에 속하는지 확인
+          for (const [year, sessions] of Object.entries(CERT_SESSIONS_MAP[selectedCertification] || {})) {
+            if (sessions.includes(sessionNumber)) {
+              sessionYear = year
+              break
+            }
+          }
+        }
+        
+        // 연도 매칭 확인
+        const yearMatch = sessionYear === examYear || (sessionYear === '' && validSessions.includes(sessionNumber))
+        
+        if (!yearMatch) {
+          console.log(`❌ 연도 불일치: exam_session="${session}" (추출: ${sessionYear}-${sessionNumber}), 요청="${examYear}"`)
+          return false
+        }
+        
+        // 회차 매칭 확인 (회차가 선택된 경우)
+        if (examSessionNumber) {
+          const paddedSession = examSessionNumber.padStart(2, '0')
+          const sessionMatch = sessionNumber === examSessionNumber || sessionNumber === paddedSession
           
-          // "2022-02", "02", "2" 형식 모두 매칭
-          const matchSession = session === `${examYear}-${paddedSession}` || 
-                              session === paddedSession || 
-                              session === examSessionNumber ||
-                              session.endsWith(`-${paddedSession}`) ||
-                              session.endsWith(`-${examSessionNumber}`)
-          
-          if (!matchSession) {
-            console.log(`❌ 회차 불일치: exam_session="${session}", 요청="${examSessionNumber}"`)
+          if (!sessionMatch) {
+            console.log(`❌ 회차 불일치: exam_session="${session}" (회차: ${sessionNumber}), 요청="${examSessionNumber}"`)
           }
           
-          return matchSession
-        })
-        console.log(`🔍 회차 필터링 결과: ${filteredData.length}개 (필터링 전: ${beforeFilter}개)`)
-      }
+          return sessionMatch
+        }
+        
+        return true
+      })
+      
+      console.log(`🔍 연도/회차 필터링 결과: ${filteredData.length}개 (필터링 전: ${beforeFilter}개)`)
       
       // 2. examSubject 필터링
       if (examSubject && examSubject !== '전체') {
@@ -242,9 +304,9 @@ export default function ExamQuestionCard() {
         if (filteredData.length === 0 && beforeFilter > 0) {
           console.warn(`⚠️ 필터링 후 문제가 0개입니다. 서버 데이터의 카테고리:`, data?.map((q: any) => q.category))
         }
-      } else {
-        console.warn(`⚠️ examSubject가 없거나 '전체'입니다. 필터링을 건너뜁니다.`)
       }
+      
+      console.log(`✅ 최종 필터링 완료: ${filteredData.length}개 문제`)
       
       // 정렬: exam_number 오름차순
       let sortedData = filteredData.sort((a: any, b: any) => {
@@ -302,6 +364,16 @@ export default function ExamQuestionCard() {
       return
     }
 
+    // 매핑된 연도가 있는지 확인
+    const mappedYears = CERT_SESSIONS_MAP[selectedCertification]
+    const yearsSet = new Set<string>()
+    
+    // 매핑된 연도 추가
+    if (mappedYears) {
+      Object.keys(mappedYears).forEach(year => yearsSet.add(year))
+      console.log(`✅ ${selectedCertification} 매핑된 연도 추가: ${Array.from(yearsSet).join(', ')}`)
+    }
+
     try {
       const { data, error } = await supabase
         .from('questions')
@@ -311,28 +383,32 @@ export default function ExamQuestionCard() {
 
       if (error) {
         console.error('❌ 사용 가능한 연도 가져오기 에러:', error)
-        // 에러 발생 시 기본 연도 목록 제공 (최근 5년)
-        const currentYear = new Date().getFullYear()
-        const defaultYears = Array.from({ length: 5 }, (_, i) => String(currentYear - i))
-        setAvailableYears(defaultYears)
+        // 매핑된 연도가 있으면 사용, 없으면 기본 연도 제공
+        if (yearsSet.size > 0) {
+          const sortedYears = Array.from(yearsSet).sort((a, b) => parseInt(b) - parseInt(a))
+          setAvailableYears(sortedYears)
+        } else {
+          const currentYear = new Date().getFullYear()
+          const defaultYears = Array.from({ length: 5 }, (_, i) => String(currentYear - i))
+          setAvailableYears(defaultYears)
+        }
         return
       }
 
-      // exam_session에서 연도 추출 (예: "2024-01" -> "2024")
-      const years = new Set<string>()
+      // DB에서 가져온 연도 추가
       if (data && data.length > 0) {
         data.forEach((q: any) => {
           if (q.exam_session) {
             const year = q.exam_session.split('-')[0]
             if (year && year.length === 4) {
-              years.add(year)
+              yearsSet.add(year)
             }
           }
         })
       }
 
       // 연도를 내림차순으로 정렬 (최신 연도가 먼저)
-      const sortedYears = Array.from(years).sort((a, b) => parseInt(b) - parseInt(a))
+      const sortedYears = Array.from(yearsSet).sort((a, b) => parseInt(b) - parseInt(a))
       
       // 연도가 없으면 기본 연도 목록 제공 (최근 5년)
       if (sortedYears.length === 0) {
@@ -344,10 +420,15 @@ export default function ExamQuestionCard() {
       }
     } catch (error) {
       console.error('❌ 사용 가능한 연도 가져오기 중 오류:', error)
-      // 에러 발생 시 기본 연도 목록 제공
-      const currentYear = new Date().getFullYear()
-      const defaultYears = Array.from({ length: 5 }, (_, i) => String(currentYear - i))
-      setAvailableYears(defaultYears)
+      // 매핑된 연도가 있으면 사용, 없으면 기본 연도 제공
+      if (yearsSet.size > 0) {
+        const sortedYears = Array.from(yearsSet).sort((a, b) => parseInt(b) - parseInt(a))
+        setAvailableYears(sortedYears)
+      } else {
+        const currentYear = new Date().getFullYear()
+        const defaultYears = Array.from({ length: 5 }, (_, i) => String(currentYear - i))
+        setAvailableYears(defaultYears)
+      }
     }
   }, [selectedCertification])
 
@@ -360,18 +441,33 @@ export default function ExamQuestionCard() {
     }
 
     // 매핑된 회차가 있는지 확인
+    // 매핑된 회차와 과목 확인 (독립적으로 처리)
     const mappedSessions = CERT_SESSIONS_MAP[selectedCertification]?.[examYear]
     const mappedSubjects = CERT_SUBJECTS_MAP[selectedCertification]
     
+    // 둘 다 매핑이 있으면 둘 다 사용하고 리턴
     if (mappedSessions && mappedSubjects) {
-      // 매핑된 데이터 사용
       console.log(`✅ ${selectedCertification} ${examYear}년 매핑 데이터 사용: 회차=${mappedSessions.join(',')}, 과목=${mappedSubjects.join(',')}`)
       setAvailableSessions(mappedSessions)
       setAvailableSubjects(mappedSubjects)
       return
     }
-
-    // 매핑이 없으면 DB에서 가져오기
+    
+    // 과목 매핑만 있으면 과목은 매핑 사용, 회차는 DB에서 가져오기
+    if (mappedSubjects) {
+      console.log(`✅ ${selectedCertification} 과목 매핑 사용: ${mappedSubjects.join(',')}`)
+      setAvailableSubjects(mappedSubjects)
+      // 회차는 아래 DB 조회에서 처리
+    }
+    
+    // 회차 매핑만 있으면 회차는 매핑 사용, 과목은 DB에서 가져오기
+    if (mappedSessions) {
+      console.log(`✅ ${selectedCertification} ${examYear}년 회차 매핑 사용: ${mappedSessions.join(',')}`)
+      setAvailableSessions(mappedSessions)
+      // 과목은 아래 DB 조회에서 처리
+    }
+    
+    // DB에서 데이터 가져오기 (회차 또는 과목 중 매핑 안 된 것)
     try {
       const { data, error } = await supabase
         .from('questions')
@@ -381,8 +477,8 @@ export default function ExamQuestionCard() {
 
       if (error) {
         console.error('❌ 사용 가능한 회차 가져오기 에러:', error)
-        setAvailableSessions([])
-        setAvailableSubjects([])
+        if (!mappedSessions) setAvailableSessions([])
+        if (!mappedSubjects) setAvailableSubjects([])
         return
       }
 
@@ -413,28 +509,32 @@ export default function ExamQuestionCard() {
         })
       }
 
-      // 회차를 오름차순으로 정렬
-      const sortedSessions = Array.from(sessions).sort((a, b) => parseInt(a) - parseInt(b))
-      setAvailableSessions(sortedSessions)
+      // 회차 설정 (매핑이 없을 때만)
+      if (!mappedSessions) {
+        const sortedSessions = Array.from(sessions).sort((a, b) => parseInt(a) - parseInt(b))
+        setAvailableSessions(sortedSessions)
+      }
 
-      // 과목을 오름차순으로 정렬
-      const sortedSubjects = Array.from(subjects).sort((a, b) => {
-        const numA = parseInt(a.replace('과목', ''))
-        const numB = parseInt(b.replace('과목', ''))
-        return numA - numB
-      }) as ExamSubject[]
-      
-      // '전체' 옵션 추가
-      if (sortedSubjects.length > 0) {
-        setAvailableSubjects([...sortedSubjects, '전체'])
-      } else {
-        // 과목이 없으면 기본 과목 목록 제공
-        setAvailableSubjects(EXAM_SUBJECTS)
+      // 과목 설정 (매핑이 없을 때만)
+      if (!mappedSubjects) {
+        const sortedSubjects = Array.from(subjects).sort((a, b) => {
+          const numA = parseInt(a.replace('과목', ''))
+          const numB = parseInt(b.replace('과목', ''))
+          return numA - numB
+        }) as ExamSubject[]
+        
+        // '전체' 옵션 추가
+        if (sortedSubjects.length > 0) {
+          setAvailableSubjects([...sortedSubjects, '전체'])
+        } else {
+          // 과목이 없으면 기본 과목 목록 제공
+          setAvailableSubjects(EXAM_SUBJECTS)
+        }
       }
     } catch (error) {
       console.error('❌ 사용 가능한 회차 가져오기 중 오류:', error)
-      setAvailableSessions([])
-      setAvailableSubjects(EXAM_SUBJECTS)
+      if (!mappedSessions) setAvailableSessions([])
+      if (!mappedSubjects) setAvailableSubjects(EXAM_SUBJECTS)
     }
   }, [selectedCertification, examYear])
 
@@ -447,6 +547,13 @@ export default function ExamQuestionCard() {
     setQuestionIds([])
     setAvailableSessions([])
     setAvailableSubjects([])
+  }
+
+  const handleYearChange = (value: string) => {
+    setExamYear(value)
+    setExamSessionNumber('')
+    setExamSubject('')
+    setQuestionIds([])
   }
 
   // 자격증 선택 시 사용 가능한 연도 로드
@@ -510,7 +617,7 @@ export default function ExamQuestionCard() {
                 '기출과목을 선택해주세요'
               )
             ) : (
-              '자격증과 기출회차를 선택해주세요'
+              '자격증과 기출회를 선택해주세요'
             )}
           </p>
         </div>
@@ -560,7 +667,7 @@ export default function ExamQuestionCard() {
               </label>
               <Select
                 value={examYear || undefined}
-                onValueChange={(value) => setExamYear(value)}
+                onValueChange={handleYearChange}
                 disabled={!selectedCertification}
               >
                 <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-center">
@@ -585,7 +692,7 @@ export default function ExamQuestionCard() {
               </Select>
             </motion.div>
 
-            {/* 기출회차 선택 */}
+            {/* 기출회 선택 */}
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -593,7 +700,7 @@ export default function ExamQuestionCard() {
               className="space-y-2"
             >
               <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center justify-center gap-1">
-                기출회차
+                기출회
               </label>
               <Select
                 value={examSessionNumber || undefined}
@@ -601,20 +708,20 @@ export default function ExamQuestionCard() {
                 disabled={!selectedCertification || !examYear}
               >
                 <SelectTrigger className="w-full h-10 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-center">
-                  <SelectValue placeholder="회차를 선택하세요" />
+                  <SelectValue placeholder="회를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
                   {availableSessions.length > 0 ? (
                     availableSessions.map((session) => (
                       <SelectItem key={session} value={session}>
-                        {session}회차
+                        {session}회
                       </SelectItem>
                     ))
                   ) : (
-                    // 기본 회차 옵션 제공 (1~4회차)
+                    // 기본 회 옵션 제공 (1~4회)
                     ['1', '2', '3', '4'].map((session) => (
                       <SelectItem key={session} value={session}>
-                        {session}회차
+                        {session}회
                       </SelectItem>
                     ))
                   )}
@@ -699,7 +806,7 @@ export default function ExamQuestionCard() {
             ) : !selectedCertification ? (
               '자격증을 선택해주세요'
             ) : !examSession ? (
-              '기출회차를 입력해주세요'
+              '기출회를 입력해주세요'
             ) : !examSubject ? (
               '기출과목을 선택해주세요'
             ) : questionIds.length === 0 ? (

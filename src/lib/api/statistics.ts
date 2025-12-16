@@ -5,6 +5,7 @@
  */
 
 import { supabase } from '../supabaseClient'
+import { formatCategoryDisplay } from '../utils/categoryFormatter'
 
 export interface DailyActivity {
   date: string // YYYY-MM-DD 형식
@@ -316,7 +317,7 @@ export async function getCategoryPerformance(
       .select(
         `
         is_correct,
-        question:questions(category)
+        question:questions(category, certification_type)
       `
       )
       .eq('user_id', userId)
@@ -333,8 +334,13 @@ export async function getCategoryPerformance(
     > = {}
 
     records?.forEach((record) => {
-      const category =
-        (record.question as { category?: string })?.category || '기타'
+      const question = record.question as { category?: string; certification_type?: string }
+      const categoryCode = question?.category || '기타'
+      const certType = question?.certification_type || ''
+      
+      // 카테고리를 "자격증명 > 과목명 > 주요항목" 형식으로 변환
+      const category = formatCategoryDisplay(certType, categoryCode)
+      
       if (!categoryMap[category]) {
         categoryMap[category] = { totalCount: 0, correctCount: 0 }
       }
