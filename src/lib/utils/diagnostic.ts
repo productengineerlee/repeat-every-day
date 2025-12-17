@@ -241,6 +241,27 @@ export function calculateDiagnosticResults(
   console.log('총 문제 수:', questions.length)
   console.log('답안 수:', Object.keys(answers).length)
 
+  // 정답 형식 통일 함수 (1,2,3,4,5 / A,B,C,D,E / ①,②,③,④,⑤ → A,B,C,D,E로 통일)
+  const normalizeAnswer = (answer: string): string => {
+    const normalized = String(answer).trim().toUpperCase()
+    const circleNumbers = ['①', '②', '③', '④', '⑤']
+    
+    // 1. 숫자 형식(1,2,3,4,5)을 A,B,C,D,E로 변환
+    if (/^[1-5]$/.test(normalized)) {
+      const index = parseInt(normalized) - 1
+      return String.fromCharCode('A'.charCodeAt(0) + index)
+    }
+    
+    // 2. 원형 숫자(①,②,③,④,⑤)를 A,B,C,D,E로 변환
+    const circleIndex = circleNumbers.indexOf(answer.trim())
+    if (circleIndex !== -1) {
+      return String.fromCharCode('A'.charCodeAt(0) + circleIndex)
+    }
+    
+    // 3. 이미 A,B,C,D,E 형식이면 그대로 반환
+    return normalized
+  }
+
   // 전체 정답/오답 카운트
   let totalCorrect = 0
   let totalQuestions = questions.length
@@ -259,16 +280,17 @@ export function calculateDiagnosticResults(
                           questionRecord.correctAnswer || 
                           question.correctAnswer
     
-    const isCorrect = userAnswer && correctAnswer && userAnswer === correctAnswer
+    // 정답 비교 (형식 통일 후 비교)
+    const isCorrect = userAnswer && correctAnswer && 
+                      normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer)
 
     console.log(`🔍 문제 ${index + 1}:`, {
       id: question.id,
       rawCategory,
       subject,
-      userAnswer: userAnswer || 'NO_ANSWER',
-      correctAnswer: correctAnswer || 'NO_CORRECT_ANSWER',
+      userAnswer: userAnswer ? `${userAnswer} (${normalizeAnswer(userAnswer)})` : 'NO_ANSWER',
+      correctAnswer: correctAnswer ? `${correctAnswer} (${normalizeAnswer(correctAnswer)})` : 'NO_CORRECT_ANSWER',
       isCorrect,
-      questionKeys: Object.keys(question)
     })
 
     // 전체 정답 수 증가
