@@ -319,15 +319,15 @@ export default function PerformanceCharts() {
               }
               
               return (
-                <div key={index} className="flex items-center gap-3">
+                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                   {/* 카테고리 이름 */}
-                  <div className="w-[300px] text-sm text-left flex-shrink-0">
+                  <div className="w-full sm:w-[200px] md:w-[300px] text-sm text-left flex-shrink-0 truncate">
                     {item.category}
                   </div>
                   
                   {/* 막대 그래프 */}
-                  <div className="flex-1 flex items-center gap-2">
-                    <div className="flex-1 bg-muted rounded-full h-6 overflow-hidden">
+                  <div className="w-full sm:flex-1 flex items-center gap-2">
+                    <div className="flex-1 bg-muted rounded-full h-6 overflow-hidden min-w-0">
                       <div 
                         className={`h-full rounded-full transition-all duration-500`}
                         style={{ 
@@ -338,7 +338,7 @@ export default function PerformanceCharts() {
                     </div>
                     
                     {/* 퍼센티지와 색상 점 */}
-                    <div className="flex items-center gap-2 w-[60px]">
+                    <div className="flex items-center gap-2 w-[60px] flex-shrink-0">
                       <span className="text-sm font-semibold">{item.accuracy}%</span>
                       <div className={`w-3 h-3 rounded-full ${colorClass}`} />
                     </div>

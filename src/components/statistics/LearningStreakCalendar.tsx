@@ -274,7 +274,7 @@ export default function LearningStreakCalendar() {
         </div>
 
         {/* 날짜 그리드 */}
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2">
           {calendarDays.map((day, index) => {
             const dateStr = format(day.date, 'yyyy-MM-dd')
             const isStreakDay = streakDates.has(dateStr)
@@ -287,8 +287,8 @@ export default function LearningStreakCalendar() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: index * 0.01 }}
                 className={`
-                  relative h-24 rounded-lg transition-all duration-300
-                  flex flex-col items-center justify-center p-2
+                  relative h-16 sm:h-20 md:h-24 rounded-lg transition-all duration-300
+                  flex flex-col items-center justify-center p-1 sm:p-2
                   ${!day.isInCurrentMonth ? 'opacity-30' : ''}
                   ${getActivityColor(day.activity)}
                   ${hasActivity 
@@ -296,18 +296,18 @@ export default function LearningStreakCalendar() {
                     : 'border border-gray-200/50 dark:border-gray-700/50'
                   }
                   ${day.isToday 
-                    ? 'ring-4 ring-primary/50 ring-offset-2' 
+                    ? 'ring-2 sm:ring-4 ring-primary/50 ring-offset-1 sm:ring-offset-2' 
                     : ''
                   }
                   ${isStreakDay && !day.isToday
-                    ? 'ring-2 ring-orange-400/60' 
+                    ? 'ring-1 sm:ring-2 ring-orange-400/60' 
                     : ''
                   }
                   cursor-pointer
                 `}
               >
                 {/* 날짜 숫자 */}
-                <div className={`text-base font-bold mb-1.5 ${
+                <div className={`text-xs sm:text-sm md:text-base font-bold mb-0.5 sm:mb-1.5 ${
                   hasActivity 
                     ? 'text-white' 
                     : 'text-gray-600 dark:text-gray-400'
@@ -316,7 +316,7 @@ export default function LearningStreakCalendar() {
                 </div>
                 
                 {/* 학습 상태 아이콘 */}
-                <div className="text-2xl mb-1">
+                <div className="text-lg sm:text-xl md:text-2xl mb-0.5 sm:mb-1">
                   {hasActivity ? (
                     <span className="text-white drop-shadow-sm">✓</span>
                   ) : (
@@ -326,9 +326,11 @@ export default function LearningStreakCalendar() {
                 
                 {/* 학습 정보 */}
                 {hasActivity && day.activity && (
-                  <div className="text-xs font-semibold text-white/95">
-                    {day.activity.correctCount}/{day.activity.count}
-                    <span className="text-[10px] ml-0.5">
+                  <div className="text-[10px] sm:text-xs font-semibold text-white/95">
+                    <span className="hidden sm:inline">
+                      {day.activity.correctCount}/{day.activity.count}
+                    </span>
+                    <span className="text-[9px] sm:text-[10px] ml-0.5">
                       ({day.activity.accuracy}%)
                     </span>
                   </div>
@@ -336,8 +338,8 @@ export default function LearningStreakCalendar() {
                 
                 {/* 스트릭 불꽃 아이콘 */}
                 {isStreakDay && (
-                  <div className="absolute top-1 right-1">
-                    <Flame className="h-3.5 w-3.5 text-orange-400 drop-shadow-sm" />
+                  <div className="absolute top-0.5 sm:top-1 right-0.5 sm:right-1">
+                    <Flame className="h-3 sm:h-3.5 w-3 sm:w-3.5 text-orange-400 drop-shadow-sm" />
                   </div>
                 )}
               </motion.div>
@@ -347,27 +349,31 @@ export default function LearningStreakCalendar() {
       </div>
 
       {/* 범례 - 정답률 기준 */}
-      <div className="flex items-center justify-center gap-6 pt-4 border-t text-xs">
-        <span className="text-muted-foreground font-medium">정답률:</span>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded shadow-sm bg-gray-50 dark:bg-gray-800/10 border border-gray-200 dark:border-gray-700" />
-          <span className="text-muted-foreground">학습 없음</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded shadow-sm bg-rose-500 dark:bg-rose-600" />
-          <span>~40%</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded shadow-sm bg-amber-500 dark:bg-amber-600" />
-          <span>40-60%</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded shadow-sm bg-green-500 dark:bg-green-600" />
-          <span>60-80%</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded shadow-sm bg-emerald-500 dark:bg-emerald-600" />
-          <span>80%+</span>
+      <div className="pt-4 border-t">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs">
+          <span className="text-muted-foreground font-medium mb-1 sm:mb-0">정답률:</span>
+          <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-2 sm:gap-3 justify-center items-center">
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 rounded shadow-sm bg-gray-50 dark:bg-gray-800/10 border border-gray-200 dark:border-gray-700" />
+              <span className="text-muted-foreground whitespace-nowrap">학습 없음</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 rounded shadow-sm bg-rose-500 dark:bg-rose-600" />
+              <span className="whitespace-nowrap">~40%</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 rounded shadow-sm bg-amber-500 dark:bg-amber-600" />
+              <span className="whitespace-nowrap">40-60%</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 rounded shadow-sm bg-green-500 dark:bg-green-600" />
+              <span className="whitespace-nowrap">60-80%</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-4 rounded shadow-sm bg-emerald-500 dark:bg-emerald-600" />
+              <span className="whitespace-nowrap">80%+</span>
+            </div>
+          </div>
         </div>
       </div>
     </motion.div>
