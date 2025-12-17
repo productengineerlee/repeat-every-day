@@ -142,13 +142,6 @@ export default function Home() {
   const { user } = useAuth()
   const navigate = useNavigate()
 
-  // 로그인한 사용자는 자동으로 대시보드로 리다이렉트
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard', { replace: true })
-    }
-  }, [user, navigate])
-
   const handleStartDiagnostic = () => {
     // 진단 완료 여부 확인
     const diagnosticCompleted = localStorage.getItem('diagnostic_completed')
