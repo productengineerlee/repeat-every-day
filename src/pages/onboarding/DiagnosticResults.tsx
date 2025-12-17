@@ -133,6 +133,11 @@ export default function DiagnosticResults() {
           })
         
         console.log('📊 차트 데이터:', chartDataArray)
+        console.log('📊 차트 데이터 길이:', chartDataArray.length)
+        console.log('📊 차트 렌더링 조건:', {
+          hasData: chartDataArray.length > 0,
+          firstItem: chartDataArray[0],
+        })
         setChartData(chartDataArray)
 
         // 로그인한 사용자만 온보딩 데이터 제출 (재시도 로직 포함)
@@ -273,7 +278,7 @@ export default function DiagnosticResults() {
         </motion.div>
 
         {/* 레이더 차트 */}
-        {chartData && chartData.length > 0 && chartData.every(item => item.category && typeof item.score === 'number') && (
+        {chartData && chartData.length > 0 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
