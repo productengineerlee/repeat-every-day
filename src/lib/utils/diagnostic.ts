@@ -241,10 +241,11 @@ export function calculateDiagnosticResults(
   console.log('총 문제 수:', questions.length)
   console.log('답안 수:', Object.keys(answers).length)
 
-  // 정답 형식 통일 함수 (1,2,3,4,5 / A,B,C,D,E / ①,②,③,④,⑤ → ①,②,③,④,⑤로 통일)
+  // 정답 형식 통일 함수 (1,2,3,4,5 / A,B,C,D,E / ㄱ,ㄴ,ㄷ,ㄹ,ㅁ / ①,②,③,④,⑤ → ①,②,③,④,⑤로 통일)
   const normalizeAnswer = (answer: string): string => {
     const trimmed = String(answer).trim()
     const circleNumbers = ['①', '②', '③', '④', '⑤']
+    const koreanConsonants = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ']
     
     // 1. 숫자 형식(1,2,3,4,5)을 ①,②,③,④,⑤로 변환
     if (/^[1-5]$/.test(trimmed)) {
@@ -259,12 +260,18 @@ export function calculateDiagnosticResults(
       return circleNumbers[index]
     }
     
-    // 3. 이미 원형 숫자(①,②,③,④,⑤) 형식이면 그대로 반환
+    // 3. 한글 자음(ㄱ,ㄴ,ㄷ,ㄹ,ㅁ)을 ①,②,③,④,⑤로 변환
+    const koreanIndex = koreanConsonants.indexOf(trimmed)
+    if (koreanIndex !== -1) {
+      return circleNumbers[koreanIndex]
+    }
+    
+    // 4. 이미 원형 숫자(①,②,③,④,⑤) 형식이면 그대로 반환
     if (circleNumbers.includes(trimmed)) {
       return trimmed
     }
     
-    // 4. 그 외의 경우 기본값 반환 (에러 방지)
+    // 5. 그 외의 경우 기본값 반환 (에러 방지)
     return trimmed
   }
 

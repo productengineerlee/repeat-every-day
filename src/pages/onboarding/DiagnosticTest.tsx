@@ -49,11 +49,25 @@ export default function DiagnosticTest() {
     fetchQuestions()
   }, [state.certificationType])
 
-  // 인덱스를 원형 숫자(①, ②, ③, ④, ⑤)로 변환
+  // 인덱스 또는 한글 자음을 원형 숫자(①, ②, ③, ④, ⑤)로 변환
   const indexToCircleNumber = (index: string): string => {
     const circleNumbers = ['①', '②', '③', '④', '⑤']
+    const koreanConsonants = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ']
+    
+    // 한글 자음인 경우
+    const koreanIndex = koreanConsonants.indexOf(index)
+    if (koreanIndex !== -1) {
+      return circleNumbers[koreanIndex]
+    }
+    
+    // 숫자 인덱스인 경우
     const numIndex = parseInt(index)
-    return circleNumbers[numIndex] || index
+    if (!isNaN(numIndex) && numIndex >= 0 && numIndex < circleNumbers.length) {
+      return circleNumbers[numIndex]
+    }
+    
+    // 이미 원형 숫자인 경우 또는 그 외의 경우 그대로 반환
+    return index
   }
 
   const currentQuestion = questions[currentIndex]

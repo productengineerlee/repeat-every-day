@@ -23,10 +23,26 @@ export default function AnswerOptions({
     setSelectedAnswer(null)
   }, [questionId])
   
-  // 인덱스를 원형 숫자로 변환 (①, ②, ③, ④, ⑤)
-  const indexToCircleNumber = (idx: number): string => {
+  // 인덱스 또는 한글 자음을 원형 숫자로 변환 (①, ②, ③, ④, ⑤)
+  const indexToCircleNumber = (idx: number | string): string => {
     const circleNumbers = ['①', '②', '③', '④', '⑤']
-    return circleNumbers[idx] || `${idx + 1}`
+    const koreanConsonants = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ']
+    
+    // 한글 자음인 경우
+    if (typeof idx === 'string') {
+      const koreanIndex = koreanConsonants.indexOf(idx)
+      if (koreanIndex !== -1) {
+        return circleNumbers[koreanIndex]
+      }
+    }
+    
+    // 숫자 인덱스인 경우
+    const numIdx = typeof idx === 'number' ? idx : parseInt(idx)
+    if (!isNaN(numIdx) && numIdx >= 0 && numIdx < circleNumbers.length) {
+      return circleNumbers[numIdx]
+    }
+    
+    return typeof idx === 'string' ? idx : `${idx + 1}`
   }
 
   // options가 배열인 경우 객체로 변환 (①, ②, ③, ④, ⑤ 키 사용)
