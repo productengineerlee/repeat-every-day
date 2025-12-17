@@ -162,7 +162,7 @@ export default function ResultsScreen({
                     return (
                       <div
                         key={optIndex}
-                        className={`p-3 rounded border ${
+                        className={`p-3 rounded border text-left ${
                           isCorrectAnswer
                             ? 'bg-green-50 border-green-200'
                             : isUserAnswer
@@ -205,8 +205,8 @@ export default function ResultsScreen({
                   <div className="text-sm font-semibold text-muted-foreground mb-2">
                     해설
                   </div>
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {question.explanation}
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap text-left">
+                    {question.explanation || '해설이 준비 중입니다.'}
                   </p>
                 </div>
 
