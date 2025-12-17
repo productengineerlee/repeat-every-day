@@ -307,3 +307,91 @@ function calculateNextReviewDate(
   return nextDate
 }
 
+/**
+ * 오답 저장 (진단 테스트 및 학습 세션용)
+ */
+export async function saveWrongAnswers(
+  userId: string,
+  wrongQuestionIds: string[]
+): Promise<{ success: boolean; error?: string; savedCount?: number }> {
+  try {
+    if (wrongQuestionIds.length === 0) {
+      return { success: true, savedCount: 0 }
+    }
+
+    const now = new Date().toISOString()
+    
+    // 각 틀린 문제에 대해 upsert 수행
+    const results = await Promise.all(
+      wrongQuestionIds.map(async (questionId) => {
+        // 기존 오답 확인
+        const { data: existing, error: fetchError } = await supabase
+          .from('wrong_answers')
+          .select('id, wrong_count')
+          .eq('user_id', userId)
+          .eq('question_id', questionId)
+          .maybeSingle()
+
+        if (fetchError) {
+          console.error(`Error fetching wrong answer for question ${questionId}:`, fetchError)
+          return false
+        }
+
+        if (existing) {
+          // 기존 오답이 있으면 업데이트 (틀린 횟수 증가, 졸업 해제)
+          const { error: updateError } = await supabase
+            .from('wrong_answers')
+            .update({
+              wrong_count: existing.wrong_count + 1,
+              last_wrong_date: now,
+              next_review_date: now, // 즉시 복습 가능
+              graduated: false,
+              updated_at: now,
+            })
+            .eq('id', existing.id)
+
+          if (updateError) {
+            console.error(`Error updating wrong answer for question ${questionId}:`, updateError)
+            return false
+          }
+          return true
+        } else {
+          // 새 오답 생성
+          const { error: insertError } = await supabase
+            .from('wrong_answers')
+            .insert({
+              user_id: userId,
+              question_id: questionId,
+              wrong_count: 1,
+              last_wrong_date: now,
+              next_review_date: now, // 즉시 복습 가능
+              graduated: false,
+            })
+
+          if (insertError) {
+            console.error(`Error inserting wrong answer for question ${questionId}:`, insertError)
+            return false
+          }
+          return true
+        }
+      })
+    )
+
+    const savedCount = results.filter(Boolean).length
+
+    return {
+      success: savedCount === wrongQuestionIds.length,
+      savedCount,
+      error: savedCount < wrongQuestionIds.length 
+        ? `${wrongQuestionIds.length}개 중 ${savedCount}개만 저장됨` 
+        : undefined,
+    }
+  } catch (error) {
+    console.error('Error saving wrong answers:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : '오답 저장 실패',
+    }
+  }
+}
+

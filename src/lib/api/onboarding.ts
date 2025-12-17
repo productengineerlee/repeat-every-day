@@ -2,6 +2,7 @@ import { supabase } from '../supabaseClient'
 import type { CertificationType } from '@/context'
 import { getDiagnosticQuestions } from './questions'
 import { calculateDiagnosticResults } from '../utils/diagnostic'
+import { saveWrongAnswers } from './wrongAnswers'
 
 export interface OnboardingData {
   certificationType: CertificationType
@@ -255,6 +256,55 @@ export async function submitOnboardingData(
 
       if (!diagnosisResult.success) {
         throw new Error(diagnosisResult.error || '진단 결과 저장 실패')
+      }
+
+      // 5. 틀린 문제를 오답 노트에 저장
+      // 정답과 사용자 답안을 비교하여 틀린 문제 찾기
+      const wrongQuestionIds: string[] = []
+      
+      // 정답 형식 통일 함수 (1,2,3,4,5 / A,B,C,D,E / ①,②,③,④,⑤ → A,B,C,D,E로 통일)
+      const normalizeAnswer = (answer: string): string => {
+        const normalized = String(answer).trim().toUpperCase()
+        const circleNumbers = ['①', '②', '③', '④', '⑤']
+        
+        // 1. 숫자 형식(1,2,3,4,5)을 A,B,C,D,E로 변환
+        if (/^[1-5]$/.test(normalized)) {
+          const index = parseInt(normalized) - 1
+          return String.fromCharCode('A'.charCodeAt(0) + index)
+        }
+        
+        // 2. 원형 숫자(①,②,③,④,⑤)를 A,B,C,D,E로 변환
+        const circleIndex = circleNumbers.indexOf(answer.trim())
+        if (circleIndex !== -1) {
+          return String.fromCharCode('A'.charCodeAt(0) + circleIndex)
+        }
+        
+        // 3. 이미 A,B,C,D,E 형식이면 그대로 반환
+        return normalized
+      }
+      
+      for (const question of questions) {
+        const userAnswer = data.diagnosticAnswers[question.id]
+        if (userAnswer) {
+          const normalizedUserAnswer = normalizeAnswer(userAnswer)
+          const normalizedCorrectAnswer = normalizeAnswer(question.correctAnswer)
+          
+          if (normalizedUserAnswer !== normalizedCorrectAnswer) {
+            wrongQuestionIds.push(question.id)
+          }
+        }
+      }
+
+      // 틀린 문제가 있으면 저장
+      if (wrongQuestionIds.length > 0) {
+        const wrongAnswersResult = await saveWrongAnswers(userId, wrongQuestionIds)
+        
+        if (!wrongAnswersResult.success) {
+          console.warn('⚠️ 일부 오답 저장 실패:', wrongAnswersResult.error)
+          // 오답 저장 실패는 치명적이지 않으므로 계속 진행
+        } else {
+          console.log(`✅ ${wrongAnswersResult.savedCount}개의 오답 저장 완료`)
+        }
       }
 
       return {
