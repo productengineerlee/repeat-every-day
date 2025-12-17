@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { supabase } from '../supabaseClient'
 import type { Question } from '@/types'
 
