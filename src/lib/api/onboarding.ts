@@ -262,25 +262,31 @@ export async function submitOnboardingData(
       // 정답과 사용자 답안을 비교하여 틀린 문제 찾기
       const wrongQuestionIds: string[] = []
       
-      // 정답 형식 통일 함수 (1,2,3,4,5 / A,B,C,D,E / ①,②,③,④,⑤ → A,B,C,D,E로 통일)
+      // 정답 형식 통일 함수 (1,2,3,4,5 / A,B,C,D,E / ①,②,③,④,⑤ → ①,②,③,④,⑤로 통일)
       const normalizeAnswer = (answer: string): string => {
-        const normalized = String(answer).trim().toUpperCase()
+        const trimmed = String(answer).trim()
         const circleNumbers = ['①', '②', '③', '④', '⑤']
         
-        // 1. 숫자 형식(1,2,3,4,5)을 A,B,C,D,E로 변환
-        if (/^[1-5]$/.test(normalized)) {
-          const index = parseInt(normalized) - 1
-          return String.fromCharCode('A'.charCodeAt(0) + index)
+        // 1. 숫자 형식(1,2,3,4,5)을 ①,②,③,④,⑤로 변환
+        if (/^[1-5]$/.test(trimmed)) {
+          const index = parseInt(trimmed) - 1
+          return circleNumbers[index]
         }
         
-        // 2. 원형 숫자(①,②,③,④,⑤)를 A,B,C,D,E로 변환
-        const circleIndex = circleNumbers.indexOf(answer.trim())
-        if (circleIndex !== -1) {
-          return String.fromCharCode('A'.charCodeAt(0) + circleIndex)
+        // 2. 알파벳 형식(A,B,C,D,E)을 ①,②,③,④,⑤로 변환
+        const upperTrimmed = trimmed.toUpperCase()
+        if (/^[A-E]$/i.test(upperTrimmed)) {
+          const index = upperTrimmed.charCodeAt(0) - 'A'.charCodeAt(0)
+          return circleNumbers[index]
         }
         
-        // 3. 이미 A,B,C,D,E 형식이면 그대로 반환
-        return normalized
+        // 3. 이미 원형 숫자(①,②,③,④,⑤) 형식이면 그대로 반환
+        if (circleNumbers.includes(trimmed)) {
+          return trimmed
+        }
+        
+        // 4. 그 외의 경우 원본 반환 (에러 방지)
+        return trimmed
       }
       
       for (const question of questions) {

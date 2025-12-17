@@ -49,11 +49,11 @@ export default function DiagnosticTest() {
     fetchQuestions()
   }, [state.certificationType])
 
-  // 인덱스를 문자(A, B, C, D, E)로 변환
-  const indexToLetter = (index: string): string => {
-    const letters = ['A', 'B', 'C', 'D', 'E']
+  // 인덱스를 원형 숫자(①, ②, ③, ④, ⑤)로 변환
+  const indexToCircleNumber = (index: string): string => {
+    const circleNumbers = ['①', '②', '③', '④', '⑤']
     const numIndex = parseInt(index)
-    return letters[numIndex] || index
+    return circleNumbers[numIndex] || index
   }
 
   const currentQuestion = questions[currentIndex]
@@ -66,8 +66,8 @@ export default function DiagnosticTest() {
   useEffect(() => {
     if (currentQuestion && state.diagnosticAnswers[currentQuestion.id]) {
       const savedAnswer = state.diagnosticAnswers[currentQuestion.id]
-      // 저장된 답안이 숫자 형식이면 문자로 변환
-      const convertedAnswer = /^\d+$/.test(savedAnswer) ? indexToLetter(savedAnswer) : savedAnswer
+      // 저장된 답안이 숫자 형식이면 원형 숫자로 변환
+      const convertedAnswer = /^\d+$/.test(savedAnswer) ? indexToCircleNumber(savedAnswer) : savedAnswer
       setSelectedAnswer(convertedAnswer)
     } else {
       setSelectedAnswer(null)
@@ -155,11 +155,11 @@ export default function DiagnosticTest() {
 
   const rawOptions = currentQuestion?.options || {}
   
-  // options의 키를 A, B, C, D, E로 변환
+  // options의 키를 ①, ②, ③, ④, ⑤로 변환
   const options: Record<string, unknown> = {}
   Object.entries(rawOptions).forEach(([key, value]) => {
-    const letter = indexToLetter(key)
-    options[letter] = value
+    const circleNum = indexToCircleNumber(key)
+    options[circleNum] = value
   })
 
   return (

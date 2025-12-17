@@ -23,11 +23,17 @@ export default function AnswerOptions({
     setSelectedAnswer(null)
   }, [questionId])
   
-  // options가 배열인 경우 객체로 변환 (A, B, C, D, E 키 사용)
+  // 인덱스를 원형 숫자로 변환 (①, ②, ③, ④, ⑤)
+  const indexToCircleNumber = (idx: number): string => {
+    const circleNumbers = ['①', '②', '③', '④', '⑤']
+    return circleNumbers[idx] || `${idx + 1}`
+  }
+
+  // options가 배열인 경우 객체로 변환 (①, ②, ③, ④, ⑤ 키 사용)
   const optionsObj: Record<string, string> =
     Array.isArray(options)
       ? options.reduce((acc, val, idx) => {
-          acc[String.fromCharCode(65 + idx)] = val // A, B, C, D, E
+          acc[indexToCircleNumber(idx)] = val // ①, ②, ③, ④, ⑤
           return acc
         }, {} as Record<string, string>)
       : options
