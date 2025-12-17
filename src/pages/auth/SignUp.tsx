@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context'
 import { Button } from '@/components/ui/button'
 import { Mail, Lock, User } from 'lucide-react'
@@ -7,7 +7,6 @@ import { supabase } from '@/lib/supabaseClient'
 
 export default function SignUp() {
   const navigate = useNavigate()
-  const location = useLocation()
   const { signUp } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -15,11 +14,6 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-
-
-  // 회원가입 전에 접근하려던 페이지
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard'
-
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -102,15 +96,12 @@ export default function SignUp() {
       
       if (session) {
         try {
-          await supabase
-            .from('users')
-            .upsert({
-              id: user.id,
-              email: user.email,
-              name: name.trim(),
-            }, {
-              onConflict: 'id'
-            })
+          // @ts-ignore - Supabase 타입 정의 문제
+          await supabase.from('users').insert({
+            id: user.id,
+            email: user.email,
+            name: name.trim(),
+          })
         } catch (userSaveError) {
           // users 테이블 저장 실패해도 회원가입은 성공한 것으로 처리
           // (이메일 인증 후 로그인 시 저장됨)
