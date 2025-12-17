@@ -280,17 +280,25 @@ export function calculateDiagnosticResults(
                           questionRecord.correctAnswer || 
                           question.correctAnswer
     
-    // 정답 비교 (형식 통일 후 비교)
-    const isCorrect = userAnswer && correctAnswer && 
-                      normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer)
+    // 정답 형식 정규화
+    const normalizedUserAnswer = userAnswer ? normalizeAnswer(userAnswer) : null
+    const normalizedCorrectAnswer = correctAnswer ? normalizeAnswer(correctAnswer) : null
+    
+    // 정답 비교
+    const isCorrect = normalizedUserAnswer && normalizedCorrectAnswer && 
+                      normalizedUserAnswer === normalizedCorrectAnswer
 
     console.log(`🔍 문제 ${index + 1}:`, {
       id: question.id,
+      content: question.content?.substring(0, 30) + '...',
       rawCategory,
       subject,
-      userAnswer: userAnswer ? `${userAnswer} (${normalizeAnswer(userAnswer)})` : 'NO_ANSWER',
-      correctAnswer: correctAnswer ? `${correctAnswer} (${normalizeAnswer(correctAnswer)})` : 'NO_CORRECT_ANSWER',
+      userAnswer,
+      normalizedUserAnswer,
+      correctAnswer,
+      normalizedCorrectAnswer,
       isCorrect,
+      match: normalizedUserAnswer === normalizedCorrectAnswer,
     })
 
     // 전체 정답 수 증가
