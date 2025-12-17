@@ -2,17 +2,11 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import type { Question } from '@/types'
-
-interface LearningSession {
-  questionId: string
-  userAnswer: string
-  isCorrect: boolean
-  timeSpent: number
-}
+import type { StudySession } from '@/lib/api/learning'
 
 interface ResultsScreenProps {
   questions: Question[]
-  session: LearningSession[]
+  session: StudySession
   onComplete: () => void
 }
 
@@ -31,12 +25,17 @@ export default function ResultsScreen({
   onComplete,
 }: ResultsScreenProps) {
   // 정답 개수 계산
-  const correctCount = session.filter((s) => s.isCorrect).length
+  const correctCount = Object.values(session.answers).filter(
+    (answer) => answer.isCorrect
+  ).length
   const totalQuestions = questions.length
   const accuracy = Math.round((correctCount / totalQuestions) * 100)
 
   // 총 소요 시간 계산
-  const totalTimeSpent = session.reduce((acc, s) => acc + s.timeSpent, 0)
+  const totalTimeSpent = Object.values(session.answers).reduce(
+    (acc, answer) => acc + answer.timeSpent,
+    0
+  )
 
   // 시간 포맷 함수
   const formatTime = (seconds: number) => {
@@ -128,9 +127,9 @@ export default function ResultsScreen({
       >
         <h2 className="text-xl font-semibold mb-4">문제별 결과</h2>
         {questions.map((question, index) => {
-          const record = session[index]
-          const isCorrect = record.isCorrect
-          const userAnswer = record.userAnswer
+          const record = session.answers[question.id]
+          const isCorrect = record?.isCorrect ?? false
+          const userAnswer = record?.answer ?? ''
 
           return (
             <Card key={question.id}>
@@ -213,7 +212,7 @@ export default function ResultsScreen({
 
                 {/* 소요 시간 */}
                 <div className="text-sm text-muted-foreground">
-                  ⏱ 소요 시간: {formatTime(record.timeSpent)}
+                  ⏱ 소요 시간: {formatTime(record?.timeSpent ?? 0)}
                 </div>
               </CardContent>
             </Card>

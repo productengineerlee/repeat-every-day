@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import type { Question } from '@/types'
 import { formatCategoryDisplay } from '@/lib/utils/categoryFormatter'
+import { formatDifficulty } from '@/lib/utils/difficultyFormatter'
 
 interface QuestionCardProps {
   question: Question
@@ -37,7 +38,7 @@ export default function QuestionCard({
           </h2>
         </div>
         <div className="px-3 py-1 bg-muted rounded-full text-xs whitespace-nowrap">
-          난이도: {question.difficulty || '중'}
+          난이도: {formatDifficulty(question.difficulty)}
         </div>
       </div>
 

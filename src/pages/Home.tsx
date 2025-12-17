@@ -20,6 +20,8 @@ import {
   ArrowRight,
   FileX,
   Play,
+  Brain,
+  GraduationCap,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -91,13 +93,27 @@ const CERT_SUBJECTS_MAP: Record<string, (ExamSubject | string)[]> = {
 
 const EXAM_SUBJECTS: ExamSubject[] = ['1과목', '2과목', '3과목', '4과목', '5과목', '전체']
 
-const features = [
+const allFeatures = [
   {
     icon: Target,
     title: '개인화된 학습',
     description: 'AI 기반 약점 분석과 간격 반복 학습 알고리즘으로 당신만의 맞춤형 문제를 추천합니다.',
     color: 'text-blue-600 dark:text-blue-400',
     bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+  },
+  {
+    icon: Brain,
+    title: '망각곡선기반 반복학습',
+    description: '에빙하우스 망각 곡선 기반 간격 반복 학습',
+    color: 'text-green-600 dark:text-green-400',
+    bgColor: 'bg-green-50 dark:bg-green-900/20',
+  },
+  {
+    icon: FileX,
+    title: '나만의 오답노트',
+    description: '오답 노트 자동 관리 및 복습 스케줄링',
+    color: 'text-red-600 dark:text-red-400',
+    bgColor: 'bg-red-50 dark:bg-red-900/20',
   },
   {
     icon: BarChart3,
@@ -107,19 +123,19 @@ const features = [
     bgColor: 'bg-purple-50 dark:bg-purple-900/20',
   },
   {
+    icon: Sparkles,
+    title: 'AI 튜터',
+    description: 'AI 튜터를 통한 개념 설명 및 이해도 향상',
+    color: 'text-pink-600 dark:text-pink-400',
+    bgColor: 'bg-pink-50 dark:bg-pink-900/20',
+  },
+  {
     icon: Trophy,
     title: '게이미피케이션',
     description: '스트릭, 업적, 보상 시스템으로 학습 동기를 부여하고 지속적인 성장을 지원합니다.',
     color: 'text-amber-600 dark:text-amber-400',
     bgColor: 'bg-amber-50 dark:bg-amber-900/20',
   },
-]
-
-const benefits = [
-  '에빙하우스 망각 곡선 기반 간격 반복 학습',
-  'AI 튜터를 통한 개념 설명 및 이해도 향상',
-  '오답 노트 자동 관리 및 복습 스케줄링',
-  '다양한 자격증 지원 (정보처리기사, ADsP, SQLD 등)',
 ]
 
 export default function Home() {
@@ -588,8 +604,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
-      {/* 진단 테스트 섹션 */}
-      <section className="container mx-auto px-4 py-12">
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 py-12 md:py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -612,74 +628,44 @@ export default function Home() {
             />
           </motion.div>
           
-          <div className="space-y-4">
+          {/* 제목 */}
+          <div className="space-y-2">
             <h2 className="text-3xl md:text-4xl font-bold">
-              딱 10문제로 진단해 보세요
+              10문제로 우선 진단하세요
             </h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-muted-foreground">
+              개인화 문제로 반복하세요
+            </h3>
           </div>
-          <Button
-            size="lg"
-            className="text-lg px-8 h-12"
-            onClick={handleStartDiagnostic}
-          >
-            진단하기
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </motion.div>
-      </section>
 
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 md:py-32">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center space-y-6 max-w-4xl mx-auto"
-        >
-          {/* Main Heading */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-3xl md:text-4xl font-bold"
-          >
-            <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              취약부분을 공략하세요
-            </span>
-          </motion.h1>
-
-          {/* CTA Buttons */}
+          {/* 버튼 */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-wrap gap-4 justify-center items-center"
           >
-            {!user ? (
-              <>
-                <Link to="/dashboard">
-                  <Button size="lg" className="text-lg px-8 h-12 group">
-                    대시보드
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link to="/dashboard">
-                  <Button size="lg" className="text-lg px-8 h-12 group">
-                    대시보드
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-              </>
-            )}
+            <Button
+              size="lg"
+              className="text-lg px-8 h-12"
+              onClick={handleStartDiagnostic}
+            >
+              진단하기
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <Link to="/dashboard">
+              <Button size="lg" variant="outline" className="text-lg px-8 h-12 group">
+                대시보드
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
       </section>
 
       {/* Features Section */}
-      <section className="container mx-auto px-4 py-20">
+      <section className="container mx-auto px-4 py-20 bg-muted/30 rounded-3xl my-20">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -687,14 +673,12 @@ export default function Home() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">왜 certiQ인가요?</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            과학적 학습 방법론과 최신 기술을 결합한 스마트한 학습 플랫폼
-          </p>
+          <h2 className="text-3xl md:text-4xl font-bold">왜 certiQ인가요?</h2>
         </motion.div>
 
+        {/* 주요 기능 카드 */}
         <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => {
+          {allFeatures.map((feature, index) => {
             const Icon = feature.icon
             return (
               <motion.div
@@ -705,7 +689,7 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="group relative"
               >
-                <div className="h-full bg-card border rounded-xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                <div className="h-full min-h-[280px] bg-card border rounded-xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                   <div className={`inline-flex p-3 rounded-lg ${feature.bgColor} mb-4`}>
                     <Icon className={`h-6 w-6 ${feature.color}`} />
                   </div>
@@ -721,49 +705,41 @@ export default function Home() {
       </section>
 
       {/* 기출문제 불러오기 섹션 */}
-      <section className="container mx-auto px-4 py-12">
+      <section className="container mx-auto px-4 py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto"
+          className="max-w-5xl mx-auto"
         >
+          {/* 섹션 제목 */}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">기출문제 풀기</h2>
+            <p className="text-lg text-muted-foreground">
+              원하는 자격증의 기출문제를 선택하여 학습하세요
+            </p>
+          </div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/20 rounded-xl p-6 md:p-8 space-y-6"
+            className="bg-card border rounded-xl p-6 md:p-8 shadow-sm space-y-6"
           >
-            {/* 헤더 */}
-            <div className="flex items-start justify-between">
-              <div className="space-y-2 flex-1">
-                <div className="flex items-center gap-2">
-                  <BookOpen className="h-6 w-6 text-primary" />
-                  <h2 className="text-2xl font-bold">기출문제</h2>
-                </div>
-                <p className="text-muted-foreground">
-                  {selectedCertification && examSession ? (
-                    examSubject ? `${examSubject} 문제를 불러오세요` : '기출과목을 선택해주세요'
-                  ) : (
-                    '자격증과 기출회를 선택해주세요'
-                  )}
-                </p>
-              </div>
-            </div>
 
             {/* 자격증 선택 및 기출년도/회차/과목 입력 */}
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* 자격증 선택 */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-center block">자격증 선택</label>
+                  <label className="text-sm font-medium block">자격증 선택</label>
                   <Select
                     value={selectedCertification || undefined}
                     onValueChange={handleCertificationChange}
                   >
-                    <SelectTrigger className="w-full text-center">
-                      <SelectValue placeholder="자격증을 선택하세요" />
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="선택하세요" />
                     </SelectTrigger>
                     <SelectContent>
                       {CERTIFICATIONS.map((cert) => (
@@ -777,8 +753,8 @@ export default function Home() {
 
                 {/* 기출년도 선택 */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-center block">
-                    기출년도 (선택)
+                  <label className="text-sm font-medium block">
+                    기출년도
                   </label>
                   <Select
                     key={`year-${selectedCertification}`}
@@ -786,8 +762,8 @@ export default function Home() {
                     onValueChange={handleYearChange}
                     disabled={!selectedCertification}
                   >
-                    <SelectTrigger className="w-full text-center">
-                      <SelectValue placeholder="연도를 선택하세요" />
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="선택하세요" />
                     </SelectTrigger>
                     <SelectContent>
                       {availableYears.length > 0 ? (
@@ -810,8 +786,8 @@ export default function Home() {
 
                 {/* 기출회 선택 */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-center block">
-                    기출회 (선택)
+                  <label className="text-sm font-medium block">
+                    기출회
                   </label>
                   <Select
                     key={`session-${selectedCertification}-${examYear}`}
@@ -819,8 +795,8 @@ export default function Home() {
                     onValueChange={(value) => setExamSessionNumber(value)}
                     disabled={!selectedCertification || !examYear}
                   >
-                    <SelectTrigger className="w-full text-center">
-                      <SelectValue placeholder="회를 선택하세요" />
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="선택하세요" />
                     </SelectTrigger>
                     <SelectContent>
                       {availableSessions.length > 0 ? (
@@ -843,15 +819,15 @@ export default function Home() {
 
                 {/* 기출과목 선택 */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-center block">기출과목 선택</label>
+                  <label className="text-sm font-medium block">기출과목</label>
                   <Select
                     key={`subject-${selectedCertification}-${examYear}`}
                     value={examSubject || undefined}
                     onValueChange={(value) => setExamSubject(value as ExamSubject)}
                     disabled={!selectedCertification || !examYear}
                   >
-                    <SelectTrigger className="w-full text-center">
-                      <SelectValue placeholder="과목을 선택하세요" />
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="선택하세요" />
                     </SelectTrigger>
                     <SelectContent>
                       {availableSubjects.length > 0 ? (
@@ -874,74 +850,48 @@ export default function Home() {
             </div>
 
             {/* 시작 버튼 */}
-            {user ? (
-              <Button
-                onClick={handleStartLearning}
-                disabled={!selectedCertification || !examSession || !examSubject || questionIds.length === 0 || loading}
-                size="lg"
-                className="w-full"
-              >
-                {loading ? (
-                  '문제 불러오는 중...'
-                ) : !selectedCertification ? (
-                  '자격증을 선택해주세요'
-                ) : !examSession ? (
-                  '기출회를 입력해주세요'
-                ) : !examSubject ? (
-                  '기출과목을 선택해주세요'
-                ) : questionIds.length === 0 ? (
-                  '문제가 없습니다'
-                ) : (
-                  <>
-                    <Play className="mr-2 h-5 w-5" />
-                    기출문제 풀기
-                  </>
-                )}
-              </Button>
-            ) : (
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">
-                  기출문제를 풀려면 로그인이 필요합니다.
-                </p>
-              </div>
-            )}
+            <div className="pt-4">
+              {user ? (
+                <Button
+                  onClick={handleStartLearning}
+                  disabled={!selectedCertification || !examSession || !examSubject || questionIds.length === 0 || loading}
+                  size="lg"
+                  className="w-full"
+                >
+                  {loading ? (
+                    '문제 불러오는 중...'
+                  ) : !selectedCertification ? (
+                    '자격증을 선택해주세요'
+                  ) : !examSession ? (
+                    '기출회를 선택해주세요'
+                  ) : !examSubject ? (
+                    '기출과목을 선택해주세요'
+                  ) : questionIds.length === 0 ? (
+                    '문제가 없습니다'
+                  ) : (
+                    <>
+                      <Play className="mr-2 h-5 w-5" />
+                      학습 시작하기
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-muted-foreground mb-4">
+                    기출문제를 풀려면 로그인이 필요합니다
+                  </p>
+                  <Link to="/login">
+                    <Button size="lg">
+                      로그인하기
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </div>
           </motion.div>
         </motion.div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="container mx-auto px-4 py-20 bg-muted/30 rounded-3xl my-20">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto"
-        >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">주요 기능</h2>
-            <p className="text-lg text-muted-foreground">
-              certiQ가 제공하는 강력한 학습 도구들
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {benefits.map((benefit, index) => (
-              <motion.div
-                key={benefit}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex items-start gap-3"
-              >
-                <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                <p className="text-foreground">{benefit}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
     </div>
   )
 }

@@ -295,13 +295,20 @@ export async function getQuestions(
             }
           }
 
-          // correct_answer 처리 (①, ②, ③, ④, ⑤ 형식 지원)
+          // correct_answer 처리 (다양한 형식 지원: 1,2,3,4,5 / A,B,C,D,E / ①,②,③,④,⑤)
           let correctAnswer = q.correct_answer || q.correctAnswer || '1'
-          // 숫자 형식(1,2,3,4,5)을 원형 숫자 형식(①,②,③,④,⑤)으로 변환
+          const circleNumbers = ['①', '②', '③', '④', '⑤']
+          
+          // 1. 숫자 형식(1,2,3,4,5)을 원형 숫자로 변환
           if (/^[1-5]$/.test(correctAnswer)) {
-            const circleNumbers = ['①', '②', '③', '④', '⑤']
             correctAnswer = circleNumbers[parseInt(correctAnswer) - 1]
           }
+          // 2. 알파벳 형식(A,B,C,D,E)을 원형 숫자로 변환
+          else if (/^[A-E]$/i.test(String(correctAnswer))) {
+            const index = String(correctAnswer).toUpperCase().charCodeAt(0) - 'A'.charCodeAt(0)
+            correctAnswer = circleNumbers[index]
+          }
+          // 3. 이미 원형 숫자면 그대로 유지
 
           return {
             id: q.id,

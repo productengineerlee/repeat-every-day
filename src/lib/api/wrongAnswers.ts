@@ -5,9 +5,14 @@ export interface WrongAnswerWithQuestion extends WrongAnswer {
   question?: {
     id: string
     content: string
+    options: string[]
+    correctAnswer: string
+    explanation: string
     category: string
-    difficulty?: number
+    certificationType?: string
+    difficulty?: number | string
   }
+  consecutiveCorrect?: number
 }
 
 /**
@@ -15,14 +20,14 @@ export interface WrongAnswerWithQuestion extends WrongAnswer {
  */
 export async function getWrongAnswers(
   userId: string,
-  category: 'today' | 'review' | 'graduated'
+  category: 'all' | 'today' | 'review' | 'graduated'
 ): Promise<WrongAnswerWithQuestion[]> {
   try {
     let query = supabase
       .from('wrong_answers')
       .select(`
         *,
-        question:questions(id, content, category)
+        question:questions(id, content, options, correct_answer, explanation, category, certification_type, difficulty)
       `)
       .eq('user_id', userId)
 
@@ -30,6 +35,10 @@ export async function getWrongAnswers(
     today.setHours(0, 0, 0, 0)
 
     switch (category) {
+      case 'all':
+        // 전체 오답 (졸업하지 않은 모든 문제)
+        query = query.eq('graduated', false)
+        break
       case 'today':
         // 오늘 틀린 문제
         query = query.gte('last_wrong_date', today.toISOString())
@@ -54,7 +63,93 @@ export async function getWrongAnswers(
       throw error
     }
 
-    return (data || []) as WrongAnswerWithQuestion[]
+    // 선택지 텍스트에서 숫자 접두사만 제거 (원형 숫자는 유지)
+    const cleanOptionText = (text: string): string => {
+      // "숫자. " 형식만 제거: "0. ① 수익비용..." → "① 수익비용..."
+      return text.replace(/^\d+\.\s*/, '').trim()
+    }
+
+    // snake_case를 camelCase로 변환하고 연속 정답 횟수 추가
+    const result = await Promise.all((data || []).map(async (item: any) => ({
+      id: item.id,
+      userId: item.user_id,
+      questionId: item.question_id,
+      wrongCount: item.wrong_count ?? 0,
+      lastWrongDate: new Date(item.last_wrong_date),
+      nextReviewDate: item.next_review_date ? new Date(item.next_review_date) : undefined,
+      graduated: item.graduated ?? false,
+      createdAt: new Date(item.created_at),
+      updatedAt: new Date(item.updated_at),
+      question: item.question ? {
+        id: item.question.id,
+        content: item.question.content,
+        options: (() => {
+          // options 처리
+          let options: string[] = []
+          if (Array.isArray(item.question.options)) {
+            options = item.question.options.map((opt: string) => cleanOptionText(opt))
+          } else if (typeof item.question.options === 'string') {
+            try {
+              const parsedOptions = JSON.parse(item.question.options)
+              options = Array.isArray(parsedOptions) 
+                ? parsedOptions.map((opt: string) => cleanOptionText(opt))
+                : []
+            } catch (e) {
+              console.warn('⚠️ options 파싱 실패:', e)
+              options = []
+            }
+          }
+          return options
+        })(),
+        correctAnswer: (() => {
+          // correct_answer 처리 (다양한 형식 지원: 1,2,3,4,5 / A,B,C,D,E / ①,②,③,④,⑤)
+          let correctAnswer = item.question.correct_answer || item.question.correctAnswer || '1'
+          correctAnswer = String(correctAnswer).trim()
+          
+          const circleNumbers = ['①', '②', '③', '④', '⑤']
+          
+          // 1. 숫자 형식(1,2,3,4,5)을 원형 숫자로 변환
+          if (/^[1-5]$/.test(correctAnswer)) {
+            return circleNumbers[parseInt(correctAnswer) - 1]
+          }
+          
+          // 2. 알파벳 형식(A,B,C,D,E)을 원형 숫자로 변환
+          if (/^[A-E]$/i.test(correctAnswer)) {
+            const index = correctAnswer.toUpperCase().charCodeAt(0) - 'A'.charCodeAt(0)
+            return circleNumbers[index]
+          }
+          
+          // 3. 이미 원형 숫자면 그대로 반환
+          if (/^[①②③④⑤]$/.test(correctAnswer)) {
+            return correctAnswer
+          }
+          
+          // 기본값
+          return '①'
+        })(),
+        explanation: item.question.explanation || '',
+        category: item.question.category,
+        certificationType: item.question.certification_type,
+        difficulty: (() => {
+          // 난이도를 '상', '중', '하'로 변환
+          const diff = item.question.difficulty
+          if (diff === null || diff === undefined) return '중'
+          
+          const diffNum = Number(diff)
+          if (!isNaN(diffNum) && diffNum >= 1 && diffNum <= 5) {
+            if (diffNum === 5) return '상'
+            if (diffNum === 4) return '상'
+            if (diffNum === 3) return '중'
+            if (diffNum === 2) return '중'
+            if (diffNum === 1) return '하'
+          }
+          return '중' // 기본값
+        })(),
+      } : undefined,
+      consecutiveCorrect: await getConsecutiveCorrectCount(userId, item.question_id),
+    })))
+    
+    return result as WrongAnswerWithQuestion[]
   } catch (error) {
     console.error('Error fetching wrong answers:', error)
     return []
@@ -64,7 +159,7 @@ export async function getWrongAnswers(
 /**
  * 연속 정답 횟수 계산 (study_records 기반)
  */
-async function getConsecutiveCorrectCount(
+export async function getConsecutiveCorrectCount(
   userId: string,
   questionId: string
 ): Promise<number> {

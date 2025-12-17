@@ -171,7 +171,7 @@ export default function NotificationSettings() {
       <div className="space-y-4 p-4 border rounded-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold">브라우저 알림 권한</h3>
+            <h3 className="font-semibold text-left">브라우저 알림 권한</h3>
             <p className="text-sm text-muted-foreground">
               {browserPermission === 'granted'
                 ? '알림이 허용되었습니다.'
@@ -197,7 +197,7 @@ export default function NotificationSettings() {
       <div className="space-y-4 p-4 border rounded-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold">알림 활성화</h3>
+            <h3 className="font-semibold text-left">알림 활성화</h3>
             <p className="text-sm text-muted-foreground">
               모든 알림을 켜거나 끌 수 있습니다.
             </p>
@@ -215,7 +215,7 @@ export default function NotificationSettings() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold">스트릭 리마인더</h3>
+              <h3 className="font-semibold text-left">스트릭 리마인더</h3>
               <p className="text-sm text-muted-foreground">
                 매일 스트릭 유지를 위한 알림을 받습니다.
               </p>
@@ -252,7 +252,7 @@ export default function NotificationSettings() {
       <div className="space-y-4 p-4 border rounded-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold">성취도 알림</h3>
+            <h3 className="font-semibold text-left">성취도 알림</h3>
             <p className="text-sm text-muted-foreground">
               성취도를 달성했을 때 알림을 받습니다.
             </p>
@@ -272,7 +272,7 @@ export default function NotificationSettings() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold">일일 학습 리마인더</h3>
+              <h3 className="font-semibold text-left">일일 학습 리마인더</h3>
               <p className="text-sm text-muted-foreground">
                 매일 학습을 시작하도록 알림을 받습니다.
               </p>
@@ -309,7 +309,7 @@ export default function NotificationSettings() {
       <div className="space-y-4 p-4 border rounded-lg">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold">복습 알림</h3>
+            <h3 className="font-semibold text-left">복습 알림</h3>
             <p className="text-sm text-muted-foreground">
               복습할 문제가 있을 때 알림을 받습니다.
             </p>
@@ -328,7 +328,7 @@ export default function NotificationSettings() {
       <div className="space-y-4 p-4 border rounded-lg">
         <div className="flex items-center gap-2 mb-2">
           <Moon className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-semibold">조용한 시간</h3>
+          <h3 className="font-semibold text-left">조용한 시간</h3>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
           이 시간 동안은 알림을 받지 않습니다.

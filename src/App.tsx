@@ -98,9 +98,8 @@ function App() {
                   <Button variant="ghost" size="sm">대시보드</Button>
                 </Link>
                 <Link to="/profile">
-                  <Button variant="ghost" size="sm" className="gap-2">
+                  <Button variant="ghost" size="icon">
                     <User className="h-4 w-4" />
-                    프로필
                   </Button>
                 </Link>
                 {isAdmin && (
