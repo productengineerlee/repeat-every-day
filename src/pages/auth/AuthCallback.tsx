@@ -10,6 +10,7 @@ export default function AuthCallback() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [success, setSuccess] = useState(false)
+  const [hasDiagnosticResults, setHasDiagnosticResults] = useState(false) // 진단 결과 존재 여부
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -91,6 +92,7 @@ export default function AuthCallback() {
               if (submitResult.success) {
                 console.log('✅ 진단 결과 DB 저장 완료')
                 diagnosticSaved = true
+                setHasDiagnosticResults(true) // 진단 결과 저장 완료 표시
                 // 저장 완료 후 localStorage 정리
                 localStorage.removeItem('diagnostic_completed')
                 localStorage.removeItem('diagnostic_certification')
@@ -140,16 +142,31 @@ export default function AuthCallback() {
           </div>
           <h1 className="text-2xl font-bold text-green-600">이메일 인증 완료!</h1>
           <p className="text-muted-foreground">
-            회원가입이 완료되었습니다.
-            <br />
-            이제 대시보드에서 학습을 시작할 수 있습니다.
+            {hasDiagnosticResults ? (
+              <>
+                회원가입이 완료되었습니다!
+                <br />
+                이제 학습 설정을 완료해주세요.
+              </>
+            ) : (
+              <>
+                회원가입이 완료되었습니다.
+                <br />
+                이제 대시보드에서 학습을 시작할 수 있습니다.
+              </>
+            )}
           </p>
           <Button
-            onClick={() => navigate('/dashboard', { replace: true })}
+            onClick={() => {
+              // 진단 결과가 있으면 온보딩(학습설정)으로, 없으면 대시보드로
+              const destination = hasDiagnosticResults ? '/onboarding' : '/dashboard'
+              console.log(`→ 이동: ${destination} (진단결과: ${hasDiagnosticResults})`)
+              navigate(destination, { replace: true })
+            }}
             className="w-full gap-2"
             size="lg"
           >
-            대시보드로 이동
+            {hasDiagnosticResults ? '학습 설정하기' : '대시보드로 이동'}
             <ArrowRight className="h-5 w-5" />
           </Button>
         </div>
