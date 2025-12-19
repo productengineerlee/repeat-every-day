@@ -74,12 +74,14 @@ export default function AuthCallback() {
           
           // 비회원 상태에서 완료한 진단 테스트 결과가 있는지 확인
           const savedDiagnosticResults = localStorage.getItem('diagnostic_results')
+          let diagnosticSaved = false
+          
           if (savedDiagnosticResults) {
             try {
               console.log('📦 비회원 진단 결과 발견 - DB에 저장 시작...')
               const diagnosticData = JSON.parse(savedDiagnosticResults)
               
-              // 온보딩 데이터 저장
+              // 온보딩 데이터 저장 (완료될 때까지 대기)
               const submitResult = await submitOnboardingData(session.user.id, {
                 certificationType: diagnosticData.certificationType,
                 targetExamDate: diagnosticData.targetExamDate,
@@ -88,26 +90,27 @@ export default function AuthCallback() {
 
               if (submitResult.success) {
                 console.log('✅ 진단 결과 DB 저장 완료')
+                diagnosticSaved = true
                 // 저장 완료 후 localStorage 정리
                 localStorage.removeItem('diagnostic_completed')
                 localStorage.removeItem('diagnostic_certification')
                 localStorage.removeItem('diagnostic_results')
               } else {
                 console.warn('⚠️ 진단 결과 DB 저장 실패:', submitResult.error)
-                // 실패해도 로그인은 계속 진행 (사용자가 대시보드에서 다시 진단 가능)
+                // 실패 시 localStorage 유지 (나중에 다시 시도 가능)
               }
             } catch (diagnosticError) {
               console.error('❌ 진단 결과 처리 중 오류:', diagnosticError)
-              // 에러가 발생해도 로그인은 계속 진행
+              // 에러 발생 시에도 계속 진행
             }
           } else {
             console.log('ℹ️ 저장된 진단 결과 없음 - 일반 로그인으로 처리')
           }
           
           // 로그인 성공 후 처리
-          console.log('✅ 이메일 인증 완료')
+          console.log('✅ 이메일 인증 완료', diagnosticSaved ? '(진단 결과 저장됨)' : '(일반 로그인)')
           
-          // 성공 상태로 변경
+          // 성공 상태로 변경 (진단 결과 저장 완료 후)
           setSuccess(true)
           setLoading(false)
         } else {

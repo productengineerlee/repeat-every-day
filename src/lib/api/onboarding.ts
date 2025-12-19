@@ -422,8 +422,10 @@ export async function checkOnboardingComplete(
       console.error('Error fetching diagnosis data:', diagnosisError)
     }
 
+    // 자격증 정보만 있으면 온보딩 완료로 간주
+    // 진단 결과는 선택 사항 (저장 실패 시에도 대시보드 접근 가능)
     return {
-      completed: hasCertification && !!diagnosisData,
+      completed: hasCertification, // 진단 결과 없어도 자격증 정보만 있으면 완료
       hasDiagnosis: !!diagnosisData,
     }
   } catch (error) {
