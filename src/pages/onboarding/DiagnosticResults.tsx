@@ -189,27 +189,44 @@ export default function DiagnosticResults() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // 빈 배열로 한 번만 실행
 
-  const handleComplete = useCallback(() => {
+  const handleComplete = useCallback(async () => {
     try {
       console.log('✅ 완료 버튼 클릭됨!')
       console.log('User 상태:', user)
       
       if (user) {
         // 로그인한 사용자는 대시보드로 바로 이동 (일일 문제 수는 이미 3으로 설정됨)
-        console.log('→ navigate("/dashboard") 호출...')
+        console.log('→ 로그인 사용자 - 대시보드로 이동')
         completeOnboarding()
         navigate('/dashboard', { replace: true })
       } else {
         // 로그인하지 않은 사용자는 회원가입으로 이동
-        console.log('→ navigate("/signup") 호출...')
-        setTimeout(() => {
-          navigate('/signup', { replace: true })
-        }, 100)
+        console.log('→ 비회원 - 회원가입 페이지로 이동')
+        
+        // 진단 결과를 localStorage에 저장 (회원가입 후 사용)
+        try {
+          const diagnosticData = {
+            certificationType: state.certificationType,
+            targetExamDate: state.targetExamDate,
+            diagnosticAnswers: state.diagnosticAnswers,
+            results: results,
+          }
+          localStorage.setItem('diagnostic_results', JSON.stringify(diagnosticData))
+          console.log('💾 진단 결과 localStorage 저장 완료')
+        } catch (storageError) {
+          console.error('❌ localStorage 저장 실패:', storageError)
+        }
+        
+        navigate('/signup', { replace: true })
       }
     } catch (error) {
       console.error('❌ 완료 처리 중 오류:', error)
+      // 에러가 발생해도 회원가입 페이지로 이동
+      if (!user) {
+        navigate('/signup', { replace: true })
+      }
     }
-  }, [user, navigate, completeOnboarding])
+  }, [user, navigate, completeOnboarding, state, results])
 
   if (loading) {
     return (
