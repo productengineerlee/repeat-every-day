@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
+import { submitOnboardingData } from '@/lib/api/onboarding'
 
 export default function AuthCallback() {
   const navigate = useNavigate()
@@ -67,6 +68,38 @@ export default function AuthCallback() {
           } catch (userSaveError) {
             console.error('❌ users 테이블 저장 중 예외:', userSaveError)
             // 에러가 발생해도 로그인은 계속 진행
+          }
+          
+          // 비회원 상태에서 완료한 진단 테스트 결과가 있는지 확인
+          const savedDiagnosticResults = localStorage.getItem('diagnostic_results')
+          if (savedDiagnosticResults) {
+            try {
+              console.log('📦 비회원 진단 결과 발견 - DB에 저장 시작...')
+              const diagnosticData = JSON.parse(savedDiagnosticResults)
+              
+              // 온보딩 데이터 저장
+              const submitResult = await submitOnboardingData(session.user.id, {
+                certificationType: diagnosticData.certificationType,
+                targetExamDate: diagnosticData.targetExamDate,
+                diagnosticAnswers: diagnosticData.diagnosticAnswers,
+              })
+
+              if (submitResult.success) {
+                console.log('✅ 진단 결과 DB 저장 완료')
+                // 저장 완료 후 localStorage 정리
+                localStorage.removeItem('diagnostic_completed')
+                localStorage.removeItem('diagnostic_certification')
+                localStorage.removeItem('diagnostic_results')
+              } else {
+                console.warn('⚠️ 진단 결과 DB 저장 실패:', submitResult.error)
+                // 실패해도 로그인은 계속 진행 (사용자가 대시보드에서 다시 진단 가능)
+              }
+            } catch (diagnosticError) {
+              console.error('❌ 진단 결과 처리 중 오류:', diagnosticError)
+              // 에러가 발생해도 로그인은 계속 진행
+            }
+          } else {
+            console.log('ℹ️ 저장된 진단 결과 없음 - 일반 로그인으로 처리')
           }
           
           // 로그인 성공 - 대시보드로 리다이렉트

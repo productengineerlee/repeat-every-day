@@ -57,6 +57,7 @@ export default function DiagnosticResults() {
     // localStorage 플래그 초기화 (재진단 허용)
     localStorage.removeItem('diagnostic_completed')
     localStorage.removeItem('diagnostic_certification')
+    localStorage.removeItem('diagnostic_results')
     
     reset() // 온보딩 상태 초기화
     navigate('/onboarding')
@@ -117,8 +118,16 @@ export default function DiagnosticResults() {
         setDiagnosticResults(calculatedResults)
         
         // 진단 완료 표시 저장 (로그인 유도용)
+        // 비회원 상태에서 진단 테스트를 완료한 경우, 회원가입 후 자동으로 이 데이터를 DB에 저장하기 위해 localStorage에 보관
         localStorage.setItem('diagnostic_completed', 'true')
         localStorage.setItem('diagnostic_certification', state.certificationType)
+        // 진단 결과 전체 저장 (회원가입 후 DB 동기화용)
+        localStorage.setItem('diagnostic_results', JSON.stringify({
+          certificationType: state.certificationType,
+          targetExamDate: state.targetExamDate,
+          diagnosticAnswers: state.diagnosticAnswers,
+          results: calculatedResults,
+        }))
 
         // 차트 데이터 형식으로 변환 (0-100 범위의 퍼센트)
         const chartDataArray = Object.entries(calculatedResults.categoryDetails || {})
@@ -159,6 +168,7 @@ export default function DiagnosticResults() {
             // 로그인한 사용자는 DB에 저장되므로 localStorage 플래그 제거
             localStorage.removeItem('diagnostic_completed')
             localStorage.removeItem('diagnostic_certification')
+            localStorage.removeItem('diagnostic_results')
           } catch (submitError) {
             console.warn('⚠️ 온보딩 데이터 제출 중 예외 발생:', submitError)
             // 에러가 발생해도 결과는 표시
