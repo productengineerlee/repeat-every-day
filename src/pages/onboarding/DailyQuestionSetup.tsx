@@ -20,6 +20,13 @@ export default function DailyQuestionSetup() {
   // 선택된 자격증
   const selectedCertification = state.certificationType
 
+  // 로그인하지 않은 사용자는 회원가입으로 리다이렉트
+  if (!user) {
+    localStorage.setItem('redirect_after_auth', 'dashboard')
+    navigate('/signup', { replace: true })
+    return null
+  }
+
   const handleSave = async () => {
     if (!user || !selectedCertification) {
       setError('사용자 정보 또는 자격증 정보가 없습니다.')

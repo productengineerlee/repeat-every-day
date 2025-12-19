@@ -195,9 +195,10 @@ export default function DiagnosticResults() {
       console.log('User 상태:', user)
       
       if (user) {
-        // 로그인한 사용자는 다음 단계(학습 설정)로 이동
-        console.log('→ nextStep() 호출 (학습 설정으로 이동)...')
-        nextStep()
+        // 로그인한 사용자는 대시보드로 바로 이동 (일일 문제 수는 이미 3으로 설정됨)
+        console.log('→ navigate("/dashboard") 호출...')
+        completeOnboarding()
+        navigate('/dashboard', { replace: true })
       } else {
         // 로그인하지 않은 사용자는 회원가입으로 이동
         // 나중에 이메일 인증 후 대시보드로 돌아오기 위한 플래그 저장
@@ -210,7 +211,7 @@ export default function DiagnosticResults() {
     } catch (error) {
       console.error('❌ 완료 처리 중 오류:', error)
     }
-  }, [user, navigate, nextStep])
+  }, [user, navigate, completeOnboarding])
 
   if (loading) {
     return (
