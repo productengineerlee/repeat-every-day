@@ -195,10 +195,9 @@ export default function DiagnosticResults() {
       console.log('User 상태:', user)
       
       if (user) {
-        // 로그인한 사용자는 대시보드로 바로 이동 (일일 문제 수는 이미 3으로 설정됨)
-        console.log('→ 로그인 사용자 - 대시보드로 이동')
-        completeOnboarding()
-        navigate('/dashboard', { replace: true })
+        // 로그인한 사용자는 학습 설정 단계로 이동 (Step 4)
+        console.log('→ 로그인 사용자 - 학습설정 단계로 이동')
+        nextStep()
       } else {
         // 로그인하지 않은 사용자는 회원가입으로 이동
         console.log('→ 비회원 - 회원가입 페이지로 이동')
@@ -226,7 +225,7 @@ export default function DiagnosticResults() {
         navigate('/signup', { replace: true })
       }
     }
-  }, [user, navigate, completeOnboarding, state, results])
+  }, [user, navigate, nextStep, state, results])
 
   if (loading) {
     return (
