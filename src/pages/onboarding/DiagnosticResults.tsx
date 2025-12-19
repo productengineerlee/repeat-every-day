@@ -200,6 +200,8 @@ export default function DiagnosticResults() {
         nextStep()
       } else {
         // 로그인하지 않은 사용자는 회원가입으로 이동
+        // 나중에 이메일 인증 후 대시보드로 돌아오기 위한 플래그 저장
+        localStorage.setItem('redirect_after_auth', 'dashboard')
         console.log('→ navigate("/signup") 호출...')
         setTimeout(() => {
           navigate('/signup', { replace: true })

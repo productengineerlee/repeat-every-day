@@ -102,21 +102,30 @@ export default function AuthCallback() {
             console.log('ℹ️ 저장된 진단 결과 없음 - 일반 로그인으로 처리')
           }
           
-          // 로그인 성공 - 대시보드로 리다이렉트
-          // 이메일 인증 링크가 새 창에서 열린 경우 처리
-          if (window.opener && !window.opener.closed) {
+          // 로그인 성공 - 리다이렉트 처리
+          // localStorage에서 리다이렉트 대상 확인
+          const redirectTarget = localStorage.getItem('redirect_after_auth')
+          
+          if (redirectTarget === 'dashboard') {
+            console.log('✅ 진단 테스트 완료 후 회원가입 → 대시보드로 이동')
+            localStorage.removeItem('redirect_after_auth')
+            
+            // BroadcastChannel을 사용하여 다른 탭에 메시지 전송 (있으면 닫기)
             try {
-              // 부모 창을 대시보드로 이동
-              window.opener.location.href = '/dashboard'
-              // 현재 창(새 창)을 닫음
-              window.close()
-            } catch (error) {
-              // 크로스 오리진 에러 등으로 실패하면 일반 리다이렉트
-              console.log('부모 창 제어 실패, 일반 리다이렉트 실행:', error)
-              navigate('/dashboard', { replace: true })
+              const channel = new BroadcastChannel('auth_channel')
+              channel.postMessage({ type: 'AUTH_SUCCESS', redirect: '/dashboard' })
+              channel.close()
+            } catch (err) {
+              console.log('BroadcastChannel not supported:', err)
             }
+            
+            // 짧은 지연 후 대시보드로 이동 (다른 탭이 먼저 이동할 시간 확보)
+            setTimeout(() => {
+              navigate('/dashboard', { replace: true })
+            }, 500)
           } else {
-            // 같은 창에서 열린 경우 일반 리다이렉트
+            // 일반 로그인인 경우
+            console.log('✅ 일반 로그인 → 대시보드로 이동')
             navigate('/dashboard', { replace: true })
           }
         } else {
