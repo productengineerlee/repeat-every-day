@@ -103,7 +103,22 @@ export default function AuthCallback() {
           }
           
           // 로그인 성공 - 대시보드로 리다이렉트
-          navigate('/dashboard', { replace: true })
+          // 이메일 인증 링크가 새 창에서 열린 경우 처리
+          if (window.opener && !window.opener.closed) {
+            try {
+              // 부모 창을 대시보드로 이동
+              window.opener.location.href = '/dashboard'
+              // 현재 창(새 창)을 닫음
+              window.close()
+            } catch (error) {
+              // 크로스 오리진 에러 등으로 실패하면 일반 리다이렉트
+              console.log('부모 창 제어 실패, 일반 리다이렉트 실행:', error)
+              navigate('/dashboard', { replace: true })
+            }
+          } else {
+            // 같은 창에서 열린 경우 일반 리다이렉트
+            navigate('/dashboard', { replace: true })
+          }
         } else {
           console.warn('⚠️ 세션이 없습니다. 로그인 페이지로 이동합니다.')
           // 세션이 없음 - 로그인 페이지로 리다이렉트
