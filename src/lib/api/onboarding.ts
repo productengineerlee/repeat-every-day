@@ -35,10 +35,10 @@ export async function saveUserCertification(
     const updateData: {
       certification_type: CertificationType
       target_exam_date?: string
-      daily_question_count?: number
+      daily_question_count?: Record<string, number | null>
     } = {
       certification_type: certificationType,
-      daily_question_count: 3, // 기본 일일 문제 수를 3으로 설정
+      daily_question_count: { [certificationType]: 3 }, // 기본 일일 문제 수를 3으로 설정 (JSONB 형식)
     }
 
     // targetExamDate가 있으면 추가
@@ -69,12 +69,12 @@ export async function saveUserCertification(
         email: string
         certification_type: CertificationType
         target_exam_date?: string
-        daily_question_count: number
+        daily_question_count: Record<string, number | null>
       } = {
         id: userId,
         email: authUser.user.email || '',
         certification_type: certificationType,
-        daily_question_count: 3, // 기본 일일 문제 수를 3으로 설정
+        daily_question_count: { [certificationType]: 3 }, // 기본 일일 문제 수를 3으로 설정 (JSONB 형식)
       }
 
       // targetExamDate가 있으면 추가
