@@ -65,12 +65,15 @@ export default function DiagnosticResults() {
       return
     }
 
-    // 이미 처리했거나 필수 정보가 없으면 스킵
-    if (processed || !state.certificationType) {
-      if (!state.certificationType) {
-        setError('자격증이 선택되지 않았습니다.')
-        setLoading(false)
-      }
+    // 필수 데이터가 없으면 Step 1(자격증 선택)으로 리셋
+    if (!state.certificationType || Object.keys(state.diagnosticAnswers).length === 0) {
+      console.warn('⚠️ 진단 데이터가 없습니다. Step 1로 이동합니다.')
+      reset() // 온보딩 상태 초기화
+      return
+    }
+
+    // 이미 처리했으면 스킵
+    if (processed) {
       return
     }
 
@@ -117,18 +120,6 @@ export default function DiagnosticResults() {
         setResults(calculatedResults)
         // setDiagnosticResults는 한 번만 호출 (무한 루프 방지)
         setDiagnosticResults(calculatedResults)
-        
-        // 진단 완료 표시 저장 (로그인 유도용)
-        // 비회원 상태에서 진단 테스트를 완료한 경우, 회원가입 후 자동으로 이 데이터를 DB에 저장하기 위해 localStorage에 보관
-        localStorage.setItem('diagnostic_completed', 'true')
-        localStorage.setItem('diagnostic_certification', state.certificationType)
-        // 진단 결과 전체 저장 (회원가입 후 DB 동기화용)
-        localStorage.setItem('diagnostic_results', JSON.stringify({
-          certificationType: state.certificationType,
-          targetExamDate: state.targetExamDate,
-          diagnosticAnswers: state.diagnosticAnswers,
-          results: calculatedResults,
-        }))
 
         // 차트 데이터 형식으로 변환 (0-100 범위의 퍼센트)
         const chartDataArray = Object.entries(calculatedResults.categoryDetails || {})
@@ -174,12 +165,17 @@ export default function DiagnosticResults() {
 
     processResults()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // 빈 배열로 한 번만 실행
+  }, []) // 컴포넌트 마운트 시 한 번만 실행 (processed 플래그로 중복 실행 방지)
 
   const handleComplete = useCallback(() => {
     console.log('✅ 완료 버튼 클릭됨! 학습설정 단계로 이동')
     nextStep()
   }, [nextStep])
+
+  // 로그인하지 않았거나 필수 데이터가 없으면 아무것도 렌더링하지 않음
+  if (!user || !state.certificationType) {
+    return null
+  }
 
   if (loading) {
     return (
