@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context'
 import { Button } from '@/components/ui/button'
@@ -14,26 +14,6 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-
-  // 다른 탭에서 인증 완료 시 자동으로 대시보드로 이동
-  useEffect(() => {
-    try {
-      const channel = new BroadcastChannel('auth_channel')
-      
-      channel.onmessage = (event) => {
-        if (event.data.type === 'AUTH_SUCCESS' && event.data.redirect) {
-          console.log('✅ 다른 탭에서 인증 완료 감지 → 대시보드로 이동')
-          navigate(event.data.redirect, { replace: true })
-        }
-      }
-      
-      return () => {
-        channel.close()
-      }
-    } catch (err) {
-      console.log('BroadcastChannel not supported:', err)
-    }
-  }, [navigate])
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault()

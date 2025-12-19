@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
 import { submitOnboardingData } from '@/lib/api/onboarding'
+import { CheckCircle, ArrowRight } from 'lucide-react'
 
 export default function AuthCallback() {
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [success, setSuccess] = useState(false)
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -102,32 +104,12 @@ export default function AuthCallback() {
             console.log('ℹ️ 저장된 진단 결과 없음 - 일반 로그인으로 처리')
           }
           
-          // 로그인 성공 - 리다이렉트 처리
-          // localStorage에서 리다이렉트 대상 확인
-          const redirectTarget = localStorage.getItem('redirect_after_auth')
+          // 로그인 성공 후 처리
+          console.log('✅ 이메일 인증 완료')
           
-          if (redirectTarget === 'dashboard') {
-            console.log('✅ 진단 테스트 완료 후 회원가입 → 대시보드로 이동')
-            localStorage.removeItem('redirect_after_auth')
-            
-            // BroadcastChannel을 사용하여 다른 탭에 메시지 전송 (있으면 닫기)
-            try {
-              const channel = new BroadcastChannel('auth_channel')
-              channel.postMessage({ type: 'AUTH_SUCCESS', redirect: '/dashboard' })
-              channel.close()
-            } catch (err) {
-              console.log('BroadcastChannel not supported:', err)
-            }
-            
-            // 짧은 지연 후 대시보드로 이동 (다른 탭이 먼저 이동할 시간 확보)
-            setTimeout(() => {
-              navigate('/dashboard', { replace: true })
-            }, 500)
-          } else {
-            // 일반 로그인인 경우
-            console.log('✅ 일반 로그인 → 대시보드로 이동')
-            navigate('/dashboard', { replace: true })
-          }
+          // 성공 상태로 변경
+          setSuccess(true)
+          setLoading(false)
         } else {
           console.warn('⚠️ 세션이 없습니다. 로그인 페이지로 이동합니다.')
           // 세션이 없음 - 로그인 페이지로 리다이렉트
@@ -144,6 +126,33 @@ export default function AuthCallback() {
 
     handleAuthCallback()
   }, [navigate])
+
+  // 성공 상태 표시
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-green-50 to-white">
+        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg text-center space-y-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+            <CheckCircle className="h-10 w-10 text-green-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-green-600">이메일 인증 완료!</h1>
+          <p className="text-muted-foreground">
+            회원가입이 완료되었습니다.
+            <br />
+            이제 대시보드에서 학습을 시작할 수 있습니다.
+          </p>
+          <Button
+            onClick={() => navigate('/dashboard', { replace: true })}
+            className="w-full gap-2"
+            size="lg"
+          >
+            대시보드로 이동
+            <ArrowRight className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   if (loading) {
     return (
