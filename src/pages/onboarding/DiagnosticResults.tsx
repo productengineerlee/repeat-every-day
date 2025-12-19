@@ -19,7 +19,7 @@ import { submitOnboardingData, validateOnboardingData } from '@/lib/api/onboardi
 import { CheckCircle, TrendingUp, AlertCircle, RotateCcw } from 'lucide-react'
 
 export default function DiagnosticResults() {
-  const { state, setDiagnosticResults, completeOnboarding, reset, nextStep } = useOnboarding()
+  const { state, setDiagnosticResults, reset, nextStep } = useOnboarding()
   const { user } = useAuth()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
@@ -54,16 +54,17 @@ export default function DiagnosticResults() {
   const [processed, setProcessed] = useState(false)
 
   const handleRetakeDiagnostic = () => {
-    // localStorage 플래그 초기화 (재진단 허용)
-    localStorage.removeItem('diagnostic_completed')
-    localStorage.removeItem('diagnostic_certification')
-    localStorage.removeItem('diagnostic_results')
-    
     reset() // 온보딩 상태 초기화
     navigate('/onboarding')
   }
 
   useEffect(() => {
+    // 로그인하지 않은 사용자는 회원가입으로 리다이렉트
+    if (!user) {
+      navigate('/signup', { replace: true })
+      return
+    }
+
     // 이미 처리했거나 필수 정보가 없으면 스킵
     if (processed || !state.certificationType) {
       if (!state.certificationType) {
@@ -149,33 +150,19 @@ export default function DiagnosticResults() {
         })
         setChartData(chartDataArray)
 
-        // 로그인한 사용자만 온보딩 데이터 제출 (재시도 로직 포함)
-        // 로그인하지 않은 사용자는 결과만 확인하고 저장하지 않음
-        if (user) {
-          try {
-            const submitResult = await submitOnboardingData(user.id, {
-              certificationType: state.certificationType,
-              targetExamDate: state.targetExamDate || undefined,
-              diagnosticAnswers: state.diagnosticAnswers,
-            })
+        // 온보딩 데이터 제출 (user는 항상 존재함)
+        try {
+          const submitResult = await submitOnboardingData(user.id, {
+            certificationType: state.certificationType,
+            targetExamDate: state.targetExamDate || undefined,
+            diagnosticAnswers: state.diagnosticAnswers,
+          })
 
-            if (!submitResult.success) {
-              console.warn('⚠️ 온보딩 데이터 저장 실패:', submitResult.error)
-              // 에러가 발생해도 결과는 표시 (사용자가 결과를 볼 수 있도록)
-              // setError는 호출하지 않음 (결과는 표시되어야 함)
-            }
-            
-            // 로그인한 사용자는 DB에 저장되므로 localStorage 플래그 제거
-            localStorage.removeItem('diagnostic_completed')
-            localStorage.removeItem('diagnostic_certification')
-            localStorage.removeItem('diagnostic_results')
-          } catch (submitError) {
-            console.warn('⚠️ 온보딩 데이터 제출 중 예외 발생:', submitError)
-            // 에러가 발생해도 결과는 표시
+          if (!submitResult.success) {
+            console.warn('⚠️ 온보딩 데이터 저장 실패:', submitResult.error)
           }
-        } else {
-          // 로그인하지 않은 사용자는 결과만 확인
-          console.log('로그인하지 않은 사용자: 진단 결과는 표시만 하고 저장하지 않습니다.')
+        } catch (submitError) {
+          console.warn('⚠️ 온보딩 데이터 제출 중 예외 발생:', submitError)
         }
       } catch (err) {
         console.error('❌ 결과 처리 중 오류:', err)
@@ -189,43 +176,10 @@ export default function DiagnosticResults() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // 빈 배열로 한 번만 실행
 
-  const handleComplete = useCallback(async () => {
-    try {
-      console.log('✅ 완료 버튼 클릭됨!')
-      console.log('User 상태:', user)
-      
-      if (user) {
-        // 로그인한 사용자는 학습 설정 단계로 이동 (Step 4)
-        console.log('→ 로그인 사용자 - 학습설정 단계로 이동')
-        nextStep()
-      } else {
-        // 로그인하지 않은 사용자는 회원가입으로 이동
-        console.log('→ 비회원 - 회원가입 페이지로 이동')
-        
-        // 진단 결과를 localStorage에 저장 (회원가입 후 사용)
-        try {
-          const diagnosticData = {
-            certificationType: state.certificationType,
-            targetExamDate: state.targetExamDate,
-            diagnosticAnswers: state.diagnosticAnswers,
-            results: results,
-          }
-          localStorage.setItem('diagnostic_results', JSON.stringify(diagnosticData))
-          console.log('💾 진단 결과 localStorage 저장 완료')
-        } catch (storageError) {
-          console.error('❌ localStorage 저장 실패:', storageError)
-        }
-        
-        navigate('/signup', { replace: true })
-      }
-    } catch (error) {
-      console.error('❌ 완료 처리 중 오류:', error)
-      // 에러가 발생해도 회원가입 페이지로 이동
-      if (!user) {
-        navigate('/signup', { replace: true })
-      }
-    }
-  }, [user, navigate, nextStep, state, results])
+  const handleComplete = useCallback(() => {
+    console.log('✅ 완료 버튼 클릭됨! 학습설정 단계로 이동')
+    nextStep()
+  }, [nextStep])
 
   if (loading) {
     return (

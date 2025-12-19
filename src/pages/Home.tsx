@@ -143,18 +143,13 @@ export default function Home() {
   const navigate = useNavigate()
 
   const handleStartDiagnostic = () => {
-    // 진단 완료 여부 확인
-    const diagnosticCompleted = localStorage.getItem('diagnostic_completed')
-    
-    // 로그인하지 않았고 이미 진단을 완료한 경우
-    if (!user && diagnosticCompleted === 'true') {
-      const certType = localStorage.getItem('diagnostic_certification') || '자격증'
-      alert(`${certType} 진단을 이미 완료하셨습니다.\n\n결과를 저장하고 맞춤형 학습을 시작하려면 로그인이 필요합니다.`)
-      navigate('/login')
+    // 로그인하지 않은 경우 회원가입으로 유도
+    if (!user) {
+      navigate('/signup')
       return
     }
     
-    // 그 외의 경우 온보딩으로 이동
+    // 로그인한 사용자는 온보딩(사전 테스트)으로 이동
     navigate('/onboarding')
   }
   const [selectedCertification, setSelectedCertification] = useState<CertificationType | ''>('')

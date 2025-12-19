@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import { useOnboarding } from '@/context'
+import { useAuth } from '@/context'
 import { Button } from '@/components/ui/button'
 import { getDiagnosticQuestions, type DiagnosticQuestion } from '@/lib/api/questions'
 import { ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react'
@@ -10,12 +12,21 @@ import { formatDifficulty } from '@/lib/utils/difficultyFormatter'
 const SWIPE_THRESHOLD = 50
 
 export default function DiagnosticTest() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
   const { state, setDiagnosticAnswer, nextStep, previousStep } = useOnboarding()
   const [questions, setQuestions] = useState<DiagnosticQuestion[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
+
+  // 로그인하지 않은 사용자는 회원가입으로 리다이렉트
+  useEffect(() => {
+    if (!user) {
+      navigate('/signup', { replace: true })
+    }
+  }, [user, navigate])
 
   useEffect(() => {
     const fetchQuestions = async () => {

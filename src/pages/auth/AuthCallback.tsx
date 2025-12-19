@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabaseClient'
 import { Button } from '@/components/ui/button'
-import { submitOnboardingData } from '@/lib/api/onboarding'
 import { CheckCircle, ArrowRight } from 'lucide-react'
 
 export default function AuthCallback() {
@@ -10,7 +9,6 @@ export default function AuthCallback() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [success, setSuccess] = useState(false)
-  const [hasDiagnosticResults, setHasDiagnosticResults] = useState(false) // 진단 결과 존재 여부
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -73,46 +71,8 @@ export default function AuthCallback() {
             // 에러가 발생해도 로그인은 계속 진행
           }
           
-          // 비회원 상태에서 완료한 진단 테스트 결과가 있는지 확인
-          const savedDiagnosticResults = localStorage.getItem('diagnostic_results')
-          let diagnosticSaved = false
-          
-          if (savedDiagnosticResults) {
-            try {
-              console.log('📦 비회원 진단 결과 발견 - DB에 저장 시작...')
-              const diagnosticData = JSON.parse(savedDiagnosticResults)
-              
-              // 온보딩 데이터 저장 (완료될 때까지 대기)
-              const submitResult = await submitOnboardingData(session.user.id, {
-                certificationType: diagnosticData.certificationType,
-                targetExamDate: diagnosticData.targetExamDate,
-                diagnosticAnswers: diagnosticData.diagnosticAnswers,
-              })
-
-              if (submitResult.success) {
-                console.log('✅ 진단 결과 DB 저장 완료')
-                diagnosticSaved = true
-                setHasDiagnosticResults(true) // 진단 결과 저장 완료 표시
-                // 저장 완료 후 localStorage 정리
-                localStorage.removeItem('diagnostic_completed')
-                localStorage.removeItem('diagnostic_certification')
-                localStorage.removeItem('diagnostic_results')
-              } else {
-                console.warn('⚠️ 진단 결과 DB 저장 실패:', submitResult.error)
-                // 실패 시 localStorage 유지 (나중에 다시 시도 가능)
-              }
-            } catch (diagnosticError) {
-              console.error('❌ 진단 결과 처리 중 오류:', diagnosticError)
-              // 에러 발생 시에도 계속 진행
-            }
-          } else {
-            console.log('ℹ️ 저장된 진단 결과 없음 - 일반 로그인으로 처리')
-          }
-          
-          // 로그인 성공 후 처리
-          console.log('✅ 이메일 인증 완료', diagnosticSaved ? '(진단 결과 저장됨)' : '(일반 로그인)')
-          
-          // 성공 상태로 변경 (진단 결과 저장 완료 후)
+          // 로그인 성공 - 성공 상태로 변경
+          console.log('✅ 이메일 인증 완료')
           setSuccess(true)
           setLoading(false)
         } else {
@@ -142,31 +102,19 @@ export default function AuthCallback() {
           </div>
           <h1 className="text-2xl font-bold text-green-600">이메일 인증 완료!</h1>
           <p className="text-muted-foreground">
-            {hasDiagnosticResults ? (
-              <>
-                회원가입이 완료되었습니다!
-                <br />
-                이제 학습 설정을 완료해주세요.
-              </>
-            ) : (
-              <>
-                회원가입이 완료되었습니다.
-                <br />
-                이제 대시보드에서 학습을 시작할 수 있습니다.
-              </>
-            )}
+            회원가입이 완료되었습니다!
+            <br />
+            지금 바로 사전 테스트를 시작해보세요.
           </p>
           <Button
             onClick={() => {
-              // 진단 결과가 있으면 온보딩(학습설정)으로, 없으면 대시보드로
-              const destination = hasDiagnosticResults ? '/onboarding' : '/dashboard'
-              console.log(`→ 이동: ${destination} (진단결과: ${hasDiagnosticResults})`)
-              navigate(destination, { replace: true })
+              console.log('→ 온보딩(사전 테스트)으로 이동')
+              navigate('/onboarding', { replace: true })
             }}
             className="w-full gap-2"
             size="lg"
           >
-            {hasDiagnosticResults ? '학습 설정하기' : '대시보드로 이동'}
+            학습 시작하기
             <ArrowRight className="h-5 w-5" />
           </Button>
         </div>
